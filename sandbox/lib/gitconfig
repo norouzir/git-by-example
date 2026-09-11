@@ -1,0 +1,14 @@
+# Pinned configuration for every example in "Git by Example".
+# Only settings that affect reproducibility or transcript rendering are set
+# here. Everything else is left at Git's own defaults so that the messages in
+# the book match what a reader sees on a stock installation.
+
+[core]
+	autocrlf = false
+	pager = cat
+[init]
+	defaultBranch = main
+[color]
+	ui = false
+[advice]
+	detachedHead = true

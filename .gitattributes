@@ -1,0 +1,16 @@
+# Normalise every text file to LF inside the repository and on checkout.
+#
+# Without this, a Windows clone with core.autocrlf=true checks the shell
+# scripts out with CRLF line endings, and a shebang line ending in a carriage
+# return makes Linux report "bad interpreter: No such file or directory".
+# Chapter 66 explains the whole mechanism.
+* text=auto eol=lf
+
+# Windows-native tooling, kept as CRLF on purpose.
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+
+# Never touched.
+*.png binary
+*.jpg binary
+*.pdf binary

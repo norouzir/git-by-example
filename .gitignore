@@ -1,0 +1,6 @@
+# Generated output. Rebuild with tools/build_html.py and tools/build_pdf.ps1.
+/build/
+
+# Scratch directories used while capturing example output.
+/playground/
+*.tmp
