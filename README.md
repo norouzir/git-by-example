@@ -25,6 +25,9 @@ from anywhere, so it works with the network off.
 ## Layout
 
 ```
+CLAUDE.md                 the working contract: rules, style, conventions
+OUTLINE.md                approved structure; chapter numbers are stable
+DECISIONS.md              why the book is the way it is
 book/
   SUMMARY.md              build manifest; the order here is the book's order
   part-00-using-this-book/
@@ -36,8 +39,13 @@ sandbox/
 tools/
   build_html.py           Markdown to one self-contained HTML file
   build_pdf.ps1           that HTML to PDF via headless Edge
+  check_refs.py           verifies every "see Chapter N" points somewhere real
 build/                    generated output, not tracked
 ```
+
+Start with `CLAUDE.md` if you are picking this project up. It states the rules
+the text is held to; `DECISIONS.md` records the reasoning behind them, so a
+settled question is not reopened without new information.
 
 ## Building
 

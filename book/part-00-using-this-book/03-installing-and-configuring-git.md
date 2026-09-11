@@ -297,31 +297,31 @@ the chapter listed.
 	email = ada@example.com          # required
 
 [init]
-	defaultBranch = main             # chapter 3
+	defaultBranch = main             # Chapter 3
 
 [core]
-	editor = nano                    # chapter 3
+	editor = nano                    # Chapter 3
 
 [pull]
-	ff = only                        # chapter 42, refuses surprise merges
+	ff = only                        # Chapter 42, refuses surprise merges
 
 [push]
-	autoSetupRemote = true           # chapter 43, no more "--set-upstream"
+	autoSetupRemote = true           # Chapter 43, no more "--set-upstream"
 
 [merge]
-	conflictStyle = zdiff3           # chapter 26, much better conflict markers
+	conflictStyle = zdiff3           # Chapter 26, much better conflict markers
 
 [rerere]
-	enabled = true                   # chapter 26, remembers conflict resolutions
+	enabled = true                   # Chapter 26, remembers conflict resolutions
 
 [log]
-	date = iso                       # chapter 17, unambiguous dates
+	date = iso                       # Chapter 17, unambiguous dates
 
 [diff]
-	algorithm = histogram            # chapter 13, better diffs
+	algorithm = histogram            # Chapter 13, better diffs
 
 [fetch]
-	prune = true                     # chapter 41, cleans up deleted branches
+	prune = true                     # Chapter 41, cleans up deleted branches
 ```
 
 Write it with `git config edit --global`, which opens the file in your editor,
