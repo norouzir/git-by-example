@@ -26,11 +26,15 @@ that ships with Git itself, and against the release notes for the version that
 introduced each feature. Where this book says Git does something, that is what
 the installed Git does, not what it did some years ago.
 
-The prose was drafted by Claude, an AI assistant from Anthropic, working to the
-author's specification and under the author's review. This is disclosed for the
-same reason the verification method is disclosed: you are holding a reference
-book with no way to check it against anything else, so you are entitled to know
-how it was built and to weigh that when you rely on it.
+The prose was drafted by Claude Opus 5, an AI assistant from Anthropic, running
+at its Ultracode effort setting, working to the author's specification and
+under the author's review. Parts written later may name a different model; the
+build stamp in the footer tells you which copy of the book you are reading.
+
+This is disclosed for the same reason the verification method is disclosed: you
+are holding a reference book with no way to check it against anything else, so
+you are entitled to know how it was built and to weigh that when you rely on
+it.
 
 ## If you find a mistake
 
@@ -62,6 +66,8 @@ They exist to be copied and adapted, so they carry no share-alike obligation.
 Copyright (c) 2026 M. Reza Norouzi.
 
 ## Thanks
+
+To Amin Hedayati, who made the writing of this book possible.
 
 To everyone who has answered a Git question patiently, and to the Git project
 for shipping its complete documentation with the software, which is the only
