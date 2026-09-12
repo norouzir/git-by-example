@@ -2,6 +2,8 @@
 
 *A Complete Offline Handbook*
 
+By M. Reza Norouzi. Text under CC BY-SA 4.0, scripts under MIT; see `LICENSE`.
+
 A Git reference written for someone with a phone, no computer, and no internet
 connection. Every question you would normally answer by running a command or
 searching the web has to be answered on the page instead, so the book leans
@@ -76,3 +78,11 @@ for why that matters and how it works.
 
 The book targets **Git 2.55**. Features that need a version newer than 2.23 are
 marked in the text with the release that introduced them.
+
+## Licence
+
+The book text is licensed under Creative Commons Attribution-ShareAlike 4.0
+International, so it can be copied, printed, translated and handed to someone
+with no internet. The scripts under `sandbox/` and `tools/` are MIT, so they
+can be copied and adapted with no share-alike obligation. Full terms in
+`LICENSE`.

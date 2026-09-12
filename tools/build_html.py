@@ -10,9 +10,11 @@ internet connection at all.
 
 from __future__ import annotations
 
+import datetime
 import html
 import pathlib
 import re
+import subprocess
 import sys
 
 import markdown
@@ -23,6 +25,9 @@ OUT = ROOT / "build" / "git-by-example.html"
 
 TITLE = "Git by Example"
 SUBTITLE = "A Complete Offline Handbook"
+AUTHOR = "M. Reza Norouzi"
+TARGET_GIT = "2.55"
+REPO = "https://github.com/norouzir/git-by-example"
 
 LINK_RE = re.compile(r"^- \[(?P<label>[^\]]+)\]\((?P<path>[^)]+)\)\s*$")
 PART_RE = re.compile(r"^## (?P<label>.+?)\s*$")
@@ -40,6 +45,23 @@ def read_manifest() -> list[tuple[str, list[tuple[str, pathlib.Path]]]]:
         if link and parts:
             parts[-1][1].append((link.group("label"), BOOK / link.group("path")))
     return parts
+
+
+def build_stamp() -> str:
+    """Identify this build, so a reader offline can say which copy they hold."""
+    date = datetime.date.today().isoformat()
+    try:
+        commit = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=ROOT, capture_output=True, text=True, check=True,
+        ).stdout.strip()
+        dirty = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=ROOT, capture_output=True, text=True, check=True,
+        ).stdout.strip()
+        return f"{date}, from commit {commit}{'+changes' if dirty else ''}"
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return date
 
 
 def slugify(text: str) -> str:
@@ -89,6 +111,10 @@ def build() -> None:
     page = TEMPLATE.format(
         title=html.escape(TITLE),
         subtitle=html.escape(SUBTITLE),
+        author=html.escape(AUTHOR),
+        target_git=html.escape(TARGET_GIT),
+        repo=html.escape(REPO),
+        stamp=html.escape(build_stamp()),
         css=CSS,
         js=JS,
         toc="\n".join(toc),
@@ -138,7 +164,13 @@ header.book {
   text-align: center;
 }
 header.book h1 { font-size: 2.1rem; margin: 0 0 .3rem; letter-spacing: -.02em; }
-header.book p { margin: 0; color: var(--muted); font-style: italic; }
+header.book .subtitle { margin: 0 0 .9rem; color: var(--muted); font-style: italic; }
+header.book .byline { margin: 0; font-size: .9rem; letter-spacing: .04em;
+  font-family: system-ui, sans-serif; }
+footer.book { max-width: 40rem; margin: 5rem auto 0; padding: 2rem 1.25rem 4rem;
+  border-top: 1px solid var(--rule); color: var(--muted); font-size: .8rem;
+  font-family: system-ui, sans-serif; text-align: center; }
+footer.book p { margin: .25rem 0; word-break: break-word; }
 nav.toc, main { max-width: 40rem; margin: 0 auto; padding: 0 1.25rem; }
 nav.toc { padding-top: 2rem; padding-bottom: 1rem; }
 nav.toc h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .1em;
@@ -201,6 +233,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
 @media print {
   body { background: #fff; color: #000; font-size: 10.5pt; }
   nav.toc, #top-link { display: none; }
+  footer.book { color: #444; page-break-before: avoid; }
   main { max-width: none; }
   .chapter { page-break-before: always; }
   h1.part-title { page-break-before: always; }
@@ -229,7 +262,8 @@ TEMPLATE = """<!DOCTYPE html>
 <body>
 <header class="book">
   <h1>{title}</h1>
-  <p>{subtitle}</p>
+  <p class="subtitle">{subtitle}</p>
+  <p class="byline">{author}</p>
 </header>
 
 <nav class="toc">
@@ -242,6 +276,13 @@ TEMPLATE = """<!DOCTYPE html>
 <main>
 {chapters}
 </main>
+
+<footer class="book">
+  <p>{title} &middot; {author}</p>
+  <p>Written against Git {target_git}. Built {stamp}.</p>
+  <p>Text under CC BY-SA 4.0. Scripts under MIT.</p>
+  <p>{repo}</p>
+</footer>
 
 <a id="top-link" href="#" aria-label="Back to top">&#8593;</a>
 <script>{js}</script>

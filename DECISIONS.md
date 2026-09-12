@@ -151,3 +151,34 @@ badge naming the release that added it.
 
 **Baseline 2.23** because that is when `git switch` and `git restore` arrived,
 and they are taught as the default.
+
+---
+
+## 2026-09-12. The book is bylined, and says how it was made
+
+The book had no author, no licence and no way to report an error. That was an
+omission rather than a decision, and it was noticed before publication.
+
+Front matter now names the author, the Git version targeted, the build date and
+commit, where to report a mistake, and the licence. `tools/build_html.py`
+stamps the date and commit automatically so a reader can say which copy they
+hold.
+
+**Why front matter matters more here than in an ordinary book.** The reader has
+no internet. They cannot look up who wrote this, when, against which Git
+version, or whether a correction exists. If that information is not on the
+page, it does not reach them at all.
+
+The colophon also discloses that the prose was drafted by an AI assistant
+working to the author's specification, alongside the description of how
+examples were generated and verified. Both are there for the same reason: this
+is a reference book that the reader has no way to check against anything else,
+so they are entitled to know how it was built.
+
+**Licence: CC BY-SA 4.0 for the text, MIT for the scripts.** Share-alike on the
+prose keeps derived versions and translations open, which matters for a book
+meant to be passed hand to hand. The scripts exist to be copied, so they carry
+no such obligation. The MIT text in `LICENSE` was fetched verbatim from the
+SPDX license list rather than written from memory, because a paraphrased
+licence is worse than none.
+
