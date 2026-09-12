@@ -120,6 +120,24 @@ with this much mixed punctuation. Use the file-writing tool instead.
 later commit to this repository, or the book's commits get authored by Ada
 Lovelace in 2026.
 
+**Reading the config docs from Python.** Config variables are only in the
+assembled `git-config.html`, and Python cannot open the MSYS-style
+`/mingw64/...` path. Use the Windows path:
+`C:/Program Files/Git/mingw64/share/doc/git-doc/git-config.html`. Strip tags
+and search the text.
+
+**`set -e` in generator scripts.** Several commands answer with a non-zero
+exit rather than failing: `git check-ignore` when nothing matches,
+`git diff --quiet` on a dirty tree, `git rm` on an unmatched path. Under
+`set -e` these terminate the script mid-transcript and the truncation is easy
+to miss. Either write them as a condition (`cmd && echo a || echo b`) or drop
+`-e` for that script with a comment saying why, as `ch16` does.
+
+**Quoting through `sb_run`.** `sb_run` joins its arguments and evals them, so
+inner quotes are lost: `sb_run git branch 'bad name'` runs
+`git branch bad name`, which is a different command with a different error.
+Pass the whole thing as one string instead: `sb_run "git branch 'bad name'"`.
+
 ## Layout
 
 ```

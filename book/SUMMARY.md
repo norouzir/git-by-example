@@ -18,3 +18,14 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 7. Refs, HEAD, and Branches as Pointers](part-01-the-mental-model/07-refs-head-and-branches.md)
 - [Chapter 8. The Lifecycle of a File](part-01-the-mental-model/08-the-lifecycle-of-a-file.md)
 
+## Part 2. Everyday Work
+
+- [Chapter 9. init and clone](part-02-everyday-work/09-init-and-clone.md)
+- [Chapter 10. status](part-02-everyday-work/10-status.md)
+- [Chapter 11. add](part-02-everyday-work/11-add.md)
+- [Chapter 12. commit](part-02-everyday-work/12-commit.md)
+- [Chapter 13. diff](part-02-everyday-work/13-diff.md)
+- [Chapter 14. Undoing Local Changes with restore](part-02-everyday-work/14-restore.md)
+- [Chapter 15. rm and mv](part-02-everyday-work/15-rm-and-mv.md)
+- [Chapter 16. Ignoring Files](part-02-everyday-work/16-ignoring-files.md)
+
