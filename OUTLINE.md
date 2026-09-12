@@ -18,11 +18,11 @@ Status marks: `[x]` written, `[ ]` not yet.
 
 ## Part 1. The Mental Model
 
-- [ ] 4. What Git Actually Stores
-- [ ] 5. The Three Areas: Working Tree, Index, Repository
-- [ ] 6. The Four Object Types
-- [ ] 7. Refs, HEAD, and Branches as Pointers
-- [ ] 8. The Lifecycle of a File
+- [x] 4. What Git Actually Stores
+- [x] 5. The Three Areas: Working Tree, Index, Repository
+- [x] 6. The Four Object Types
+- [x] 7. Refs, HEAD, and Branches as Pointers
+- [x] 8. The Lifecycle of a File
 
 ## Part 2. Everyday Work
 
@@ -154,13 +154,19 @@ editing every chapter in the left column.
 
 | Chapter | Refers to |
 |---|---|
-| 1 | Appendices A, B, E, G, H |
-| 2 | Chapters 3, 12, 17, 40, 61, 62 |
-| 3 | Chapters 13, 17, 23, 26, 40, 41, 42, 43, 56, 66 |
+| 1 | Appendix A, Appendix B, Appendix E, Appendix G, Appendix H |
+| 2 | Chapter 3, Chapter 12, Chapter 17, Chapter 40, Chapter 61, Chapter 62 |
+| 3 | Chapter 13, Chapter 17, Chapter 23, Chapter 26, Chapter 40, Chapter 41, Chapter 42, Chapter 43, Chapter 56, Chapter 66 |
+| 4 | Chapter 13, Chapter 15, Chapter 29, Chapter 33, Chapter 37, Chapter 57, Chapter 71, Chapter 72, Chapter 75 |
+| 5 | Chapter 11, Chapter 26, Chapter 73, Chapter 78, Chapter 79 |
+| 6 | Chapter 4, Chapter 12, Chapter 18, Chapter 27, Chapter 28, Chapter 29, Chapter 33, Chapter 37, Chapter 41, Chapter 47, Chapter 77, Chapter 79 |
+| 7 | Chapter 18, Chapter 22, Chapter 30, Chapter 36, Chapter 70 |
+| 8 | Chapter 16, Chapter 37, Chapter 60 |
 
 Do not maintain that table by hand. Regenerate it, and check that nothing
 points at a chapter that does not exist:
 
 ```sh
-python tools/check_refs.py --map
+python tools/check_refs.py --map          # report, and list who refers to what
+python tools/check_refs.py --write-table  # rewrite the table above
 ```

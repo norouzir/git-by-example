@@ -25,6 +25,30 @@ REF_CHAPTER = re.compile(r"\bChapter (\d+)\b")
 REF_APPENDIX = re.compile(r"\bAppendix ([A-Z])\b")
 
 
+TABLE_START = "| Chapter | Refers to |"
+
+
+def write_outline_table(ref_map: dict[str, list[str]], outline_text: str) -> None:
+    """Replace the cross-reference table in OUTLINE.md with current reality."""
+    rows: list[str] = []
+    for path in sorted(ref_map):
+        own = re.search(r"/(\d+)-", "/" + pathlib.Path(path).name)
+        if not own:
+            continue
+        number = int(own.group(1))
+        # Drop the chapter's reference to itself, which is just its own title.
+        refs = [r for r in ref_map[path] if r != f"Chapter {number}"]
+        if refs:
+            rows.append(f"| {number} | {', '.join(refs)} |")
+
+    table = "\n".join([TABLE_START, "|---|---|", *rows])
+    start = outline_text.index(TABLE_START)
+    end = outline_text.index("\n\n", start)
+    OUTLINE.write_text(
+        outline_text[:start] + table + outline_text[end:], encoding="utf-8"
+    )
+
+
 def main() -> int:
     text = OUTLINE.read_text(encoding="utf-8")
     chapters = {int(n): title for n, title in OUTLINE_CHAPTER.findall(text)}
@@ -63,6 +87,10 @@ def main() -> int:
         for name, refs in ref_map.items():
             print(f"{name:<{width}}  {', '.join(refs)}")
         print()
+
+    if "--write-table" in sys.argv:
+        write_outline_table(ref_map, text)
+        print("rewrote the cross-reference table in OUTLINE.md")
 
     print(f"{len(chapters)} chapters and {len(appendices)} appendices in OUTLINE.md")
     if problems:
