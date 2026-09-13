@@ -262,9 +262,9 @@ CSS = """
   --code-bg: #f2efe9;
   --accent: #7a3b12;
   --quote-bg: #f4f1ea;
-  --ansi-black: #1c1b19; --ansi-red: #b3261e; --ansi-green: #1f7a33;
-  --ansi-yellow: #8a6100; --ansi-blue: #1f5fbf; --ansi-magenta: #8e3aa8;
-  --ansi-cyan: #0e7a86; --ansi-white: #6b6862;
+  --ansi-black: #1c1b19; --ansi-red: #b3261e; --ansi-green: #2e7d1f;
+  --ansi-yellow: #8a6100; --ansi-blue: #3f4fc8; --ansi-magenta: #8e3aa8;
+  --ansi-cyan: #0074a6; --ansi-white: #6b6862;
   --ansi-bg-red: #eeb0a9; --ansi-bg-green: #d4ecd9; --ansi-bg-yellow: #f3e5bf;
   --ansi-bg-blue: #d5e2f6; --ansi-bg-magenta: #ead7f1; --ansi-bg-cyan: #cfeaec;
   --ansi-bg-white: #e4e1da; --ansi-bg-black: #3a3833;
@@ -280,8 +280,8 @@ CSS = """
     --accent: #e0a878;
     --quote-bg: #1d1c23;
     --ansi-black: #8b949e; --ansi-red: #ff7b72; --ansi-green: #7ee787;
-    --ansi-yellow: #e3b341; --ansi-blue: #79c0ff; --ansi-magenta: #d2a8ff;
-    --ansi-cyan: #56d4dd; --ansi-white: #e6e3dd;
+    --ansi-yellow: #e3b341; --ansi-blue: #a3adff; --ansi-magenta: #d2a8ff;
+    --ansi-cyan: #4fb8f5; --ansi-white: #e6e3dd;
     --ansi-bg-red: #5a1e1b; --ansi-bg-green: #1b4527; --ansi-bg-yellow: #4d3b0f;
     --ansi-bg-blue: #1a3558; --ansi-bg-magenta: #43245a; --ansi-bg-cyan: #144449;
     --ansi-bg-white: #3a3940; --ansi-bg-black: #0d0c10;

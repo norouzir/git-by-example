@@ -1,193 +1,142 @@
 # Chapter 13. diff
 
-`git diff` shows the difference between two versions of your files. Which two
-versions is the part that trips everyone, and most of this chapter is about
-that, about reading the output, and about the dozens of ways to shape it.
+## What it is
 
-## git diff and the diff command
+`git diff` shows, line by line, how two versions of your files differ. The two
+versions can be your working tree, the index, any commit, or even two files that
+have nothing to do with Git. It changes nothing; it only reports.
 
-Unix has had a `diff` command since the 1970s, and Git bundles one. So the
-first fair question is why `git diff` exists at all.
+The report is made of *hunks*: each hunk is one block of changed lines,
+with a few unchanged lines around it so you can see where it sits.
 
-### Plain diff compares two files, and nothing else
+With no arguments it answers one specific question: what have I changed that I
+have not staged yet? Every other form answers a different question, and knowing
+which question each form asks is most of what there is to learn about it.
 
-```console
-$ diff -u story.txt
-diff: missing operand after 'story.txt'
-diff: Try 'diff --help' for more information.
+Its output is the unified diff format that almost every tool understands, with a
+few extra lines only Git writes. It looks like the output of the Unix `diff`
+command, but it is not the same program and does not behave the same way; the
+section "git diff and the diff command" near the end of this chapter compares
+the two.
+
+## Synopsis
+
+These are the forms Git's own documentation lists:
+
+```
+git diff [<options>] [<commit>] [--] [<path>...]
+git diff [<options>] --cached [--merge-base] [<commit>] [--] [<path>...]
+git diff [<options>] [--merge-base] <commit> [<commit>...] <commit> [--] [<path>...]
+git diff [<options>] <commit>...<commit> [--] [<path>...]
+git diff [<options>] <blob> <blob>
+git diff [<options>] --no-index [--] <path> <path> [<pathspec>...]
 ```
 
-`diff` needs two files on disk. It knows nothing about commits or the index.
-To compare your edited file with the last commit, you first have to get the
-committed version out of Git into a file of its own:
+| Part | Means |
+|---|---|
+| `[<options>]` | Any of the options below. They may also come after the commits |
+| `<commit>` | Anything that names a commit: a hash, a branch, `HEAD`, `HEAD~2` (Chapter 18) |
+| `--cached` | Compare the index instead of the working tree. `--staged` is a synonym |
+| `<blob>` | A file's content, usually written `<commit>:<path>` |
+| `--` | Everything after this is a path, never a commit |
+| `<path>...` | Limit the diff to these paths. Pathspec syntax applies (Chapter 11) |
 
-```console
-$ git show HEAD:story.txt > ../story-committed.txt
-$ diff -u ../story-committed.txt story.txt
---- ../story-committed.txt	2026-01-05 08:00:00.000000000 +0000
-+++ story.txt	2026-01-05 09:00:00.000000000 +0000
-@@ -1,3 +1,3 @@
- Once upon a time
--there was a repository.
-+there was a git repository.
- The end.
-$ git diff
-diff --git a/story.txt b/story.txt
-index d1747ff..e3caeae 100644
---- a/story.txt
-+++ b/story.txt
-@@ -1,3 +1,3 @@
- Once upon a time
--there was a repository.
-+there was a git repository.
- The end.
-```
+What each form compares:
 
-The body is identical, because both use the same unified format. The headers
-differ: `diff -u` prints modification times, while `git diff` prints the blob
-hashes and the file mode, and adds a `diff --git` line that later tools use to
-recognise renames and binary changes.
+| Command | Compares |
+|---|---|
+| `git diff` | working tree against index |
+| `git diff --staged` | index against HEAD |
+| `git diff HEAD` | working tree against HEAD |
+| `git diff <commit>` | working tree against that commit |
+| `git diff --staged <commit>` | index against that commit |
+| `git diff <a> <b>` | commit `a` against commit `b` |
+| `git diff <a>..<b>` | the same thing; the dots are optional here |
+| `git diff <a>...<b>` | the merge base of `a` and `b` against `b` |
+| `git diff --merge-base <a> <b>` | the same as `<a>...<b>` |
+| `git diff <a>:<path> <b>:<path>` | one file's blob against another's |
+| `git diff --no-index <f1> <f2>` | two files, with no repository involved |
 
-| | `diff -u` | `git diff` |
+The first three rows are the ones you will use every day, and they are the ones
+people confuse. Chapter 5 explains them through the three areas; the section
+"Choosing what to compare" below shows every row running.
+
+> **Careful.** Inside a repository, `git diff a.txt b.txt` does not compare
+> `a.txt` with `b.txt`. Both names are read as paths to limit the first form,
+> so it shows your uncommitted changes to each. To compare two files, add
+> `--no-index`. The section "git diff and the diff command" shows the trap.
+
+## Options at a glance
+
+Every option below is demonstrated in the section named in the last column.
+
+| Option | Does | Covered in |
 |---|---|---|
-| Compares two files on disk | yes | yes, with `--no-index` |
-| Compares against the index | no | yes, the default |
-| Compares against any commit | only after extracting it yourself | yes |
-| Compares two commits | no | yes |
-| Detects renames and copies | no | yes |
-| Word-level diffs | no | yes |
-| Recognises binary files | only says they differ | yes, and can produce a binary patch |
-| Shows moved code differently | no | yes |
-| Exits 1 when files differ | yes | only with `--exit-code` or `--quiet` |
+| `--staged`, `--cached` | Compare the index, against HEAD or a commit you name | Choosing what to compare |
+| `--merge-base` | Compare from the merge base, like three dots | Two dots and three dots |
+| `-R` | Swap the two sides | Choosing what to compare |
+| `--relative[=<path>]` | Limit to a directory and show paths relative to it | Choosing what to compare |
+| `--no-index` | Compare two paths outside version control | git diff and the diff command |
+| `-U<n>`, `--unified=<n>` | Number of context lines | How much context |
+| `-W`, `--function-context` | Show the whole function around each change | How much context |
+| `--inter-hunk-context=<n>` | Merge hunks separated by up to `<n>` unchanged lines | How much context |
+| `--stat[=<width>]` | A bar chart per file | Summaries instead of content |
+| `--stat-count=<n>` | List at most `<n>` files in `--stat` | Summaries instead of content |
+| `--numstat`, `--shortstat` | Exact counts, or only the total | Summaries instead of content |
+| `--name-only`, `--name-status`, `--summary` | Path listings | Summaries instead of content |
+| `--compact-summary` | `--stat` with creations, deletions and mode changes marked | Summaries instead of content |
+| `--dirstat[=<params>]` | Share of change per directory | Summaries instead of content |
+| `--word-diff[=<mode>]` | Word-level output | Word-level diffs |
+| `--word-diff-regex=<regex>` | What counts as a word | Word-level diffs |
+| `--color-words` | Word diff in colour | Word-level diffs |
+| `-S <string>`, `-G <regex>` | Filter by content change | Searching history through diffs |
+| `--pickaxe-regex` | Treat `-S` as a regex | Searching history through diffs |
+| `--pickaxe-all` | Keep every file in a matching commit | Searching history through diffs |
+| `-w`, `--ignore-all-space` | Ignore all whitespace | Whitespace |
+| `-b`, `--ignore-space-change` | Ignore changes in the amount of whitespace | Whitespace |
+| `--ignore-space-at-eol` | Ignore whitespace at line ends only | Whitespace |
+| `--ignore-blank-lines` | Ignore added or removed blank lines | Whitespace |
+| `--ignore-cr-at-eol` | Ignore a carriage return at line end | Whitespace |
+| `--check` | Report whitespace errors and conflict markers | Whitespace |
+| `-M[<n>]`, `--find-renames[=<n>]` | Rename detection and its threshold | Renames and copies |
+| `-C[<n>]`, `--find-copies[=<n>]` | Copy detection from changed files | Renames and copies |
+| `--find-copies-harder` | Copy detection from every file | Renames and copies |
+| `--no-renames` | Report renames as a delete plus an add | Renames and copies |
+| `-B`, `--break-rewrites` | Treat heavy rewrites as a delete plus an add | Renames and copies |
+| `-l <num>` | Limit how many files rename detection considers | Renames and copies |
+| `--color-moved[=<mode>]` | Colour moved lines differently from changed ones | Moved code |
+| `--diff-algorithm=<name>` | Choose the algorithm | Algorithms |
+| `--minimal`, `--patience`, `--histogram` | Shorter spellings for three algorithms | Algorithms |
+| `--anchored=<text>` | Keep lines starting with `<text>` unchanged where possible | Algorithms |
+| `--diff-filter=<letters>` | Keep only added, deleted, modified and so on | Keeping only some kinds of change |
+| `--no-prefix`, `--src-prefix`, `--dst-prefix` | Change or remove the `a/` and `b/` prefixes | Prefixes, output files, and file names |
+| `--default-prefix` | Use `a/` and `b/` whatever the configuration says | Prefixes, output files, and file names |
+| `--output=<file>` | Write to a file instead of standard output | Prefixes, output files, and file names |
+| `-z` | Separate paths with a zero byte (NUL) and never quote them | Prefixes, output files, and file names |
+| `--binary` | Include binary content in the patch | Binary files |
+| `--text`, `-a` | Treat every file as text | Binary files |
+| `--exit-code`, `--quiet` | Report differences through the exit status | Exit codes |
+| `--submodule[=<format>]` | How to show changed submodules | Chapter 57 |
+| `--ext-diff`, `--textconv` | Use external diff drivers and converters | Chapter 65 |
+| `--cc`, `-c` | Combined diff for a merge commit | Chapter 26 |
 
-So `git diff` is not a reimplementation of `diff`. It is a diff engine that
-knows where Git keeps every version of every file.
+<!-- no-example: -B
+     Tested on a complete rewrite, on a rewrite that kept its blank lines in
+     place, and on a rewrite combined with -M where the old content had moved
+     to another file. In all three the output was identical to the default, so
+     an example would show the reader nothing they cannot see without it. It
+     changes output only for large files rewritten past a threshold, and its
+     main use is helping -M pair rewritten files in big changes. -->
 
-### They do not exit the same way
+<!-- no-example: -l
+     A performance limit on how many files rename detection will compare before
+     giving up. On any example small enough to print, the output is the same
+     with or without it. -->
 
-```console
-$ diff -u ../story-committed.txt story.txt > /dev/null; echo exit=$?
-exit=1
-$ git diff > /dev/null; echo exit=$?
-exit=0
-$ git diff --exit-code > /dev/null; echo exit=$?
-exit=1
-```
+## Reading the output
 
-`diff` exits 1 when the files differ. `git diff` exits 0 whether or not there
-are changes, because it treats showing you a diff as success. `--exit-code`
-gives you `diff`'s behaviour, and the Exit codes section below covers scripts.
-
-> **Careful.** A script that swaps `diff a b` for `git diff a b` and tests the
-> exit status will silently stop detecting changes.
-
-### Inside a repository, two paths are not two files
-
-This one looks like it works and does not:
-
-```console
-$ git diff draft-one.txt draft-two.txt; echo exit=$?
-exit=0
-$ git diff --no-index draft-one.txt draft-two.txt; echo exit=$?
-diff --git a/draft-one.txt b/draft-two.txt
-index f8704fb..48d0939 100644
---- a/draft-one.txt
-+++ b/draft-two.txt
-@@ -1,2 +1,2 @@
- alpha
--bravo
-+charlie
-exit=1
-```
-
-Both files are tracked and differ from each other, and the first command printed
-nothing. Inside a repository, `git diff a b` means "show my uncommitted changes
-to `a` and to `b`", with the two names as a pathspec. Neither file had
-uncommitted changes, so there was nothing to show.
-
-`--no-index` is what turns two names into two files to compare.
-
-### Outside a repository, --no-index is implied
-
-```console
-$ git rev-parse --is-inside-work-tree
-fatal: not a git repository (or any of the parent directories): .git
-$ git diff one.txt two.txt; echo exit=$?
-diff --git a/one.txt b/two.txt
-index f8704fb..48d0939 100644
---- a/one.txt
-+++ b/two.txt
-@@ -1,2 +1,2 @@
- alpha
--bravo
-+charlie
-exit=1
-```
-
-Git's documentation spells out the rule: `--no-index` may be left out when you
-are outside a repository, or when at least one of the two paths points outside
-the working tree. In every other case, write it. And note that this form exits
-1 on a difference by itself, unlike the rest of `git diff`.
-
-That makes `git diff --no-index` a genuinely better `diff` for everyday use,
-because you get rename detection, word diffs, `--stat`, and colour between any
-two files or directories:
-
-```console
-$ git diff --no-index one.txt two.txt
-diff --git a/one.txt b/two.txt
-index f8704fb..48d0939 100644
---- a/one.txt
-+++ b/two.txt
-@@ -1,2 +1,2 @@
- alpha
--bravo
-+charlie
-$ git diff --no-index --stat one.txt two.txt
- one.txt => two.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-```
-
-### Can the patch command use git diff output?
-
-Yes, for text changes, and a current GNU `patch` even understands Git's rename
-headers:
-
-```console
-$ git diff --staged > ../change.diff
-$ cat ../change.diff
-diff --git a/extra.txt b/renamed.txt
-similarity index 100%
-rename from extra.txt
-rename to renamed.txt
-diff --git a/story.txt b/story.txt
-index d1747ff..e3caeae 100644
---- a/story.txt
-+++ b/story.txt
-@@ -1,3 +1,3 @@
- Once upon a time
--there was a repository.
-+there was a git repository.
- The end.
-$ git reset -q --hard
-$ patch -p1 < ../change.diff
-patching file renamed.txt (renamed from extra.txt)
-patching file story.txt
-$ git status --short
- D extra.txt
- M story.txt
-?? renamed.txt
-```
-
-`-p1` strips the `a/` and `b/` prefixes. The rename applied, but only to the
-files on disk: `patch` knows nothing about the index, so Git now sees a deleted
-file and an untracked one rather than a staged rename.
-
-Binary changes are where the two part ways; the Binary files section below
-shows `patch` refusing one that `git apply` accepts. `git apply` is covered
-properly in Chapter 61.
-
-## Reading one
+Before any option makes sense, the output has to. Here is the plain form after
+changing one word in a tracked file:
 
 ```console
 $ git diff
@@ -231,6 +180,9 @@ The left hash is the index version, the right is the file on disk. Plain
 
 ### New, deleted and mode-changed files
 
+Three kinds of change add header lines of their own between `diff --git` and
+the content: creating a file, deleting one, and changing only its mode.
+
 ```console
 $ git diff --staged -- new.txt
 diff --git a/new.txt b/new.txt
@@ -267,6 +219,9 @@ lists the five modes.
 
 ### No newline at end of file
 
+Sometimes the last line of a diff is followed by a line starting with a
+backslash:
+
 ```console
 $ git diff --staged -- tail.txt
 diff --git a/tail.txt b/tail.txt
@@ -289,6 +244,9 @@ one had it.
 > identical; what changed is the invisible character after it.
 
 ### A renamed file with edits
+
+When Git detects that a file was renamed and its content also changed, the
+header records both:
 
 ```console
 $ git diff --staged -- mover.txt moved.txt
@@ -343,23 +301,11 @@ it is inside `total`. Chapter 65 shows how `.gitattributes` teaches Git the real
 function syntax of a language, for the cases where the letter rule guesses
 wrong.
 
-## Which two things
+## Choosing what to compare
 
-This is the part people get wrong, so it is worth repeating from Chapter 5:
-
-| Command | Compares |
-|---|---|
-| `git diff` | working tree against index |
-| `git diff --staged` | index against HEAD |
-| `git diff HEAD` | working tree against HEAD |
-| `git diff <commit>` | working tree against that commit |
-| `git diff --staged <commit>` | index against that commit |
-| `git diff <a> <b>` | commit `a` against commit `b` |
-| `git diff <a>..<b>` | the same thing; the dots are optional here |
-| `git diff <a>...<b>` | the merge base of `a` and `b` against `b` |
-| `git diff --merge-base <a> <b>` | the same as `<a>...<b>` |
-| `git diff <a>:<path> <b>:<path>` | one file's blob against another's |
-| `git diff --no-index <f1> <f2>` | two files, with no repository involved |
+The table in the Synopsis lists what each form compares. This section runs the
+forms that the first example did not, and the cases where a form behaves in a
+way you would not guess.
 
 ### A commit, and the index against a commit
 
@@ -391,6 +337,9 @@ commit does the same for the index.
 
 ### Swapping the sides
 
+`-R` swaps the two sides of any diff, so additions show as removals and the
+other way round:
+
 ```console
 $ git diff -R HEAD~1 --staged
 diff --git b/a.txt a/a.txt
@@ -402,10 +351,12 @@ index 9c89174..9bc69cf 100644
 +version one
 ```
 
-`-R` reverses the direction, and look closely: it swaps the prefixes as well, so
-`b/` now comes first. A reversed diff applied as a patch undoes the original.
+Look closely: `-R` swaps the prefixes as well, so `b/` now comes first. A reversed diff applied as a patch undoes the original.
 
 ### One file across commits, or two different files
+
+The content of one file in one commit can be named directly as
+`<commit>:<path>`, and two such names can be compared:
 
 ```console
 $ git diff HEAD~2:a.txt HEAD:a.txt
@@ -426,7 +377,7 @@ index 9c89174..69edd21 100644
 +a different file
 ```
 
-The `<commit>:<path>` form names a blob directly (Chapter 18), so you can
+That form names a blob directly (Chapter 18), so you can
 compare any file at any point in history with any other, even files with
 different names.
 
@@ -436,6 +387,9 @@ different names.
 | `git diff A:file B:file` | two blobs, directly | Works for two different paths; rename detection does not apply |
 
 ### Only my subdirectory
+
+`--relative` limits the diff to the directory you are standing in and shows
+paths relative to it. Both commands below were run from inside `sub/`:
 
 ```console
 $ git diff --stat
@@ -447,14 +401,17 @@ $ git diff --relative --stat
  1 file changed, 1 insertion(+), 1 deletion(-)
 ```
 
-Both run from inside `sub/`. Plain `git diff` shows the whole repository no
-matter where you stand. `--relative` limits it to the current directory and
-strips that directory from the paths. `--relative=<path>` does the same for a
-path you name.
+Plain `git diff` shows the whole repository no matter where you stand, with
+paths from the top. With `--relative`, `outer.txt` dropped out and `sub/` was
+stripped from the path. `--relative=<path>` does the same for a directory you
+name instead of the current one.
 
 > **Since Git 2.28.** The `diff.relative` setting, to make this the default.
 
 ### New files do not appear
+
+A file you have created but never added is left out of every form of
+`git diff`:
 
 ```console
 $ git diff --stat
@@ -471,6 +428,9 @@ add -N` puts an empty placeholder in the index, which makes the file visible
 without staging its content. Chapter 11 covers `-N` in detail.
 
 ### Before the first commit
+
+In a new repository with a file staged and nothing committed yet, the forms
+that mention `HEAD` behave differently from those that do not:
 
 ```console
 $ git diff --staged
@@ -492,6 +452,96 @@ There is no `HEAD` yet. `--staged` copes, and Git's documentation says it then
 shows everything that is staged. `git diff HEAD` fails with an error that talks
 about paths, because Git tried to read `HEAD` as a file name after failing to
 find it as a revision.
+
+## Comparing commits
+
+Given two commits, `git diff` compares the snapshots they record. Your working
+tree and index play no part:
+
+```console
+$ git diff HEAD~2 HEAD --stat
+ config.ini | 3 ++-
+ story.txt  | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+$ git diff HEAD~2..HEAD --stat
+ config.ini | 3 ++-
+ story.txt  | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+$ git diff HEAD~2 HEAD -- story.txt
+diff --git a/story.txt b/story.txt
+index 681da97..ec8af9a 100644
+--- a/story.txt
++++ b/story.txt
+@@ -1,4 +1,5 @@
+ Once upon a time
+-there was a repository.
++there was a git repository.
+ It had many commits.
++It had branches too.
+ The end.
+```
+
+A space or two dots between the commits: same result. Everything after `--` is
+a pathspec, limiting the diff to those paths. The `--` separates paths from
+revisions and is worth typing whenever a path could be mistaken for a branch
+name.
+
+## Two dots and three dots
+
+This is the single most common source of "that diff is wrong". Given this
+history:
+
+```console
+$ git log --oneline --all --graph
+* 9038d5b Add a feature
+| * 92aa31c Mention branches
+| * 38b2fe8 Tell a git story
+|/  
+* e8b4006 Add story and config
+```
+
+The two forms answer different questions:
+
+```console
+$ git diff main..feature --name-status
+M	config.ini
+A	feature.txt
+M	story.txt
+$ git diff main...feature --name-status
+A	feature.txt
+$ git merge-base main feature
+e8b4006caa0ffd58502e41102d7e7ea8409b5d6c
+$ git diff --merge-base main feature --name-status
+A	feature.txt
+```
+
+| Form | Compares | Answers |
+|---|---|---|
+| `main..feature` | tip of `main` against tip of `feature` | What is different between these two right now? |
+| `main...feature` | merge base against tip of `feature` | What did `feature` change since it diverged? |
+| `--merge-base main feature` | the same as three dots | The same question, spelled out |
+
+The *merge base* is the most recent commit that both branches have in their
+history, which is the point where they went separate ways. Here it is
+`e8b4006`, and `git merge-base` prints it. Chapter 76 explains how Git finds
+it when the history is more tangled.
+
+The three-dot form is almost always what you want when reviewing a branch,
+because it excludes work that happened on `main` in the meantime. It is what
+GitHub and GitLab show in a pull request.
+
+`main..feature` reported `config.ini` and `story.txt` as modified, although
+`feature` never touched them. Those are the commits on `main` that `feature`
+does not have, seen from the other side.
+
+> **Since Git 2.30.** `--merge-base`. It exists because three dots are easy to
+> miss when reading a command, and a word is not.
+
+> **Careful.** The meaning of `..` and `...` is *reversed* between `git diff`
+> and `git log`. In `git log`, `a..b` means commits in `b` but not `a`, and
+> `a...b` means commits in either but not both. Chapter 18 covers both, and
+> the reversal is a genuine historical wart rather than something you can
+> reason your way to.
 
 ## git diff, git show and git log -p
 
@@ -583,6 +633,9 @@ answer, and the three commands answer it differently.
 
 ## How much context
 
+Around each change, `git diff` prints some unchanged lines so you can see where
+the change sits. `-U<n>`, or its long form `--unified=<n>`, sets how many:
+
 ```console
 $ git diff -U1
 diff --git a/story.txt b/story.txt
@@ -659,6 +712,10 @@ function, where three lines around the edit tell you nothing.
 
 ### Nearby changes, one hunk or two
 
+When two changes are close, their context overlaps and they print as one hunk;
+otherwise each gets its own. `--inter-hunk-context=<n>` joins hunks that are up
+to `<n>` unchanged lines apart:
+
 ```console
 $ git diff
 diff --git a/n.txt b/n.txt
@@ -712,6 +769,9 @@ says "merge hunks separated by up to two unchanged lines", so they became one.
 Nothing about the changes is different; only the grouping is.
 
 ## Summaries instead of content
+
+When you want to know which files changed and by how much, rather than every
+changed line, these options print a summary instead of the diff:
 
 ```console
 $ git diff --stat
@@ -772,6 +832,9 @@ $ git diff --staged --compact-summary
 
 ### What --stat scales, and what it does not
 
+`--stat` draws a bar for each file. Here one file had all 300 of its lines
+changed and another had one:
+
 ```console
 $ git diff --stat
  big.txt   | 600 +++++++++++++++++++++++++++++++-------------------------------
@@ -809,6 +872,8 @@ the book trimming output.
 
 ### Which directories changed
 
+`--dirstat` reports what share of the change happened in each directory:
+
 ```console
 $ git diff --dirstat
   23.1% docs/
@@ -819,17 +884,60 @@ $ git diff --dirstat=lines
 ```
 
 Thirty lines changed in `src/core.txt` and ten in `docs/guide.txt`. The two
-answers differ because they measure differently:
+answers differ because they measure differently.
 
-| Parameter | Counts |
+`--dirstat` takes parameters after an `=`, several of them separated by commas:
+
+| Form | Counts |
 |---|---|
-| `changes` | Changed content, not counting code that only moved. The default |
-| `lines` | Lines added and removed, the same as `--stat` would. Slower |
-| `files` | Changed files, each counting equally. Cheapest |
-| `cumulative` | Also credit changes in a subdirectory to its parent |
-| a number | Hide directories below that percentage. The default is 3 |
+| `--dirstat`, `--dirstat=changes` | Changed content, not counting code that only moved. The default |
+| `--dirstat=lines` | Lines added and removed, the same as `--stat` would. Slower |
+| `--dirstat=files` | Changed files, each counting equally. Cheapest |
+| `--dirstat=cumulative` | Also credit changes in a subdirectory to its parent |
+| `--dirstat=<number>` | Hide directories below that percentage. The default is 3 |
 
-Parameters combine with commas, for example `--dirstat=files,10`.
+Here is a tree where the parameters give visibly different answers: two files
+heavily edited in `src/core/`, one lightly in `src/ui/`, one very lightly in
+`docs/`, and one line in a file at the top level.
+
+```console
+$ git diff --stat
+ docs/d.txt     |  6 ++---
+ src/core/a.txt | 80 +++++++++++++++++++++++++++++-----------------------------
+ src/core/b.txt | 80 +++++++++++++++++++++++++++++-----------------------------
+ src/ui/c.txt   | 10 ++++----
+ top.txt        |  2 +-
+ 5 files changed, 89 insertions(+), 89 deletions(-)
+$ git diff --dirstat
+  91.7% src/core/
+   4.5% src/ui/
+$ git diff --dirstat=files
+  20.0% docs/
+  40.0% src/core/
+  20.0% src/ui/
+$ git diff --dirstat=cumulative
+  91.7% src/core/
+   4.5% src/ui/
+  96.3% src/
+$ git diff --dirstat=files,cumulative
+  20.0% docs/
+  40.0% src/core/
+  20.0% src/ui/
+  60.0% src/
+$ git diff --dirstat=10
+  91.7% src/core/
+```
+
+Reading them in turn:
+
+- **The default** hid `docs/`, whose share of the changed content fell below 3%.
+- **`files`** counts files instead, so `docs/` with one of five changed files
+  gets 20% and reappears.
+- **`cumulative`** adds `src/` itself, crediting it with everything beneath it.
+- **`10`** raised the cut-off to 10%, which removed `src/ui/`.
+
+None of the percentages add up to 100, and that is not an error: `top.txt` is
+not in any subdirectory, so its share is never listed.
 
 ## Word-level diffs
 
@@ -874,14 +982,18 @@ index 681da97..5e46c1f 100644
 Each word-level piece is on its own line with a leading space, `+` or `-`, and
 `~` marks the end of an original line.
 
-| Mode | Shows changes as |
+`--word-diff` takes a mode after an `=`:
+
+| Form | Shows changes as |
 |---|---|
-| `plain` | `[-removed-]{+added+}`. The default for `--word-diff` |
-| `color` | Colour only, no brackets |
-| `porcelain` | One piece per line, for scripts |
-| `none` | Turns word diff off again |
+| `--word-diff`, `--word-diff=plain` | `[-removed-]{+added+}` |
+| `--word-diff=color` | Colour only, no brackets |
+| `--word-diff=porcelain` | One piece per line, for scripts |
+| `--word-diff=none` | An ordinary line diff; turns word diff off again |
 
 ### In colour
+
+`--color-words` shows the same word diff, using colour instead of brackets:
 
 ```ansi
 $ git diff --color-words
@@ -904,6 +1016,19 @@ Identical. Git's documentation defines `--color-words` as exactly
 `--word-diff=color`, plus an optional word pattern. It is the nicest to read on
 a terminal and the least useful to paste anywhere, because without colour the
 removed and added words run together.
+
+The table above also claims that `plain` is what you get with no mode, and that
+`none` gives an ordinary diff. Comparing the saved output of each pair:
+
+```console
+$ git diff --word-diff=plain > ../a.diff; git diff --word-diff > ../b.diff; cmp ../a.diff ../b.diff && echo same
+same
+$ git diff --word-diff=none > ../a.diff; git diff > ../b.diff; cmp ../a.diff ../b.diff && echo same
+same
+```
+
+`cmp` prints nothing when two files are byte-for-byte identical, so `same` is
+printed only when they are.
 
 ### Deciding what counts as a word
 
@@ -932,89 +1057,11 @@ non-space character. Now only the identifier is marked. For code, that is
 almost always what you want; for languages written without spaces between
 words, a pattern like this is the only way word diff works at all.
 
-## Comparing commits
-
-```console
-$ git diff HEAD~2 HEAD --stat
- config.ini | 3 ++-
- story.txt  | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
-$ git diff HEAD~2..HEAD --stat
- config.ini | 3 ++-
- story.txt  | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
-$ git diff HEAD~2 HEAD -- story.txt
-diff --git a/story.txt b/story.txt
-index 681da97..ec8af9a 100644
---- a/story.txt
-+++ b/story.txt
-@@ -1,4 +1,5 @@
- Once upon a time
--there was a repository.
-+there was a git repository.
- It had many commits.
-+It had branches too.
- The end.
-```
-
-A space or two dots between the commits: same result. Everything after `--` is
-a pathspec, limiting the diff to those paths. The `--` separates paths from
-revisions and is worth typing whenever a path could be mistaken for a branch
-name.
-
-## Two dots and three dots
-
-This is the single most common source of "that diff is wrong". Given this
-history:
-
-```console
-$ git log --oneline --all --graph
-* 9038d5b Add a feature
-| * 92aa31c Mention branches
-| * 38b2fe8 Tell a git story
-|/  
-* e8b4006 Add story and config
-```
-
-The two forms answer different questions:
-
-```console
-$ git diff main..feature --name-status
-M	config.ini
-A	feature.txt
-M	story.txt
-$ git diff main...feature --name-status
-A	feature.txt
-$ git merge-base main feature
-e8b4006caa0ffd58502e41102d7e7ea8409b5d6c
-$ git diff --merge-base main feature --name-status
-A	feature.txt
-```
-
-| Form | Compares | Answers |
-|---|---|---|
-| `main..feature` | tip of `main` against tip of `feature` | What is different between these two right now? |
-| `main...feature` | merge base against tip of `feature` | What did `feature` change since it diverged? |
-| `--merge-base main feature` | the same as three dots | The same question, spelled out |
-
-The three-dot form is almost always what you want when reviewing a branch,
-because it excludes work that happened on `main` in the meantime. It is what
-GitHub and GitLab show in a pull request.
-
-`main..feature` reported `config.ini` and `story.txt` as modified, although
-`feature` never touched them. Those are the commits on `main` that `feature`
-does not have, seen from the other side.
-
-> **Since Git 2.30.** `--merge-base`. It exists because three dots are easy to
-> miss when reading a command, and a word is not.
-
-> **Careful.** The meaning of `..` and `...` is *reversed* between `git diff`
-> and `git log`. In `git log`, `a..b` means commits in `b` but not `a`, and
-> `a...b` means commits in either but not both. Chapter 18 covers both, and
-> the reversal is a genuine historical wart rather than something you can
-> reason your way to.
-
 ## Searching history through diffs
+
+Two options select changes by their content: `-S <string>` and `-G <regex>`.
+They are used mostly with `git log`, where they pick out the commits whose
+changes involve some text:
 
 ```console
 $ git log -S 'branches' --oneline
@@ -1076,6 +1123,8 @@ dcc3706 Remove the call
 
 ### Seeing the whole commit
 
+`--pickaxe-all` changes how much of each matching commit is shown:
+
 ```console
 $ git log -S frotz --oneline --name-only -1
 9b8cdf8 Bring the call back, and add a note
@@ -1092,6 +1141,9 @@ of a change matters as much as the change.
 
 ### -S works on git diff too
 
+The same options work when `git diff` compares two commits, where they keep
+only the matching files:
+
 ```console
 $ git diff HEAD~1 HEAD --name-only
 lib.c
@@ -1100,8 +1152,8 @@ $ git diff HEAD~1 HEAD --name-only -S frotz
 lib.c
 ```
 
-The pickaxe options are diff options, not log options. On `git diff` they keep
-only the files where the count changed.
+They are diff options that `git log` also accepts, not log options. On
+`git diff` they keep only the files where the count changed.
 
 ## Whitespace
 
@@ -1167,6 +1219,9 @@ untrue in any string literal.
 
 ### Ignoring whitespace does not change what gets committed
 
+These flags are easy to mistake for a way of ignoring whitespace changes
+altogether. They are not:
+
 ```console
 $ git diff -w --stat
 $ git diff --stat
@@ -1183,6 +1238,8 @@ lines. These flags change only what the diff shows you. There is no flag on
 `git diff` that stops a whitespace change from being committed.
 
 ### Blank lines
+
+`--ignore-blank-lines` hides changes that only add or remove empty lines:
 
 ```console
 $ git diff blank.txt
@@ -1228,6 +1285,9 @@ character.
 
 ### Finding whitespace errors before committing
 
+`--check` looks for whitespace problems in the changes instead of printing the
+diff:
+
 ```console
 $ git diff --check; echo exit=$?
 check.txt:2: trailing whitespace.
@@ -1262,7 +1322,11 @@ $ git diff check.txt
 By default only added lines are highlighted; `--ws-error-highlight` extends it
 to removed and context lines.
 
-## Renames
+## Renames and copies
+
+Git does not record renames or copies. It detects them when it compares two
+snapshots, and these options control how. Here `story.txt` was renamed with
+`git mv` and nothing else changed:
 
 ```console
 $ git diff --cached --stat
@@ -1422,17 +1486,167 @@ different colours from the blank lines that were genuinely removed and added.
 If one character inside the moved block had changed, those lines would fall
 back to ordinary red and green, and that contrast is the point.
 
-| Mode | Behaviour |
-|---|---|
-| `no` | No move detection |
-| `default` | The same as `zebra` |
-| `plain` | Moved lines in the moved colours, with no distinction between blocks |
-| `blocks` | Only blocks of at least 20 alphanumeric characters count as moved |
-| `zebra` | Like `blocks`, alternating colours so adjacent moved blocks can be told apart |
-| `dimmed-zebra` | Like `zebra`, dimming the uninteresting parts of moved blocks |
+### The modes
 
-This needs colour, so it does nothing in a patch file or when piped. Set
-`diff.colorMoved` to make it the default.
+Plain `--color-moved` uses the default mode. A different one is chosen by adding
+it after an `=`:
+
+| Form | Behaviour |
+|---|---|
+| `--color-moved=no` | No move detection. Git's documentation says `--no-color-moved` is the same, and either one overrides `diff.colorMoved` for one command |
+| `--color-moved`, `--color-moved=default` | The same as `zebra` |
+| `--color-moved=plain` | Every moved line in the moved colours |
+| `--color-moved=blocks` | Only blocks of at least 20 letters and digits count as moved |
+| `--color-moved=zebra` | Like `blocks`, with alternating colours so two adjacent moved blocks can be told apart |
+| `--color-moved=dimmed-zebra` | Like `zebra`, dimming the inside of moved blocks and highlighting their edges |
+
+The difference between them only shows when there is more than one moved block.
+In this file, `alpha` and `bravo` were each moved from different places and
+ended up next to each other at the bottom:
+
+```ansi
+$ git diff --color-moved=no
+\e[1mdiff --git a/f.txt b/f.txt\e[m
+\e[1mindex f5e65bc..2722837 100644\e[m
+\e[1m--- a/f.txt\e[m
+\e[1m+++ b/f.txt\e[m
+\e[36m@@ -1,11 +1,11 @@\e[m
+\e[31m-alpha one alpha one alpha\e[m
+\e[31m-alpha two alpha two alpha\e[m
+ stays put number one here\e[m
+ stays put number two here\e[m
+ stays put number three here\e[m
+\e[31m-bravo one bravo one bravo\e[m
+\e[31m-bravo two bravo two bravo\e[m
+ stays put number four here\e[m
+ stays put number five here\e[m
+ stays put number six here\e[m
+\e[32m+\e[m\e[32mbravo one bravo one bravo\e[m
+\e[32m+\e[m\e[32mbravo two bravo two bravo\e[m
+\e[32m+\e[m\e[32malpha one alpha one alpha\e[m
+\e[32m+\e[m\e[32malpha two alpha two alpha\e[m
+ end\e[m
+$ git diff --color-moved=plain
+\e[1mdiff --git a/f.txt b/f.txt\e[m
+\e[1mindex f5e65bc..2722837 100644\e[m
+\e[1m--- a/f.txt\e[m
+\e[1m+++ b/f.txt\e[m
+\e[36m@@ -1,11 +1,11 @@\e[m
+\e[1;35m-alpha one alpha one alpha\e[m
+\e[1;35m-alpha two alpha two alpha\e[m
+ stays put number one here\e[m
+ stays put number two here\e[m
+ stays put number three here\e[m
+\e[1;35m-bravo one bravo one bravo\e[m
+\e[1;35m-bravo two bravo two bravo\e[m
+ stays put number four here\e[m
+ stays put number five here\e[m
+ stays put number six here\e[m
+\e[1;36m+\e[m\e[1;36mbravo one bravo one bravo\e[m
+\e[1;36m+\e[m\e[1;36mbravo two bravo two bravo\e[m
+\e[1;36m+\e[m\e[1;36malpha one alpha one alpha\e[m
+\e[1;36m+\e[m\e[1;36malpha two alpha two alpha\e[m
+ end\e[m
+$ git diff --color-moved=zebra
+\e[1mdiff --git a/f.txt b/f.txt\e[m
+\e[1mindex f5e65bc..2722837 100644\e[m
+\e[1m--- a/f.txt\e[m
+\e[1m+++ b/f.txt\e[m
+\e[36m@@ -1,11 +1,11 @@\e[m
+\e[1;35m-alpha one alpha one alpha\e[m
+\e[1;35m-alpha two alpha two alpha\e[m
+ stays put number one here\e[m
+ stays put number two here\e[m
+ stays put number three here\e[m
+\e[1;35m-bravo one bravo one bravo\e[m
+\e[1;35m-bravo two bravo two bravo\e[m
+ stays put number four here\e[m
+ stays put number five here\e[m
+ stays put number six here\e[m
+\e[1;36m+\e[m\e[1;36mbravo one bravo one bravo\e[m
+\e[1;36m+\e[m\e[1;36mbravo two bravo two bravo\e[m
+\e[1;33m+\e[m\e[1;33malpha one alpha one alpha\e[m
+\e[1;33m+\e[m\e[1;33malpha two alpha two alpha\e[m
+ end\e[m
+$ git diff --color-moved=dimmed-zebra
+\e[1mdiff --git a/f.txt b/f.txt\e[m
+\e[1mindex f5e65bc..2722837 100644\e[m
+\e[1m--- a/f.txt\e[m
+\e[1m+++ b/f.txt\e[m
+\e[36m@@ -1,11 +1,11 @@\e[m
+\e[2m-alpha one alpha one alpha\e[m
+\e[2m-alpha two alpha two alpha\e[m
+ stays put number one here\e[m
+ stays put number two here\e[m
+ stays put number three here\e[m
+\e[2m-bravo one bravo one bravo\e[m
+\e[2m-bravo two bravo two bravo\e[m
+ stays put number four here\e[m
+ stays put number five here\e[m
+ stays put number six here\e[m
+\e[2m+\e[m\e[2mbravo one bravo one bravo\e[m
+\e[1;36m+\e[m\e[1;36mbravo two bravo two bravo\e[m
+\e[1;33m+\e[m\e[1;33malpha one alpha one alpha\e[m
+\e[2;3m+\e[m\e[2;3malpha two alpha two alpha\e[m
+ end\e[m
+```
+
+Look only at the four added lines at the bottom:
+
+- **`no`** shows them as ordinary additions, the same green as any new line.
+- **`plain`** marks all four as moved, in one colour, so nothing tells you that
+  they came from two different places.
+- **`zebra`** gives `bravo` one colour and `alpha` another. Where the colour
+  changes is where one moved block ends and the next begins.
+- **`dimmed-zebra`** dims the lines inside the moved blocks and keeps colour
+  only on the two lines that meet at the boundary, which is the place most
+  likely to hide a mistake.
+
+`default` really is `zebra`:
+
+```ansi
+$ git diff --color-moved=default > ../a.diff; git diff --color-moved=zebra > ../b.diff; cmp ../a.diff ../b.diff && echo same
+same
+```
+
+`blocks` differs from `plain` on short lines. Here `x = 1` moved from the top to
+the bottom:
+
+```ansi
+$ git diff --color-moved=plain
+\e[1mdiff --git a/s.txt b/s.txt\e[m
+\e[1mindex 2d2c140..5dd8632 100644\e[m
+\e[1m--- a/s.txt\e[m
+\e[1m+++ b/s.txt\e[m
+\e[36m@@ -1,4 +1,4 @@\e[m
+\e[1;35m-x = 1\e[m
+ a long enough line of real content here\e[m
+ another long line of genuine content\e[m
+ y = 2\e[m
+\e[1;36m+\e[m\e[1;36mx = 1\e[m
+$ git diff --color-moved=blocks
+\e[1mdiff --git a/s.txt b/s.txt\e[m
+\e[1mindex 2d2c140..5dd8632 100644\e[m
+\e[1m--- a/s.txt\e[m
+\e[1m+++ b/s.txt\e[m
+\e[36m@@ -1,4 +1,4 @@\e[m
+\e[31m-x = 1\e[m
+ a long enough line of real content here\e[m
+ another long line of genuine content\e[m
+ y = 2\e[m
+\e[32m+\e[m\e[32mx = 1\e[m
+```
+
+`plain` calls it moved. `blocks` does not, because `x = 1` has only two letters
+and digits, far short of the 20 that Git's documentation sets as the minimum. That threshold exists because short lines such as
+`}` or `return` repeat everywhere in code, and treating each one as "moved"
+paints half the diff in move colours for no reason. The documentation says
+`zebra` detects blocks the same way `blocks` does, and `dimmed-zebra` is built
+on `zebra`, so both apply the same threshold. You may also meet
+`dimmed_zebra` with an underscore; it is a deprecated spelling of the same mode.
+
+Move detection needs colour, so it does nothing in a patch file or when output
+is piped. Set `diff.colorMoved` to make a mode the default.
 
 ## Algorithms
 
@@ -1540,14 +1754,18 @@ are excellent matches that mean nothing. Patience and histogram first anchor on
 lines that appear only once in each version, such as `// Frobs foo heartily`,
 and so line up the real structure.
 
-| Algorithm | Character |
-|---|---|
-| `myers` | The default. Fast, occasionally produces a pairing like the one above |
-| `minimal` | Myers, spending extra effort for the smallest possible diff |
-| `patience` | Anchors on lines that are unique on both sides. Good for reordered code |
-| `histogram` | An extension of patience, generally the best readability for the cost |
+The algorithm is chosen with `--diff-algorithm=<name>`, and three of the four
+also have a shorter spelling of their own:
 
-Each has a shorter spelling, and on this file two pairs give identical output:
+| Form | Character |
+|---|---|
+| `--diff-algorithm=myers` | The default. Fast, occasionally produces a pairing like the one above |
+| `--diff-algorithm=minimal`, `--minimal` | Myers, spending extra effort for the smallest possible diff |
+| `--diff-algorithm=patience`, `--patience` | Anchors on lines that are unique on both sides. Good for reordered code |
+| `--diff-algorithm=histogram`, `--histogram` | An extension of patience, generally the best readability for the cost |
+
+Myers has no shorter spelling, because it is what you get without asking. On
+this file, two pairs of algorithms give byte-for-byte identical output:
 
 ```console
 $ git diff --minimal > ../a.diff; git diff --diff-algorithm=myers > ../b.diff; cmp ../a.diff ../b.diff && echo same
@@ -1561,6 +1779,9 @@ the smallest; the problem was never size. `git config set diff.algorithm
 histogram` is a reasonable global setting.
 
 ### Choosing which lines stay put
+
+`--anchored=<text>` tells Git which lines to treat as not moving, when the same
+change can be described in more than one way:
 
 ```console
 $ git diff
@@ -1594,6 +1815,24 @@ everything else as moving around them.
 
 ## Keeping only some kinds of change
 
+`--diff-filter` limits the diff to files that changed in a particular way. It
+takes one or more letters after an `=`, the same letters `--name-status`
+prints:
+
+| Form | Keeps only files that were |
+|---|---|
+| `--diff-filter=A` | Added |
+| `--diff-filter=D` | Deleted |
+| `--diff-filter=M` | Modified |
+| `--diff-filter=R` | Renamed |
+| `--diff-filter=C` | Copied |
+| `--diff-filter=T` | Changed type, for instance from a file to a symbolic link |
+| `--diff-filter=U` | Unmerged, which only happens during a conflict (Chapter 26) |
+| `--diff-filter=AD` | Added or deleted. Letters combine |
+| `--diff-filter=d` | Anything except deleted. A lowercase letter excludes |
+
+Starting from a change that adds one file, modifies one and deletes one:
+
 ```console
 $ git diff --staged --name-status
 A	add.txt
@@ -1611,18 +1850,37 @@ A	add.txt
 M	edit.txt
 ```
 
-| Letter | Keeps |
-|---|---|
-| `A` | Added |
-| `C` | Copied |
-| `D` | Deleted |
-| `M` | Modified |
-| `R` | Renamed |
-| `T` | Type changed |
-| `U` | Unmerged |
+`d` kept the addition and the modification and dropped the deletion. Git's
+documentation gives `ad` as its own example of excluding two kinds at once.
 
-Letters combine, so `AD` means added or deleted. Lowercase inverts: `d` means
-everything *except* deletions, and `ad` excludes both added and deleted files.
+The other letters need renames, copies and a type change to exist. This change
+edits a file, renames one, copies one from a file that was also edited, and
+turns an ordinary file into a symbolic link. `-C` is there so copies are
+detected at all (see "Renames and copies"):
+
+```console
+$ git diff --staged -C --name-status
+C100	source.txt	copied.txt
+M	edit.txt
+T	link-me.txt
+R100	rename-me.txt	renamed.txt
+M	source.txt
+$ git diff --staged -C --name-status --diff-filter=M
+M	edit.txt
+M	source.txt
+$ git diff --staged -C --name-status --diff-filter=R
+R100	rename-me.txt	renamed.txt
+$ git diff --staged -C --name-status --diff-filter=C
+C100	source.txt	copied.txt
+$ git diff --staged -C --name-status --diff-filter=T
+T	link-me.txt
+```
+
+Two things in that output are easy to misread. `source.txt` appears twice: once
+as the source of a copy, and once in its own right as modified, because it was
+both. And without `-C`, `copied.txt` would be reported as `A`, and
+`--diff-filter=C` would find nothing at all, since there would be no copies for
+it to keep.
 
 > **Worth knowing.** `git diff --diff-filter=D --name-only HEAD~10 HEAD` lists
 > every file deleted in the last ten commits, which answers "where did that file
@@ -1631,6 +1889,9 @@ everything *except* deletions, and `ad` excludes both added and deleted files.
 ## Prefixes, output files, and file names
 
 ### What a/ and b/ are for
+
+Every path in a diff header carries a prefix, `a/` for the old side and `b/`
+for the new. Three options change or remove them:
 
 ```console
 $ git diff
@@ -1659,11 +1920,14 @@ index 5626abf..f719efd 100644
 +two
 ```
 
-`a/` and `b/` are just labels for "old" and "new". They are the reason
-`patch -p1` exists: `-p1` strips one leading directory from each path. A diff
+The prefixes are only labels. They are the reason `patch -p1` exists: `-p1` strips one leading directory from each path. A diff
 made with `--no-prefix` needs `patch -p0` instead.
 
 ### Why some diffs say i/ and w/
+
+The `diff.mnemonicPrefix` setting replaces `a/` and `b/` with letters that say
+where each side came from. `git -c <name>=<value>` sets it here for one command
+only (Chapter 62):
 
 ```console
 $ git -c diff.mnemonicPrefix=true diff
@@ -1696,7 +1960,7 @@ If someone's diffs show `i/` and `w/`, they have `diff.mnemonicPrefix` set.
 The letters say where each side came from, which makes it impossible to confuse
 `git diff` with `git diff --staged` at a glance:
 
-| Prefix | Side |
+| Prefix | That side of the diff comes from |
 |---|---|
 | `c/` | a commit |
 | `i/` | the index |
@@ -1712,6 +1976,8 @@ else to apply.
 
 ### Writing to a file
 
+`--output=<file>` writes the result to a file instead of the screen:
+
 ```console
 $ git diff --staged --stat --output=../saved.txt
 $ cat ../saved.txt
@@ -1719,10 +1985,14 @@ $ cat ../saved.txt
  1 file changed, 1 insertion(+), 1 deletion(-)
 ```
 
-`--output` is the same as redirecting with `>`, except that it works even where
-a shell redirect is awkward, such as inside another program's configuration.
+The result is the same as redirecting with `>`. The option is useful where a
+shell redirect is not available, such as in a command another program runs for
+you.
 
 ### File names that come out as numbers
+
+The staged change below adds a file whose name contains a letter outside plain
+ASCII:
 
 ```console
 $ git diff --staged --name-only
@@ -1746,6 +2016,8 @@ scripts, because a file name can legally contain a newline, and a newline-based
 script would then treat one file as two.
 
 ## Binary files
+
+For a file Git considers binary, it does not print lines of content:
 
 ```console
 $ git diff
@@ -1783,6 +2055,9 @@ index 8352675..75218e8 100644
 
 ### A binary patch, and who can apply it
 
+`--binary` makes the diff carry the binary content itself, so that it can be
+applied as a patch:
+
 ```console
 $ git diff --binary > ../binary.diff && cat ../binary.diff
 diff --git a/image.bin b/image.bin
@@ -1805,14 +2080,18 @@ $ git status --short
 ```
 
 `--binary` encodes the new content into the patch, with full hashes on the
-`index` line. GNU `patch` refuses it outright. `git apply` applies it, and this
-is the practical line between the two tools: for text they are close, for
-binary files only Git will do.
+`index` line. GNU `patch`, the traditional tool for applying diffs, refuses it
+outright. `git apply` applies it. The section "git diff and the diff command"
+compares the two tools on ordinary text changes, where they are much closer.
 
 Chapter 65 covers `.gitattributes`, which can teach Git to show a readable diff
 for a binary format by converting it to text first.
 
 ## Exit codes
+
+By default `git diff` exits with 0 whether or not it found a difference.
+`--exit-code` and `--quiet` make the exit status report differences instead,
+which is what a script needs:
 
 ```console
 $ git diff --quiet && echo 'clean (exit 0)' || echo 'dirty (exit 1)'
@@ -1858,6 +2137,205 @@ $ git status --short
 > error. Write it as a condition, `if git diff --quiet; then ... fi`, or append
 > `|| true` when you only want the side effect.
 
+## git diff and the diff command
+
+Unix has had a `diff` command since the 1970s, and Git for Windows bundles one.
+Having seen everything `git diff` does, the fair question is how much of it the
+ordinary `diff` could have done, and why `git diff` exists at all.
+
+### Plain diff compares two files, and nothing else
+
+Given only one file, `diff` cannot do anything:
+
+```console
+$ diff -u story.txt
+diff: missing operand after 'story.txt'
+diff: Try 'diff --help' for more information.
+```
+
+`diff` needs two files on disk. It knows nothing about commits or the index.
+To compare your edited file with the last commit, you first have to get the
+committed version out of Git into a file of its own. `git show HEAD:story.txt`
+prints the file as it is in the last commit, using the same `<commit>:<path>`
+form as the blob comparison earlier:
+
+```console
+$ git show HEAD:story.txt > ../story-committed.txt
+$ diff -u ../story-committed.txt story.txt
+--- ../story-committed.txt	2026-01-05 08:00:00.000000000 +0000
++++ story.txt	2026-01-05 09:00:00.000000000 +0000
+@@ -1,3 +1,3 @@
+ Once upon a time
+-there was a repository.
++there was a git repository.
+ The end.
+$ git diff
+diff --git a/story.txt b/story.txt
+index d1747ff..e3caeae 100644
+--- a/story.txt
++++ b/story.txt
+@@ -1,3 +1,3 @@
+ Once upon a time
+-there was a repository.
++there was a git repository.
+ The end.
+```
+
+The body is identical, because both use the same unified format. The headers
+differ: `diff -u` prints modification times, while `git diff` prints the blob
+hashes and the file mode, and adds a `diff --git` line that later tools use to
+recognise renames and binary changes.
+
+| | `diff -u` | `git diff` |
+|---|---|---|
+| Compares two files on disk | yes | yes, with `--no-index` |
+| Compares against the index | no | yes, the default |
+| Compares against any commit | only after extracting it yourself | yes |
+| Compares two commits | no | yes |
+| Detects renames and copies | no | yes |
+| Word-level diffs | no | yes |
+| Recognises binary files | only says they differ | yes, and can produce a binary patch |
+| Shows moved code differently | no | yes |
+| Exits 1 when files differ | yes | only with `--exit-code` or `--quiet` |
+
+So `git diff` is not a reimplementation of `diff`. It is a diff engine that
+knows where Git keeps every version of every file.
+
+### They do not exit the same way
+
+Both commands below compare the same two versions of `story.txt`; only the exit
+status is printed:
+
+```console
+$ diff -u ../story-committed.txt story.txt > /dev/null; echo exit=$?
+exit=1
+$ git diff > /dev/null; echo exit=$?
+exit=0
+$ git diff --exit-code > /dev/null; echo exit=$?
+exit=1
+```
+
+`diff` exits 1 when the files differ. `git diff` exits 0 whether or not there
+are changes, because it treats showing you a diff as success. `--exit-code`
+gives you `diff`'s behaviour, as the Exit codes section showed.
+
+> **Careful.** A script that swaps `diff a b` for `git diff a b` and tests the
+> exit status will silently stop detecting changes.
+
+### Inside a repository, two paths are not two files
+
+This one looks like it works and does not:
+
+```console
+$ git diff draft-one.txt draft-two.txt; echo exit=$?
+exit=0
+$ git diff --no-index draft-one.txt draft-two.txt; echo exit=$?
+diff --git a/draft-one.txt b/draft-two.txt
+index f8704fb..48d0939 100644
+--- a/draft-one.txt
++++ b/draft-two.txt
+@@ -1,2 +1,2 @@
+ alpha
+-bravo
++charlie
+exit=1
+```
+
+Both files are tracked and differ from each other, and the first command printed
+nothing. Inside a repository, `git diff a b` means "show my uncommitted changes
+to `a` and to `b`", with the two names as a pathspec. Neither file had
+uncommitted changes, so there was nothing to show.
+
+`--no-index` is what turns two names into two files to compare.
+
+### Outside a repository, --no-index is implied
+
+In a directory that is not inside any repository, `git diff` accepts two file
+names directly:
+
+```console
+$ git rev-parse --is-inside-work-tree
+fatal: not a git repository (or any of the parent directories): .git
+$ git diff one.txt two.txt; echo exit=$?
+diff --git a/one.txt b/two.txt
+index f8704fb..48d0939 100644
+--- a/one.txt
++++ b/two.txt
+@@ -1,2 +1,2 @@
+ alpha
+-bravo
++charlie
+exit=1
+```
+
+Git's documentation spells out the rule: `--no-index` may be left out when you
+are outside a repository, or when at least one of the two paths points outside
+the working tree. In every other case, write it. And note that this form exits
+1 on a difference by itself, unlike the rest of `git diff`.
+
+That makes `git diff --no-index` a genuinely better `diff` for everyday use,
+because you get rename detection, word diffs, `--stat`, and colour between any
+two files or directories:
+
+```console
+$ git diff --no-index one.txt two.txt
+diff --git a/one.txt b/two.txt
+index f8704fb..48d0939 100644
+--- a/one.txt
++++ b/two.txt
+@@ -1,2 +1,2 @@
+ alpha
+-bravo
++charlie
+$ git diff --no-index --stat one.txt two.txt
+ one.txt => two.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+```
+
+### Can the patch command use git diff output?
+
+Yes, for text changes, and a current GNU `patch` even understands Git's rename
+headers:
+
+```console
+$ git diff --staged > ../change.diff
+$ cat ../change.diff
+diff --git a/extra.txt b/renamed.txt
+similarity index 100%
+rename from extra.txt
+rename to renamed.txt
+diff --git a/story.txt b/story.txt
+index d1747ff..e3caeae 100644
+--- a/story.txt
++++ b/story.txt
+@@ -1,3 +1,3 @@
+ Once upon a time
+-there was a repository.
++there was a git repository.
+ The end.
+$ git reset -q --hard
+$ patch -p1 < ../change.diff
+patching file renamed.txt (renamed from extra.txt)
+patching file story.txt
+$ git status --short
+ D extra.txt
+ M story.txt
+?? renamed.txt
+```
+
+`-p1` strips the `a/` and `b/` prefixes. The rename applied, but only to the
+files on disk: `patch` knows nothing about the index, so Git now sees a deleted
+file and an untracked one rather than a staged rename.
+
+Binary changes are where the two part ways, as the Binary files section showed:
+`patch` refused a binary patch that `git apply` accepted. `git apply` is covered
+properly in Chapter 61.
+
+In the transcript above, `git reset -q --hard` threw away the staged rename and
+the edit so that `patch` had something to apply them to. It discards every
+uncommitted change in the repository, which is why it appears here only as a
+setup step; Chapter 30 covers it properly.
+
 ## The pager
 
 On a terminal, a long diff opens in a pager rather than scrolling past. People
@@ -1883,6 +2361,9 @@ itself, not to `diff`.
 
 ## Commands that look similar
 
+Several other commands print diffs, or compare things in a similar way. This
+table is for deciding which one you want:
+
 | Command | Does | Difference from `git diff` |
 |---|---|---|
 | `diff`, `diff -u` | Compares two files on disk | Knows nothing about Git; see the first section |
@@ -1891,75 +2372,17 @@ itself, not to `diff`.
 | `git log -p` | That, for every commit in a range | One diff per commit instead of one combined diff |
 | `git status -v` | Status plus the staged diff | The same as `git diff --staged`, printed under the status |
 | `git difftool` | Opens the same comparison in an external viewer | Same arguments, shown in a graphical or side-by-side tool |
-| `git range-diff` | Compares two *versions of a branch* | A diff of diffs, used after a rebase. Chapter 35 |
-| `git diff-files`, `git diff-index`, `git diff-tree` | Plumbing that `git diff` is built on | Stable output for scripts. Chapter 75 |
-
-## The options table
-
-| Option | Does |
-|---|---|
-| `--staged`, `--cached` | Compare the index against HEAD, or against a commit you name |
-| `-U<n>`, `--unified=<n>` | Context lines |
-| `-W`, `--function-context` | Show the whole function around each change |
-| `--inter-hunk-context=<n>` | Merge hunks separated by up to `<n>` unchanged lines |
-| `--stat[=<width>]` | A bar chart per file |
-| `--stat-count=<n>` | List at most `<n>` files in `--stat` |
-| `--numstat`, `--shortstat` | Exact counts, or only the total |
-| `--name-only`, `--name-status`, `--summary` | Path listings |
-| `--compact-summary` | `--stat` with creations, deletions and mode changes marked |
-| `--dirstat[=<params>]` | Share of change per directory |
-| `--word-diff[=<mode>]` | Word-level output |
-| `--word-diff-regex=<regex>` | What counts as a word |
-| `--color-words` | Word diff in colour |
-| `-w`, `--ignore-all-space` | Ignore all whitespace |
-| `-b`, `--ignore-space-change` | Ignore changes in the amount of whitespace |
-| `--ignore-space-at-eol` | Ignore whitespace at line ends only |
-| `--ignore-blank-lines` | Ignore added or removed blank lines |
-| `--ignore-cr-at-eol` | Ignore a carriage return at line end |
-| `--check` | Report whitespace errors and conflict markers |
-| `-M[<n>]`, `--find-renames[=<n>]` | Rename detection and its threshold |
-| `-C[<n>]`, `--find-copies[=<n>]` | Copy detection from changed files |
-| `--find-copies-harder` | Copy detection from every file |
-| `--no-renames` | Report renames as a delete plus an add |
-| `-B`, `--break-rewrites` | Treat heavy rewrites as a delete plus an add |
-| `-l <num>` | Limit how many files rename detection considers |
-| `-S <string>`, `-G <regex>` | Filter by content change |
-| `--pickaxe-regex` | Treat `-S` as a regex |
-| `--pickaxe-all` | Keep every file in a matching commit |
-| `--diff-algorithm=<name>` | Choose the algorithm |
-| `--minimal`, `--patience`, `--histogram` | Shorter spellings for three algorithms |
-| `--anchored=<text>` | Keep lines starting with `<text>` unchanged where possible |
-| `--color-moved[=<mode>]` | Colour moved lines differently from changed ones |
-| `--diff-filter=<letters>` | Keep only added, deleted, modified and so on |
-| `--relative[=<path>]` | Limit to a directory and show paths relative to it |
-| `-R` | Swap the two sides |
-| `--no-prefix`, `--src-prefix`, `--dst-prefix` | Change or remove the `a/` and `b/` prefixes |
-| `--default-prefix` | Use `a/` and `b/` whatever the configuration says |
-| `--output=<file>` | Write to a file instead of standard output |
-| `-z` | Separate paths with NUL and never quote them |
-| `--binary` | Include binary content in the patch |
-| `--text`, `-a` | Treat every file as text |
-| `--exit-code`, `--quiet` | Report differences through the exit status |
-| `--merge-base` | Compare from the merge base, like three dots |
-| `--no-index` | Compare two paths outside version control |
-| `--submodule[=<format>]` | How to show changed submodules. Chapter 57 |
-| `--ext-diff`, `--textconv` | Use external diff drivers and converters. Chapter 65 |
-| `--cc`, `-c` | Combined diff for a merge commit. Chapter 26 |
-
-<!-- no-example: -B
-     Tested on a complete rewrite, on a rewrite that kept its blank lines in
-     place, and on a rewrite combined with -M where the old content had moved
-     to another file. In all three the output was identical to the default, so
-     an example would show the reader nothing they cannot see without it. It
-     changes output only for large files rewritten past a threshold, and its
-     main use is helping -M pair rewritten files in big changes. -->
-
-<!-- no-example: -l
-     A performance limit on how many files rename detection will compare before
-     giving up. On any example small enough to print, the output is the same
-     with or without it. -->
+| `git range-diff` | Compares two versions of a series of commits | Compares whole commits against commits, typically before and after a rebase. Chapter 35 |
+| `git diff-files` | Working tree against the index | Plumbing: meant for scripts, with output that does not change between versions. Chapter 75 |
+| `git diff-index` | A commit's tree against the working tree or the index | Plumbing. Chapter 75 |
+| `git diff-tree` | The blobs in two trees | Plumbing. Chapter 75 |
 
 ## The settings
+
+These configuration settings change what `git diff` does by default, so that
+you do not have to type the option every time. Set one with
+`git config set --global <name> <value>` (Chapter 62); an option given on the
+command line still wins for that one command.
 
 | Setting | Effect |
 |---|---|

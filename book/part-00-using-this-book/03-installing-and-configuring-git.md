@@ -267,9 +267,10 @@ explains when to turn it off.
 ## Credentials
 
 Git needs a password or token every time it talks to an HTTPS remote, unless
-something stores it:
+something stores it. The `credential.helper` setting names the program that
+does, and these are the values it usually takes:
 
-| Helper | Platform | Storage |
+| Value of `credential.helper` | Platform | Storage |
 |---|---|---|
 | `manager` | Windows | Windows Credential Manager, encrypted |
 | `osxkeychain` | macOS | Keychain, encrypted |

@@ -59,6 +59,58 @@ find: what it does, every option worth knowing, what changes if a flag is
 altered, what error appears when it is used wrongly, how it differs from its
 neighbours, what the common practice is, and how to undo it.
 
+### The order inside a chapter
+
+The author had to point out that Chapter 13 opened with fine details before
+saying what `git diff` is. That must never happen again. A chapter about a
+command follows this order:
+
+1. **What it is.** A short explanation of the command itself, and the one
+   question its plain form answers. Define any term the next sections rely on.
+2. **Synopsis.** The forms from Git's own documentation, what each part means,
+   and what each form does.
+3. **Options at a glance.** Every option, one line each, with the section where
+   it is demonstrated.
+4. **Details, in teaching order.** Reading the output comes first, then the core
+   model, then the options grouped by purpose, then edge cases.
+5. **Comparisons with neighbours**, after the reader knows the command well
+   enough for the comparison to mean something: `diff` for `git diff`, `patch`
+   for `git apply`, and so on.
+6. **Reference tables**, such as settings.
+
+The same rule applies inside every section: a section that introduces an option
+or a concept opens with one or two sentences saying what it is and how it is
+written, and only then shows the example. Never open a section with a transcript
+of something not yet named.
+
+Never refer forward to explain something. A pointer to where a topic is covered
+in full is fine; relying on a later section for the reader to understand this
+one is not.
+
+### Tables that list values
+
+A table listing the values an option accepts must show the complete syntax in
+every row, never a bare value. Write `--color-moved=zebra`, not `zebra` under a
+header called "Mode": a reader cannot know what "Mode" is or where it goes.
+For a configuration setting, the header names the setting: "Value of
+`credential.helper`". The same applies to any table whose first column would
+otherwise be meaningless on its own.
+
+`tools/audit_examples.py` checks every `--option=value` row separately, so each
+value needs its own example, pointer, or written exception.
+
+### Before delivering a chapter
+
+The tools do not see ambiguity. Before a chapter is delivered, check by hand:
+
+- Every table header says what its first column is.
+- Every term is defined before the first place it is used, including in the
+  options table near the top.
+- Every section opens by saying what it is about.
+- Every claim of equivalence ("the same as", "identical to") is demonstrated,
+  or attributed in the text to Git's documentation where it says so.
+- The question list in the generator matches the chapter, in the chapter's order.
+
 ### What complete means
 
 Part 2 was first written to a lower standard and sent back. Chapter 13 is the

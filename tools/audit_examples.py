@@ -37,7 +37,9 @@ BOOK = ROOT / "book"
 
 LINK_RE = re.compile(r"^- \[[^\]]+\]\((?P<path>[^)]+)\)\s*$", re.M)
 BLOCK_RE = re.compile(r"```(?:console|ansi)\n(.*?)```", re.S)
-OPTION_RE = re.compile(r"`(-{1,2}[A-Za-z][\w-]*)")
+# An option, plus a literal value when the table names one: `--color-moved=zebra`
+# is its own row to demonstrate, while `--stat[=<width>]` is just `--stat`.
+OPTION_RE = re.compile(r"`(-{1,2}[A-Za-z][\w-]*(?:=[A-Za-z0-9][\w,.%-]*)?)")
 POINTER_RE = re.compile(r"\bChapter (\d+)\b")
 EXCEPTION_RE = re.compile(r"<!--\s*no-example:\s*(\S+)\s+(.*?)-->", re.S)
 ESCAPE_RE = re.compile(r"\\e\[[0-9;]*[A-Za-z]")

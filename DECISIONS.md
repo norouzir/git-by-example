@@ -282,3 +282,30 @@ readable, and `tools/build_html.py` turns them into styled text for both themes.
 The time zone is now pinned to UTC in the harness. Git's default dates carry
 their own offset, but `--date=local` and non-Git tools such as `diff -u` print
 local time, so an example could otherwise differ between two machines.
+
+---
+
+## 2026-09-13. A chapter says what a command is before anything else
+
+The reworked Chapter 13 opened with a detailed comparison between `git diff` and
+the `diff` command, before explaining what `git diff` is or how to read its
+output. The author caught it. The comparison had been placed first because the
+author had asked about it, which is writing for the reviewer rather than for the
+reader, and the section leaned on material taught later in the same chapter.
+
+**The order is now fixed** for every chapter about a command: what it is, its
+synopsis, its options at a glance, then the details in teaching order, then
+comparisons with similar commands, then reference tables. Within a section, the
+thing being shown is named before it is shown. CLAUDE.md spells this out.
+
+**Tables of values show complete syntax.** The author also found a table of
+`--color-moved` modes headed "Mode", with no indication of what a mode is or
+where it goes. A scan of the book found eight tables with the same flaw, five of
+them in Chapter 13. Rows now read `--color-moved=zebra` rather than `zebra`,
+and the audit tool checks each value as its own row, so every value is either
+demonstrated, pointed to, or excused in writing.
+
+**Why a rule and not just a fix.** The author cannot read thousands of pages
+word by word, so any class of mistake found once has to become something that
+is checked every time, either by a tool or by the pre-delivery checklist in
+CLAUDE.md.
