@@ -41,6 +41,18 @@ sb_tick() {
 }
 sb_settime
 
+# sb_touch <file>... : set file modification times to the current sandbox clock,
+# for tools such as diff -u that print them
+sb_touch() {
+	touch -d "@$SANDBOX_NOW" "$@"
+}
+
+# --- Time zone ---------------------------------------------------------------
+# Git stores an offset with every date, so its default output does not depend on
+# the machine. But --date=local does, and so does every non-Git tool that prints
+# a time, such as diff -u. Pinning the zone removes the last clock dependency.
+export TZ=UTC
+
 # --- Path normalisation ------------------------------------------------------
 # Scratch directories have machine-specific names. Transcripts show a stable
 # fake home instead. This is the only edit ever made to captured output.
@@ -92,6 +104,19 @@ sb_commit() {
 sb_run() {
 	printf '$ %s\n' "$*" | sb_filter
 	eval "$@" 2>&1 | sb_filter
+}
+
+# sb_run_ansi <command> : like sb_run, but with colour forced on.
+#
+# Git only colours output when writing to a terminal, and the sandbox is not
+# one. Forcing color.ui=always through the environment reproduces exactly what
+# a reader sees on a terminal, without adding a flag to the printed command.
+# Escape bytes are written as the two visible characters \e so the Markdown
+# source stays readable; tools/build_html.py turns them back into colour.
+sb_run_ansi() {
+	printf '$ %s\n' "$*" | sb_filter
+	GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=color.ui GIT_CONFIG_VALUE_0=always \
+		eval "$@" 2>&1 | sb_filter | sed 's/\x1b/\\e/g'
 }
 
 # sb_say <text> : a blank line and a comment, for separating transcript sections

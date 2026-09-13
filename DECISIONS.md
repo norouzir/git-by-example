@@ -182,3 +182,103 @@ no such obligation. The MIT text in `LICENSE` was fetched verbatim from the
 SPDX license list rather than written from memory, because a paraphrased
 licence is worse than none.
 
+
+---
+
+## 2026-09-13. The first release waits for the complete book
+
+No GitHub release, and no PDF handed out, until every chapter and every
+appendix is written and every check passes.
+
+**Why.** The book is designed to be copied and passed hand to hand with no
+internet, and its licence encourages exactly that. So any file that leaves has
+to be treated as if it will circulate forever without updates. A pre-release
+label lives on GitHub, not inside the PDF. And the written chapters already
+point forward to chapters up to 83: a partial copy gives an offline reader dead
+ends with no way to reach the rest.
+
+"Complete" includes the appendices, because Chapter 1 promises them as the way
+to find answers.
+
+**Rejected.** Releasing each part as it is written. The one thing that would
+make that defensible is a build that replaces references to unwritten chapters
+with a visible "not yet written" marker, and that is not worth building now.
+
+---
+
+## 2026-09-13. Part 2 was not complete enough, and what "complete" now means
+
+The author reviewed Part 2 and found the writing good but the coverage short of
+what Chapter 1 promises. Measured, not guessed: 160 option rows in Part 2's
+tables, 74 with an example, 86 without. And questions a reader would obviously
+ask, such as how `git diff` differs from the `diff` command, were not answered.
+
+**The standard, agreed in discussion:**
+
+- **An example goes in when a reader would still be unsure of the result.** The
+  test is the author's own framing from the first message: the reader must not
+  be left thinking "if I had a computer I would run this to see". An example is
+  redundant only if a reader who has read the chapter so far could confidently
+  predict its output. The same command in a different state (an empty
+  repository, a detached HEAD, mid-rebase) usually passes this test.
+- **Comparisons are content, not extras.** When two commands or options look
+  alike, say so and show the difference. When they are genuinely identical, say
+  that too, and show it.
+- **Each chapter's generator script starts with the list of questions it
+  answers.** The list exists to find gaps. It only grows: an example that
+  teaches something not on it means the list was incomplete. It never rejects
+  an example.
+- **Every option in a table needs one of three things.** An example in the
+  chapter; a pointer to the chapter where its concept is taught, with the full
+  example there rather than repeated; or a written reason for having none, as a
+  comment in the chapter file that does not appear in the book.
+- **Exceptions are reported, not buried.** Each delivery message lists every
+  exception and its reason, so the author can reject one without opening a
+  file.
+
+**The first proposal was wrong in one respect.** It said an example not
+answering a listed question would be left out. The author objected that an
+example can carry new information without matching a listed question, and that
+the list might be incomplete. Both are right: used as a gate, an incomplete
+list protects itself from being corrected. The list was demoted to a tool for
+finding gaps, and the inclusion test became reader uncertainty.
+
+**Calibrated on Chapter 13 first**, before touching the other seven chapters,
+so that the depth could be corrected once rather than eight times.
+
+---
+
+## 2026-09-13. Transcripts and options are checked by programs
+
+Two tools, both of which must pass before a part is called done:
+
+- `tools/verify_transcripts.py` runs a chapter's generator from nothing and
+  checks every transcript in the text against the real output, allowing only
+  `...` and comment lines.
+- `tools/audit_examples.py` checks every option named in a table for an
+  example, a pointer, or a written exception.
+
+**Why.** Rules that depend on care alone were already broken. The first run of
+the verifier over the written chapters found transcripts in Chapters 7 to 16
+that did not match real output, most of them output trimmed without the `...`
+marker, a few with the command simplified, and one line in Chapter 13 typed
+from memory. Chapters 1 to 3 have no generator script at all, so nothing in
+them can be verified yet.
+
+**What the audit does not measure.** Comparisons and "what happens if" cases
+are invisible to it. Passing means no option was forgotten, never that a
+chapter is complete.
+
+---
+
+## 2026-09-13. Colour in transcripts, and the time zone pinned
+
+Options such as `--color-words` and `--color-moved` mean nothing without
+colour, so those transcripts are captured with colour forced on through the
+environment and rendered in the book. Escape codes are stored in the Markdown
+as the visible characters `\e[...m` inside `ansi` blocks, which keeps the source
+readable, and `tools/build_html.py` turns them into styled text for both themes.
+
+The time zone is now pinned to UTC in the harness. Git's default dates carry
+their own offset, but `--date=local` and non-Git tools such as `diff -u` print
+local time, so an example could otherwise differ between two machines.

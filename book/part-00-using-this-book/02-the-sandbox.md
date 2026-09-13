@@ -46,14 +46,15 @@ This is also the mechanism behind several things later in the book, including
 why `git rebase` cannot preserve commit hashes and why `git commit --amend`
 produces a new commit rather than editing the old one.
 
-## The five things that are pinned
+## The six things that are pinned
 
-To make the hashes stable, five sources of variation are removed:
+To make the output stable, six sources of variation are removed:
 
 | Source | Normally | In the sandbox |
 |---|---|---|
 | Author and committer | Your name and email | `Ada Lovelace <ada@example.com>` |
 | Time | Now | Starts 2026-01-05 09:00:00 +0000, advances one hour per commit |
+| Time zone | Your machine's | UTC |
 | Your global config | Read from your home directory | Replaced by a fixed file |
 | System config | Read from the install directory | Ignored completely |
 | Line endings | `core.autocrlf` is on by default on Windows | Turned off, so blobs match everywhere |
@@ -61,6 +62,12 @@ To make the hashes stable, five sources of variation are removed:
 Time is set explicitly rather than left to the clock. It starts on a Monday
 morning and moves forward one hour per commit, which is why timestamps in the
 examples look like a plausible working day.
+
+The time zone needs pinning separately. Git stores an offset with every date,
+so its default output looks the same everywhere, but `--date=local` converts to
+your machine's zone, and tools outside Git such as `diff -u` print file times in
+local time too. The same example run in Tehran and in London would otherwise
+print different times.
 
 ## Ignoring your configuration
 
@@ -212,6 +219,25 @@ hostname get the same treatment, and appear as `<user>` and `<hostname>`.
 That is the only edit. No output in this book was retyped, shortened by hand,
 or corrected after the fact. Where output was trimmed for length, the cut is
 marked with `...` on its own line.
+
+That promise is checked by a program rather than by trust. For every chapter,
+`tools/verify_transcripts.py` runs the chapter's script from nothing and
+confirms that each transcript in the text appears in the real output, line for
+line, allowing only the `...` marker and comment lines. It exists because an
+early draft of this book failed that check in places: output trimmed without
+the marker, and once a line typed from memory. No release of the book goes out
+without every chapter passing it.
+
+## Coloured transcripts
+
+Some options only make sense in colour, such as a word diff or moved-code
+highlighting. Those transcripts appear in colour, exactly as a terminal shows
+them.
+
+Git colours its output only when it is writing to a terminal, and the sandbox
+is not one, so for those examples colour is switched on through the
+environment. The command printed is still exactly the command you would type;
+on a real terminal it produces the same colours without anything extra.
 
 ## Reproducing this yourself
 

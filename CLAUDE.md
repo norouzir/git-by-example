@@ -59,6 +59,52 @@ find: what it does, every option worth knowing, what changes if a flag is
 altered, what error appears when it is used wrongly, how it differs from its
 neighbours, what the common practice is, and how to undo it.
 
+### What complete means
+
+Part 2 was first written to a lower standard and sent back. Chapter 13 is the
+calibrated example of the depth expected; read it before writing a chapter.
+
+**The inclusion test is reader uncertainty.** An example belongs if a reader who
+has read the chapter up to that point would still be unsure what happens. It is
+redundant only if they could confidently predict the output. The same command
+in a different state (empty repository, detached HEAD, mid-merge, outside a
+repository) usually passes.
+
+**Comparisons are content.** Whenever two commands, options or forms look alike,
+say so and show the difference. When they are genuinely identical, say that and
+show it. "What is the difference between X and Y" and "can I use X instead of Y"
+are among the most important questions the book answers. So is the neighbour
+outside Git: `diff` for `git diff`, `patch` for `git apply`, and so on.
+
+**Start each generator script with its question list.** Every question the
+chapter answers, and the script section that answers it. The list finds gaps. It
+only grows; an example teaching something not on it means the list was
+incomplete. It never rejects an example.
+
+**Every option named in a table needs one of:**
+
+1. an example in the chapter;
+2. a pointer in that row to the chapter where its concept is taught, with the
+   full example there instead of repeated here;
+3. a written reason, as a comment in the chapter file directly below the table:
+
+   ```
+   <!-- no-example: --option
+        why an example would show nothing the sentence does not -->
+   ```
+
+   Reasons must be specific. "Niche" is not a reason; "tested on these three
+   cases and the output was identical to the default" is.
+
+**List every exception in the delivery message**, with its reason, so the author
+can reject one without opening a file. `tools/audit_examples.py N --exceptions`
+prints them.
+
+**Test before claiming.** Several facts in Chapter 13 turned out false only when
+run: GNU `patch` does understand Git's rename headers; the number in `--stat` is
+literal and only the bar scales; `-B` and `--no-indent-heuristic` showed no
+difference on any small case tried. Run it, then write it.
+
 The tone is direct and unceremonious. Contractions are fine. Marketing language
 is not.
 
@@ -69,6 +115,7 @@ Defined in Chapter 1, so changing one means editing that chapter too.
 | Convention | Form |
 |---|---|
 | Transcripts | fenced ` ```console `, commands prefixed `$ `, output unprefixed |
+| Coloured transcripts | fenced ` ```ansi `, escapes written as the visible characters `\e[...m`; generate with `sb_run_ansi` |
 | Placeholders | `<angle-brackets>` |
 | Trimmed output | `...` on its own line |
 | Call-outs | blockquote opening with **Since Git X.Y.**, **Windows.**, **Careful.**, or **Worth knowing.** |
@@ -89,17 +136,26 @@ Writing a chapter means three artefacts, not one:
 3. A line added to `book/SUMMARY.md`, which is the build manifest and controls
    order. The build fails on a file listed there that does not exist.
 
-Then mark the chapter `[x]` in `OUTLINE.md`, check that every forward reference
-still points somewhere real, and rebuild:
+Then mark the chapter `[x]` in `OUTLINE.md`, run all three checks, and rebuild:
 
 ```sh
-python tools/check_refs.py --map
+python tools/verify_transcripts.py N     # every transcript matches a real run
+python tools/audit_examples.py N         # every table option is shown, pointed, or excused
+python tools/check_refs.py --map         # every "see Chapter N" resolves
 python tools/build_html.py
 powershell -File tools/build_pdf.ps1
 ```
 
-A reader with no internet cannot recover from a cross-reference that leads to
-the wrong chapter, so `check_refs.py` must pass before a part is called done.
+All three must pass before a part is called done. A reader with no internet
+cannot recover from a transcript that lies, an option they can only guess at, or
+a cross-reference that leads nowhere.
+
+The printed command in a transcript must be exactly what a reader types. Never
+simplify it in the chapter; change the generator instead. The verifier catches
+the difference.
+
+No release until the whole book is complete and every check passes on every
+chapter. See DECISIONS.md for why.
 
 ## Things that have already bitten
 
@@ -133,6 +189,16 @@ exit rather than failing: `git check-ignore` when nothing matches,
 to miss. Either write them as a condition (`cmd && echo a || echo b`) or drop
 `-e` for that script with a comment saying why, as `ch16` does.
 
+**Running bash from Windows Python.** `subprocess.run(["bash", ...])` starts
+the WSL launcher from System32, not Git Bash, and fails with a message about
+attaching a disk. `tools/verify_transcripts.py` resolves Git's own `bash.exe`
+explicitly. Do the same in any new tool.
+
+**Colour and time in the harness.** `sb_run_ansi` forces colour through the
+environment so the printed command stays what a reader types. `TZ` is pinned to
+UTC because `diff -u` and `--date=local` print local time. `sb_touch` sets file
+modification times to the sandbox clock for tools that print them.
+
 **Quoting through `sb_run`.** `sb_run` joins its arguments and evals them, so
 inner quotes are lost: `sb_run git branch 'bad name'` runs
 `git branch bad name`, which is a different command with a different error.
@@ -148,6 +214,9 @@ sandbox/lib/gitconfig    the pinned configuration examples run under
 sandbox/scripts/         one generator script per chapter
 tools/build_html.py      Markdown to one self-contained HTML file
 tools/build_pdf.ps1      that HTML to PDF via headless Edge
+tools/verify_transcripts.py  checks transcripts against a fresh run
+tools/audit_examples.py  checks every table option is shown, pointed, or excused
+tools/check_refs.py      checks every chapter reference resolves
 build/                   generated, not tracked
 OUTLINE.md               approved structure, stable chapter numbers
 DECISIONS.md             why the book is the way it is

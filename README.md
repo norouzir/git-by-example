@@ -42,6 +42,8 @@ tools/
   build_html.py           Markdown to one self-contained HTML file
   build_pdf.ps1           that HTML to PDF via headless Edge
   check_refs.py           verifies every "see Chapter N" points somewhere real
+  verify_transcripts.py   checks every transcript against a fresh run of its script
+  audit_examples.py       checks every option in a table has an example
 build/                    generated output, not tracked
 ```
 

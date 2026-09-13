@@ -76,6 +76,131 @@ def wrap_tables(body: str) -> str:
     )
 
 
+ANSI_BLOCK_RE = re.compile(r'<pre><code class="language-ansi">(.*?)</code></pre>', re.S)
+CSI_RE = re.compile(r"\\e\[([0-9;]*)([A-Za-z])")
+BASIC = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
+
+
+def _xterm256(n: int) -> tuple[str, str]:
+    """An xterm 256-colour index as ("class", name) or ("rgb", "#rrggbb")."""
+    if n < 8:
+        return ("class", BASIC[n])
+    if n < 16:
+        return ("class", "bright-" + BASIC[n - 8])
+    if n < 232:
+        n -= 16
+        steps = [0, 95, 135, 175, 215, 255]
+        r, g, b = steps[n // 36], steps[(n // 6) % 6], steps[n % 6]
+        return ("rgb", f"#{r:02x}{g:02x}{b:02x}")
+    level = 8 + (n - 232) * 10
+    return ("rgb", f"#{level:02x}{level:02x}{level:02x}")
+
+
+def _apply_sgr(state: dict, params: str) -> None:
+    codes = [int(c) if c else 0 for c in params.split(";")] if params else [0]
+    i = 0
+    while i < len(codes):
+        c = codes[i]
+        if c == 0:
+            state.clear()
+        elif c == 1:
+            state["bold"] = True
+        elif c == 2:
+            state["dim"] = True
+        elif c == 3:
+            state["italic"] = True
+        elif c == 4:
+            state["underline"] = True
+        elif c == 7:
+            state["reverse"] = True
+        elif c == 22:
+            state.pop("bold", None)
+            state.pop("dim", None)
+        elif c == 23:
+            state.pop("italic", None)
+        elif c == 24:
+            state.pop("underline", None)
+        elif c == 27:
+            state.pop("reverse", None)
+        elif 30 <= c <= 37:
+            state["fg"] = ("class", BASIC[c - 30])
+        elif 90 <= c <= 97:
+            state["fg"] = ("class", "bright-" + BASIC[c - 90])
+        elif 40 <= c <= 47:
+            state["bg"] = ("class", BASIC[c - 40])
+        elif 100 <= c <= 107:
+            state["bg"] = ("class", "bright-" + BASIC[c - 100])
+        elif c == 39:
+            state.pop("fg", None)
+        elif c == 49:
+            state.pop("bg", None)
+        elif c in (38, 48) and i + 1 < len(codes):
+            key = "fg" if c == 38 else "bg"
+            if codes[i + 1] == 5 and i + 2 < len(codes):
+                state[key] = _xterm256(codes[i + 2])
+                i += 2
+            elif codes[i + 1] == 2 and i + 4 < len(codes):
+                r, g, b = codes[i + 2:i + 5]
+                state[key] = ("rgb", f"#{r:02x}{g:02x}{b:02x}")
+                i += 4
+        i += 1
+
+
+def _open_span(state: dict) -> str:
+    if not state:
+        return ""
+    classes, styles = [], []
+    fg, bg = state.get("fg"), state.get("bg")
+    if state.get("reverse"):
+        fg, bg = bg, fg
+        if bg is None:
+            classes.append("ansi-bg-fg")
+        if fg is None:
+            classes.append("ansi-fg-bg")
+    for value, prefix, prop in ((fg, "ansi-fg-", "color"), (bg, "ansi-bg-", "background")):
+        if value is None:
+            continue
+        if value[0] == "class":
+            classes.append(prefix + value[1])
+        else:
+            styles.append(f"{prop}:{value[1]}")
+    for flag in ("bold", "dim", "italic", "underline"):
+        if state.get(flag):
+            classes.append("ansi-" + flag)
+    attrs = f' class="{" ".join(classes)}"' if classes else ""
+    attrs += f' style="{";".join(styles)}"' if styles else ""
+    return f"<span{attrs}>"
+
+
+def _render_ansi_text(text: str) -> str:
+    out, state, pos, open_ = [], {}, 0, False
+    for m in CSI_RE.finditer(text):
+        out.append(text[pos:m.start()])
+        pos = m.end()
+        if m.group(2) != "m":
+            continue  # cursor movement and line erasing mean nothing on a page
+        if open_:
+            out.append("</span>")
+            open_ = False
+        _apply_sgr(state, m.group(1))
+        span = _open_span(state)
+        if span:
+            out.append(span)
+            open_ = True
+    out.append(text[pos:])
+    if open_:
+        out.append("</span>")
+    return "".join(out)
+
+
+def render_ansi(body: str) -> str:
+    """Colour ```ansi blocks, whose escapes are written as the characters \\e."""
+    return ANSI_BLOCK_RE.sub(
+        lambda m: '<pre class="ansi"><code>' + _render_ansi_text(m.group(1)) + "</code></pre>",
+        body,
+    )
+
+
 def build() -> None:
     parts = read_manifest()
     if not parts:
@@ -100,7 +225,7 @@ def build() -> None:
                 sys.exit(f"missing chapter file: {path}")
             chapter_id = f"ch{counter}-{slugify(label)}"
             md.reset()
-            body = wrap_tables(md.convert(path.read_text(encoding="utf-8")))
+            body = render_ansi(wrap_tables(md.convert(path.read_text(encoding="utf-8"))))
             # The chapter's own H1 becomes the anchor target.
             body = body.replace("<h1>", f'<h1 id="{chapter_id}">', 1)
             chapters.append(f'<section class="chapter">{body}</section>')
@@ -137,6 +262,12 @@ CSS = """
   --code-bg: #f2efe9;
   --accent: #7a3b12;
   --quote-bg: #f4f1ea;
+  --ansi-black: #1c1b19; --ansi-red: #b3261e; --ansi-green: #1f7a33;
+  --ansi-yellow: #8a6100; --ansi-blue: #1f5fbf; --ansi-magenta: #8e3aa8;
+  --ansi-cyan: #0e7a86; --ansi-white: #6b6862;
+  --ansi-bg-red: #eeb0a9; --ansi-bg-green: #d4ecd9; --ansi-bg-yellow: #f3e5bf;
+  --ansi-bg-blue: #d5e2f6; --ansi-bg-magenta: #ead7f1; --ansi-bg-cyan: #cfeaec;
+  --ansi-bg-white: #e4e1da; --ansi-bg-black: #3a3833;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -148,6 +279,12 @@ CSS = """
     --code-bg: #201f26;
     --accent: #e0a878;
     --quote-bg: #1d1c23;
+    --ansi-black: #8b949e; --ansi-red: #ff7b72; --ansi-green: #7ee787;
+    --ansi-yellow: #e3b341; --ansi-blue: #79c0ff; --ansi-magenta: #d2a8ff;
+    --ansi-cyan: #56d4dd; --ansi-white: #e6e3dd;
+    --ansi-bg-red: #5a1e1b; --ansi-bg-green: #1b4527; --ansi-bg-yellow: #4d3b0f;
+    --ansi-bg-blue: #1a3558; --ansi-bg-magenta: #43245a; --ansi-bg-cyan: #144449;
+    --ansi-bg-white: #3a3940; --ansi-bg-black: #0d0c10;
   }
 }
 * { box-sizing: border-box; }
@@ -207,6 +344,30 @@ pre {
   font-size: .82rem; line-height: 1.5; margin: 0 0 1.3rem;
 }
 pre code { background: none; padding: 0; font-size: inherit; }
+.ansi-fg-black, .ansi-fg-bright-black { color: var(--ansi-black); }
+.ansi-bg-black, .ansi-bg-bright-black { background: var(--ansi-bg-black); }
+.ansi-fg-red, .ansi-fg-bright-red { color: var(--ansi-red); }
+.ansi-bg-red, .ansi-bg-bright-red { background: var(--ansi-bg-red); }
+.ansi-fg-green, .ansi-fg-bright-green { color: var(--ansi-green); }
+.ansi-bg-green, .ansi-bg-bright-green { background: var(--ansi-bg-green); }
+.ansi-fg-yellow, .ansi-fg-bright-yellow { color: var(--ansi-yellow); }
+.ansi-bg-yellow, .ansi-bg-bright-yellow { background: var(--ansi-bg-yellow); }
+.ansi-fg-blue, .ansi-fg-bright-blue { color: var(--ansi-blue); }
+.ansi-bg-blue, .ansi-bg-bright-blue { background: var(--ansi-bg-blue); }
+.ansi-fg-magenta, .ansi-fg-bright-magenta { color: var(--ansi-magenta); }
+.ansi-bg-magenta, .ansi-bg-bright-magenta { background: var(--ansi-bg-magenta); }
+.ansi-fg-cyan, .ansi-fg-bright-cyan { color: var(--ansi-cyan); }
+.ansi-bg-cyan, .ansi-bg-bright-cyan { background: var(--ansi-bg-cyan); }
+.ansi-fg-white, .ansi-fg-bright-white { color: var(--ansi-white); }
+.ansi-bg-white, .ansi-bg-bright-white { background: var(--ansi-bg-white); }
+.ansi-fg-bright-red, .ansi-fg-bright-green, .ansi-fg-bright-yellow, .ansi-fg-bright-blue,
+.ansi-fg-bright-magenta, .ansi-fg-bright-cyan { filter: saturate(1.25); }
+.ansi-fg-bg { color: var(--code-bg); }
+.ansi-bg-fg { background: var(--fg); }
+.ansi-bold { font-weight: 700; }
+.ansi-dim { opacity: .6; }
+.ansi-italic { font-style: italic; }
+.ansi-underline { text-decoration: underline; }
 blockquote {
   margin: 1.3rem 0; padding: .8rem 1rem; background: var(--quote-bg);
   border-left: 3px solid var(--accent); border-radius: 0 4px 4px 0;
@@ -237,6 +398,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
   main { max-width: none; }
   .chapter { page-break-before: always; }
   h1.part-title { page-break-before: always; }
+  pre, .ansi span { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   pre { border: 1px solid #ccc; background: #f6f6f6;
     white-space: pre-wrap; word-break: break-word; }
   h1, h2, h3 { page-break-after: avoid; }
