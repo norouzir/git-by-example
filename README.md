@@ -43,6 +43,7 @@ tools/
   build_pdf.ps1           that HTML to PDF via headless Edge
   check_refs.py           verifies every chapter and section link points somewhere real
   anchors.py              defines section ids, shared by the build and check_refs.py
+  compare_versions.py     lists sentences, rows and headings a chapter lost since a commit
   verify_transcripts.py   checks every transcript against a fresh run of its script
   audit_examples.py       checks every option in a table has an example
 build/                    generated output, not tracked
@@ -58,6 +59,7 @@ settled question is not reopened without new information.
 python tools/verify_transcripts.py 13   # a chapter's transcripts match a fresh run
 python tools/audit_examples.py 13       # every option in its tables has an example
 python tools/check_refs.py              # every chapter and section link resolves
+python tools/compare_versions.py --changed   # what edited chapters lost since the last commit
 python tools/build_html.py
 powershell -File tools/build_pdf.ps1
 ```

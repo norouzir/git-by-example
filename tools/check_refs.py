@@ -8,7 +8,9 @@ contract and this checks the text against it.
 It also checks links to sections. Every `[text](#slug)` must lead to a heading
 in the same chapter, and every `[text](#ch13-slug)` to a heading in that
 chapter. In a chapter with a question list, every section must be the target of
-at least one question, so the list cannot fall behind the chapter.
+at least one question, so the list cannot fall behind the chapter. The only
+correct response to that error is a new question; the check exists to make the
+list grow with the chapter, never to make the chapter shrink to fit the list.
 
     python tools/check_refs.py          # report and exit non-zero on a problem
     python tools/check_refs.py --map    # also print who references what
@@ -61,7 +63,10 @@ def section_link_problems() -> list[str]:
             asked = set(SECTION_LINK.findall(block.group(1)))
             for level, title, slug in heads:
                 if level == 2 and slug not in asked:
-                    problems.append(f"{name}: no question points to the section \"{title}\"")
+                    problems.append(
+                        f"{name}: no question points to the section \"{title}\". "
+                        "Fix it by adding a question this section answers. Never remove, "
+                        "merge or retitle the section to silence this check.")
     return problems
 
 

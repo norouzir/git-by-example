@@ -398,3 +398,33 @@ answers, which would duplicate the book. Instead, when the appendices are
 written, Appendix G will gather every chapter's questions into one linked list
 beside its decision tables, for a reader who does not know which chapter to
 open.
+
+---
+
+## 2026-09-14. Removals are reported by a tool, and the record is kept current
+
+**The question-coverage check could be misread.** `check_refs.py` fails when a
+section of a chapter has no question pointing to it. The author pointed out that
+this looks as if useful material without a question would be deleted. The check
+never changes a file, and it only looks at main sections, not subsections,
+paragraphs or examples. But the author's instinct was right about the risk: an
+error can be silenced by adding a question or by deleting the section, and a
+tool cannot tell which was done. The error message now states the only correct
+fix, and CLAUDE.md says the same.
+
+**"Nothing correct was removed" is now a report, not a promise.** The
+sentence-by-sentence comparison that found content lost in Chapter 13's rewrites
+became `tools/compare_versions.py` and a required step before every commit that
+edits a chapter. It lists what a chapter no longer contains, marks each item as
+`changed` or `REMOVED`, and never passes or fails on its own, because some
+removals are right. Table rows are matched by their first cell rather than by
+similarity: a first version matched them by similarity and reported a deleted
+row as merely reworded, because rows in one table look alike, which would have
+hidden exactly the loss the tool exists to find.
+
+**The project record is updated at defined moments.** The author asked that the
+documentation never again fall behind the decisions, as it had between Part 2
+and this point, without turning every message into a documentation pass.
+CLAUDE.md now lists the moments to stop and check: when a question is settled
+with the author, when a rule or tool changes, when a chapter's status changes,
+and before every delivery and every new part.

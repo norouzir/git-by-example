@@ -118,10 +118,10 @@ The tools do not see ambiguity. Before a chapter is delivered, check by hand:
   options table near the top.
 - Every example is understandable from its heading and itself, or has the one
   sentence that makes it so, and no sentence merely restates either.
-- Nothing correct was removed. Compare against the previous version of the
-  chapter sentence by sentence before delivering a rework; a reworded sentence
-  must keep its meaning, and a removed one needs a reason (it was wrong, or
-  untested and could not be verified).
+- Nothing correct was removed. `tools/compare_versions.py` lists every
+  sentence, table row and heading the chapter no longer contains; a reworded
+  sentence must keep its meaning, and a removed one needs a reason (it was
+  wrong, or untested and could not be verified).
 - Every claim of equivalence ("the same as", "identical to") is demonstrated,
   or attributed in the text to Git's documentation where it says so.
 - The question list covers every section, in the chapter's order, in the
@@ -157,7 +157,10 @@ This list is the single source; generator scripts do not keep a copy.
   it means the list was incomplete, and the question is added. It never rejects
   an example.
 - `tools/check_refs.py` fails on a question link that leads nowhere and on a
-  section no question points to.
+  section no question points to. The only correct response to the second is to
+  write a question the section answers. Never remove, merge or retitle a
+  section to silence it; the check exists to make the list grow with the
+  chapter, not the chapter shrink to fit the list.
 
 **Every option named in a table needs one of:**
 
@@ -209,6 +212,30 @@ of real output that is permitted.
 
 Deliver one part at a time and stop for feedback before starting the next.
 
+### Keep the project record current
+
+CLAUDE.md, DECISIONS.md, OUTLINE.md and README.md are the project's memory. A
+decision that exists only in the conversation is lost the moment the
+conversation is, and a new session starts from these files alone.
+
+They do not need updating after every small change or every message; updating
+them is slow and batching is fine. What must not happen is drift: finishing
+several chapters or parts and only then finding that nothing was recorded
+since. So at each of these moments, stop and ask whether anything agreed or
+learned since the last update is missing, and write it down before moving on:
+
+| Moment | Update |
+|---|---|
+| The author and I settle a question | DECISIONS.md, with the reason and what was rejected; CLAUDE.md if it changes how to work |
+| A new rule, or a trap that cost time | CLAUDE.md |
+| A tool is added or its behaviour changes | CLAUDE.md workflow and layout, README.md |
+| A chapter is written, reworked, or found to fall short | OUTLINE.md status and Outstanding |
+| Before delivering a chapter or a part to the author | All four: is anything decided since the last update not yet written down? |
+| Before starting the next part | The same question, once more |
+
+When the author asks whether the documentation is up to date, check each file
+against the decisions actually made, rather than answering from memory.
+
 Writing a chapter means three artefacts, not one:
 
 1. `book/part-NN-.../NN-slug.md`, the chapter.
@@ -216,19 +243,27 @@ Writing a chapter means three artefacts, not one:
 3. A line added to `book/SUMMARY.md`, which is the build manifest and controls
    order. The build fails on a file listed there that does not exist.
 
-Then mark the chapter `[x]` in `OUTLINE.md`, run all three checks, and rebuild:
+Then mark the chapter `[x]` in `OUTLINE.md`, run the checks, and rebuild:
 
 ```sh
 python tools/verify_transcripts.py N     # every transcript matches a real run
 python tools/audit_examples.py N         # every table option is shown, pointed, or excused
-python tools/check_refs.py --map         # every "see Chapter N" resolves
+python tools/check_refs.py --map         # every chapter and section link resolves
+python tools/compare_versions.py --changed   # what edited chapters lost since the last commit
 python tools/build_html.py
 powershell -File tools/build_pdf.ps1
 ```
 
-All three must pass before a part is called done. A reader with no internet
-cannot recover from a transcript that lies, an option they can only guess at, or
-a cross-reference that leads nowhere.
+The first three must pass before a part is called done. A reader with no
+internet cannot recover from a transcript that lies, an option they can only
+guess at, or a cross-reference that leads nowhere.
+
+`compare_versions.py` does not pass or fail. It lists every sentence, table row
+and heading that an edited chapter no longer contains. Run it before every
+commit that changes a chapter. Each `changed` item: read both versions and
+confirm the meaning survived. Each `REMOVED` item: either it goes back, or it
+was wrong or could not be verified, and the commit message says which. The
+delivery message to the author lists every intentional removal.
 
 The printed command in a transcript must be exactly what a reader types. Never
 simplify it in the chapter; change the generator instead. The verifier catches
@@ -305,6 +340,7 @@ tools/verify_transcripts.py  checks transcripts against a fresh run
 tools/audit_examples.py  checks every table option is shown, pointed, or excused
 tools/check_refs.py      checks every chapter, appendix and section link, and question coverage
 tools/anchors.py         the one definition of section ids, shared by the build and the checker
+tools/compare_versions.py  lists what a chapter lost since an earlier version
 build/                   generated, not tracked
 OUTLINE.md               approved structure, stable chapter numbers
 DECISIONS.md             why the book is the way it is
