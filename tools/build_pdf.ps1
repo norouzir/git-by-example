@@ -29,7 +29,8 @@ $profile = Join-Path $env:TEMP "git-by-example-pdf-profile"
 
 if (Test-Path $pdf) { Remove-Item $pdf -Force }
 
-$uri = "file:///" + ($html -replace '\\', '/')
+# #print-all makes the page open every collapsed question list before printing.
+$uri = "file:///" + ($html -replace '\\', '/') + "#print-all"
 $browserArgs = @(
     "--headless=new"
     "--disable-gpu"

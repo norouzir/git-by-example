@@ -16,8 +16,158 @@ which question each form asks is most of what there is to learn about it.
 Its output is the unified diff format that almost every tool understands, with a
 few extra lines only Git writes. It looks like the output of the Unix `diff`
 command, but it is not the same program and does not behave the same way; the
-section "git diff and the diff command" near the end of this chapter compares
+section [git diff and the diff command](#git-diff-and-the-diff-command) near the end of this chapter compares
 the two.
+
+<details class="questions" markdown="1">
+<summary>Questions this chapter answers</summary>
+
+**[What it is](#what-it-is)**
+
+- [What does `git diff` actually do? Can it change my files?](#what-it-is)
+
+**[Synopsis](#synopsis)**
+
+- [There are several ways to write `git diff`. Which one shows what I'm about to commit?](#synopsis)
+
+**[Options at a glance](#options-at-a-glance)**
+
+- [Is there a list of every option, and where each one is explained?](#options-at-a-glance)
+
+**[Reading the output](#reading-the-output)**
+
+- [How do I read a diff? What do all the lines at the top mean?](#reading-the-output)
+- [What does a new file, a deleted file, or a change of permissions look like?](#new-deleted-and-mode-changed-files)
+- [The diff says `\ No newline at end of file`, but I didn't change that line. What does it mean?](#no-newline-at-end-of-file)
+- [What does `similarity index 87%` mean?](#a-renamed-file-with-edits)
+- [What is the text after the second `@@`? Sometimes it has nothing to do with my change.](#the-text-after-the-second)
+
+**[Choosing what to compare](#choosing-what-to-compare)**
+
+- [How do I compare my files with an older commit instead of the last one?](#a-commit-and-the-index-against-a-commit)
+- [Can I compare what I've staged with an older commit?](#a-commit-and-the-index-against-a-commit)
+- [How do I show a change the other way round?](#swapping-the-sides)
+- [How do I compare one file as it was two commits ago with how it is now, or two files with different names?](#one-file-across-commits-or-two-different-files)
+- [I'm working in a subdirectory. How do I see only the changes in it?](#only-my-subdirectory)
+- [I created a new file, but `git diff` doesn't show it. Why?](#new-files-do-not-appear)
+- [I haven't made my first commit yet. Can I still see what I'm about to commit?](#before-the-first-commit)
+- [In a brand new repository, `git diff HEAD` says "ambiguous argument". What's wrong?](#before-the-first-commit)
+
+**[Comparing commits](#comparing-commits)**
+
+- [How do I see what changed between two commits? Does it matter if I put `..` between them?](#comparing-commits)
+- [What is the `--` in the middle of some commands for?](#comparing-commits)
+
+**[Two dots and three dots](#two-dots-and-three-dots)**
+
+- [The diff of my branch shows files I never touched. Why?](#two-dots-and-three-dots)
+- [What is the difference between `main..feature` and `main...feature`?](#two-dots-and-three-dots)
+
+**[git diff, git show and git log -p](#git-diff-git-show-and-git-log-p)**
+
+- [Do `git diff HEAD~1 HEAD`, `git show` and `git log -p` show the same thing?](#git-diff-git-show-and-git-log-p)
+- [How do I see the changes made by the very first commit? `git diff` refuses.](#git-diff-git-show-and-git-log-p)
+
+**[How much context](#how-much-context)**
+
+- [How do I show more, or fewer, unchanged lines around each change?](#how-much-context)
+- [The diff shows a few lines from the middle of a long function. How do I see all of it?](#the-whole-function)
+- [Two changes close to each other show up as separate blocks. Can I see them as one?](#nearby-changes-one-hunk-or-two)
+
+**[Summaries instead of content](#summaries-instead-of-content)**
+
+- [How do I list only which files changed, without the changes themselves?](#summaries-instead-of-content)
+- [How do I see which files were added, deleted, renamed, or made executable?](#structural-changes)
+- [`--stat` shows a long bar of `+` and `-`. Is the number next to it real?](#what-stat-scales-and-what-it-does-not)
+- [A change touched many directories. Which of them had most of it?](#which-directories-changed)
+- [`--dirstat` left out a directory I know I changed. Why?](#which-directories-changed)
+
+**[Word-level diffs](#word-level-diffs)**
+
+- [I changed one word, and the whole line shows as changed. Can I see just the word?](#word-level-diffs)
+- [Can the changed words be shown in colour instead of brackets?](#in-colour)
+- [Are `--color-words` and `--word-diff=color` the same?](#in-colour)
+- [Only `beta` changed, but the word diff marks `beta);`. How do I fix that?](#deciding-what-counts-as-a-word)
+
+**[Searching history through diffs](#searching-history-through-diffs)**
+
+- [A function disappeared from the code. How do I find the commit that removed it?](#searching-history-through-diffs)
+- [`-S` and `-G` both search for text. When do they give different results?](#when-s-and-g-disagree)
+- [I only moved a line of code. Will searching history find that commit?](#when-a-line-only-moves)
+- [The search found the commit but shows only one of its files. How do I see all of them?](#seeing-the-whole-commit)
+- [Can I use the same search when comparing two commits with `git diff`?](#s-works-on-git-diff-too)
+
+**[Whitespace](#whitespace)**
+
+- [I reindented a file and now every line shows as changed. How do I see the real changes?](#whitespace)
+- [What is the difference between `-b` and `-w`?](#whitespace)
+- [`git diff -w` shows nothing. Does that mean my whitespace changes won't be committed?](#ignoring-whitespace-does-not-change-what-gets-committed)
+- [How do I hide changes that only add or remove empty lines?](#blank-lines)
+- [Every line of a file shows as changed, but the lines look identical. What happened?](#carriage-returns)
+- [How do I check for trailing spaces before I commit?](#finding-whitespace-errors-before-committing)
+
+**[Renames and copies](#renames-and-copies)**
+
+- [How does Git know I renamed a file? I never told it.](#renames-and-copies)
+- [I renamed a file and edited it a lot, and Git shows a deletion and a new file. Why?](#the-threshold-and-why-m5-is-not-five-percent)
+- [I set the rename threshold to 5 and nothing changed. Why?](#the-threshold-and-why-m5-is-not-five-percent)
+- [I copied a file. Why doesn't Git show it as a copy?](#copies)
+
+**[Moved code](#moved-code)**
+
+- [I moved a block of code without changing it. Can the diff show that it only moved?](#moved-code)
+- [What do the different values of `--color-moved` do?](#the-modes)
+
+**[Algorithms](#algorithms)**
+
+- [The diff looks nothing like what I actually did. Can Git show it more sensibly?](#algorithms)
+- [The same change could be shown in two ways. Can I choose which lines stay in place?](#choosing-which-lines-stay-put)
+
+**[Keeping only some kinds of change](#keeping-only-some-kinds-of-change)**
+
+- [How do I list only the deleted files, or only the added ones?](#keeping-only-some-kinds-of-change)
+
+**[Prefixes, output files, and file names](#prefixes-output-files-and-file-names)**
+
+- [What are `a/` and `b/` in front of the file names? Can I get rid of them?](#what-a-and-b-are-for)
+- [Someone's diff shows `i/` and `w/` instead of `a/` and `b/`. Why?](#why-some-diffs-say-i-and-w)
+- [How do I save a diff to a file?](#writing-to-a-file)
+- [My file names appear in quotes, full of numbers. Why?](#file-names-that-come-out-as-numbers)
+- [How do I pass file names to a script safely, even unusual ones?](#file-names-that-come-out-as-numbers)
+
+**[Binary files](#binary-files)**
+
+- [Git only says "Binary files differ". Can I see anything more?](#binary-files)
+- [Can I send someone a change to a binary file as a patch?](#a-binary-patch-and-who-can-apply-it)
+
+**[Exit codes](#exit-codes)**
+
+- [In a script, how do I check whether there are any changes?](#exit-codes)
+- [My script says there are no changes, but I created a new file. Why?](#exit-codes)
+
+**[git diff and the diff command](#git-diff-and-the-diff-command)**
+
+- [Why use `git diff` at all, instead of the ordinary `diff` command?](#plain-diff-compares-two-files-and-nothing-else)
+- [My script switched from `diff` to `git diff` and stopped noticing changes. Why?](#they-do-not-exit-the-same-way)
+- [I ran `git diff a.txt b.txt` to compare two files and it printed nothing. Why?](#inside-a-repository-two-paths-are-not-two-files)
+- [How do I compare two files that are not in any repository?](#outside-a-repository-no-index-is-implied)
+- [Can I apply the output of `git diff` with the `patch` command?](#can-the-patch-command-use-git-diff-output)
+
+**[The pager](#the-pager)**
+
+- [A long diff opened a screen I can't get out of. How do I leave it?](#the-pager)
+- [How do I stop `git diff` from opening that screen?](#the-pager)
+
+**[Commands that look similar](#commands-that-look-similar)**
+
+- [When would I use `git difftool`, `git range-diff` or `git status -v` instead?](#commands-that-look-similar)
+
+**[The settings](#the-settings)**
+
+- [How do I make an option the default, so I don't have to type it every time?](#the-settings)
+
+</details>
+
 
 ## Synopsis
 
@@ -59,12 +209,13 @@ What each form compares:
 
 The first three rows are the ones you will use every day, and they are the ones
 people confuse. Chapter 5 explains them through the three areas; the section
-"Choosing what to compare" below shows every row running.
+[Choosing what to compare](#choosing-what-to-compare) and the ones after it show every row running.
 
 > **Careful.** Inside a repository, `git diff a.txt b.txt` does not compare
 > `a.txt` with `b.txt`. Both names are read as paths to limit the first form,
 > so it shows your uncommitted changes to each. To compare two files, add
-> `--no-index`. The section "git diff and the diff command" shows the trap.
+> `--no-index`. The section [Inside a repository, two paths are not two files](#inside-a-repository-two-paths-are-not-two-files)
+> shows the trap.
 
 ## Options at a glance
 
@@ -72,50 +223,50 @@ Every option below is demonstrated in the section named in the last column.
 
 | Option | Does | Covered in |
 |---|---|---|
-| `--staged`, `--cached` | Compare the index, against HEAD or a commit you name | Choosing what to compare |
-| `--merge-base` | Compare from the merge base, like three dots | Two dots and three dots |
-| `-R` | Swap the two sides | Choosing what to compare |
-| `--relative[=<path>]` | Limit to a directory and show paths relative to it | Choosing what to compare |
-| `--no-index` | Compare two paths outside version control | git diff and the diff command |
-| `-U<n>`, `--unified=<n>` | Number of context lines | How much context |
-| `-W`, `--function-context` | Show the whole function around each change | How much context |
-| `--inter-hunk-context=<n>` | Merge hunks separated by up to `<n>` unchanged lines | How much context |
-| `--stat[=<width>]` | A bar chart per file | Summaries instead of content |
-| `--stat-count=<n>` | List at most `<n>` files in `--stat` | Summaries instead of content |
-| `--numstat`, `--shortstat` | Exact counts, or only the total | Summaries instead of content |
-| `--name-only`, `--name-status`, `--summary` | Path listings | Summaries instead of content |
-| `--compact-summary` | `--stat` with creations, deletions and mode changes marked | Summaries instead of content |
-| `--dirstat[=<params>]` | Share of change per directory | Summaries instead of content |
-| `--word-diff[=<mode>]` | Word-level output | Word-level diffs |
-| `--word-diff-regex=<regex>` | What counts as a word | Word-level diffs |
-| `--color-words` | Word diff in colour | Word-level diffs |
-| `-S <string>`, `-G <regex>` | Filter by content change | Searching history through diffs |
-| `--pickaxe-regex` | Treat `-S` as a regex | Searching history through diffs |
-| `--pickaxe-all` | Keep every file in a matching commit | Searching history through diffs |
-| `-w`, `--ignore-all-space` | Ignore all whitespace | Whitespace |
-| `-b`, `--ignore-space-change` | Ignore changes in the amount of whitespace | Whitespace |
-| `--ignore-space-at-eol` | Ignore whitespace at line ends only | Whitespace |
-| `--ignore-blank-lines` | Ignore added or removed blank lines | Whitespace |
-| `--ignore-cr-at-eol` | Ignore a carriage return at line end | Whitespace |
-| `--check` | Report whitespace errors and conflict markers | Whitespace |
-| `-M[<n>]`, `--find-renames[=<n>]` | Rename detection and its threshold | Renames and copies |
-| `-C[<n>]`, `--find-copies[=<n>]` | Copy detection from changed files | Renames and copies |
-| `--find-copies-harder` | Copy detection from every file | Renames and copies |
-| `--no-renames` | Report renames as a delete plus an add | Renames and copies |
-| `-B`, `--break-rewrites` | Treat heavy rewrites as a delete plus an add | Renames and copies |
-| `-l <num>` | Limit how many files rename detection considers | Renames and copies |
-| `--color-moved[=<mode>]` | Colour moved lines differently from changed ones | Moved code |
-| `--diff-algorithm=<name>` | Choose the algorithm | Algorithms |
-| `--minimal`, `--patience`, `--histogram` | Shorter spellings for three algorithms | Algorithms |
-| `--anchored=<text>` | Keep lines starting with `<text>` unchanged where possible | Algorithms |
-| `--diff-filter=<letters>` | Keep only added, deleted, modified and so on | Keeping only some kinds of change |
-| `--no-prefix`, `--src-prefix`, `--dst-prefix` | Change or remove the `a/` and `b/` prefixes | Prefixes, output files, and file names |
-| `--default-prefix` | Use `a/` and `b/` whatever the configuration says | Prefixes, output files, and file names |
-| `--output=<file>` | Write to a file instead of standard output | Prefixes, output files, and file names |
-| `-z` | Separate paths with a zero byte (NUL) and never quote them | Prefixes, output files, and file names |
-| `--binary` | Include binary content in the patch | Binary files |
-| `--text`, `-a` | Treat every file as text | Binary files |
-| `--exit-code`, `--quiet` | Report differences through the exit status | Exit codes |
+| `--staged`, `--cached` | Compare the index, against HEAD or a commit you name | [Choosing what to compare](#choosing-what-to-compare) |
+| `--merge-base` | Compare from the merge base, like three dots | [Two dots and three dots](#two-dots-and-three-dots) |
+| `-R` | Swap the two sides | [Choosing what to compare](#choosing-what-to-compare) |
+| `--relative[=<path>]` | Limit to a directory and show paths relative to it | [Choosing what to compare](#choosing-what-to-compare) |
+| `--no-index` | Compare two paths outside version control | [git diff and the diff command](#git-diff-and-the-diff-command) |
+| `-U<n>`, `--unified=<n>` | Number of context lines | [How much context](#how-much-context) |
+| `-W`, `--function-context` | Show the whole function around each change | [How much context](#how-much-context) |
+| `--inter-hunk-context=<n>` | Merge hunks separated by up to `<n>` unchanged lines | [How much context](#how-much-context) |
+| `--stat[=<width>]` | A bar chart per file | [Summaries instead of content](#summaries-instead-of-content) |
+| `--stat-count=<n>` | List at most `<n>` files in `--stat` | [Summaries instead of content](#summaries-instead-of-content) |
+| `--numstat`, `--shortstat` | Exact counts, or only the total | [Summaries instead of content](#summaries-instead-of-content) |
+| `--name-only`, `--name-status`, `--summary` | Path listings | [Summaries instead of content](#summaries-instead-of-content) |
+| `--compact-summary` | `--stat` with creations, deletions and mode changes marked | [Summaries instead of content](#summaries-instead-of-content) |
+| `--dirstat[=<params>]` | Share of change per directory | [Summaries instead of content](#summaries-instead-of-content) |
+| `--word-diff[=<mode>]` | Word-level output | [Word-level diffs](#word-level-diffs) |
+| `--word-diff-regex=<regex>` | What counts as a word | [Word-level diffs](#word-level-diffs) |
+| `--color-words` | Word diff in colour | [Word-level diffs](#word-level-diffs) |
+| `-S <string>`, `-G <regex>` | Filter by content change | [Searching history through diffs](#searching-history-through-diffs) |
+| `--pickaxe-regex` | Treat `-S` as a regex | [Searching history through diffs](#searching-history-through-diffs) |
+| `--pickaxe-all` | Keep every file in a matching commit | [Searching history through diffs](#searching-history-through-diffs) |
+| `-w`, `--ignore-all-space` | Ignore all whitespace | [Whitespace](#whitespace) |
+| `-b`, `--ignore-space-change` | Ignore changes in the amount of whitespace | [Whitespace](#whitespace) |
+| `--ignore-space-at-eol` | Ignore whitespace at line ends only | [Whitespace](#whitespace) |
+| `--ignore-blank-lines` | Ignore added or removed blank lines | [Whitespace](#whitespace) |
+| `--ignore-cr-at-eol` | Ignore a carriage return at line end | [Whitespace](#whitespace) |
+| `--check` | Report whitespace errors and conflict markers | [Whitespace](#whitespace) |
+| `-M[<n>]`, `--find-renames[=<n>]` | Rename detection and its threshold | [Renames and copies](#renames-and-copies) |
+| `-C[<n>]`, `--find-copies[=<n>]` | Copy detection from changed files | [Renames and copies](#renames-and-copies) |
+| `--find-copies-harder` | Copy detection from every file | [Renames and copies](#renames-and-copies) |
+| `--no-renames` | Report renames as a delete plus an add | [Renames and copies](#renames-and-copies) |
+| `-B`, `--break-rewrites` | Treat heavy rewrites as a delete plus an add | [Renames and copies](#renames-and-copies) |
+| `-l <num>` | Limit how many files rename detection considers | [Renames and copies](#renames-and-copies) |
+| `--color-moved[=<mode>]` | Colour moved lines differently from changed ones | [Moved code](#moved-code) |
+| `--diff-algorithm=<name>` | Choose the algorithm | [Algorithms](#algorithms) |
+| `--minimal`, `--patience`, `--histogram` | Shorter spellings for three algorithms | [Algorithms](#algorithms) |
+| `--anchored=<text>` | Keep lines starting with `<text>` unchanged where possible | [Algorithms](#algorithms) |
+| `--diff-filter=<letters>` | Keep only added, deleted, modified and so on | [Keeping only some kinds of change](#keeping-only-some-kinds-of-change) |
+| `--no-prefix`, `--src-prefix`, `--dst-prefix` | Change or remove the `a/` and `b/` prefixes | [Prefixes, output files, and file names](#prefixes-output-files-and-file-names) |
+| `--default-prefix` | Use `a/` and `b/` whatever the configuration says | [Prefixes, output files, and file names](#prefixes-output-files-and-file-names) |
+| `--output=<file>` | Write to a file instead of standard output | [Prefixes, output files, and file names](#prefixes-output-files-and-file-names) |
+| `-z` | Separate paths with a zero byte (NUL) and never quote them | [Prefixes, output files, and file names](#prefixes-output-files-and-file-names) |
+| `--binary` | Include binary content in the patch | [Binary files](#binary-files) |
+| `--text`, `-a` | Treat every file as text | [Binary files](#binary-files) |
+| `--exit-code`, `--quiet` | Report differences through the exit status | [Exit codes](#exit-codes) |
 | `--submodule[=<format>]` | How to show changed submodules | Chapter 57 |
 | `--ext-diff`, `--textconv` | Use external diff drivers and converters | Chapter 65 |
 | `--cc`, `-c` | Combined diff for a merge commit | Chapter 26 |
@@ -1819,7 +1970,7 @@ documentation gives `ad` as its own example of excluding two kinds at once.
 The other letters need renames, copies and a type change to exist. This change
 edits a file, renames one, copies one from a file that was also edited, and
 turns an ordinary file into a symbolic link. `-C` is there so copies are
-detected at all (see "Renames and copies"):
+detected at all (see [Renames and copies](#renames-and-copies)):
 
 ```console
 $ git diff --staged -C --name-status
@@ -2030,7 +2181,8 @@ $ git status --short
 
 `--binary` encodes the new content into the patch, with full hashes on the
 `index` line. GNU `patch`, the traditional tool for applying diffs, refuses it
-outright. `git apply` applies it. The section "git diff and the diff command"
+outright. `git apply` applies it. The section
+[Can the patch command use git diff output?](#can-the-patch-command-use-git-diff-output)
 compares the two tools on ordinary text changes, where they are much closer.
 
 Chapter 65 covers `.gitattributes`, which can teach Git to show a readable diff

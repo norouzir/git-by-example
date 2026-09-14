@@ -19,6 +19,8 @@ import sys
 
 import markdown
 
+import anchors
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 BOOK = ROOT / "book"
 OUT = ROOT / "build" / "git-by-example.html"
@@ -201,12 +203,46 @@ def render_ansi(body: str) -> str:
     )
 
 
+SECTION_RE = re.compile(r"<h([234])>(.*?)</h\1>", re.S)
+LOCAL_LINK_RE = re.compile(r'href="#([^"]+)"')
+QUESTIONS_RE = re.compile(r'(<details class="questions">\s*<summary>)(.*?)(</summary>)(.*?</details>)', re.S)
+
+
+def anchor_sections(body: str, prefix: str) -> tuple[str, set[str]]:
+    """Give every h2-h4 a book-wide id and point the chapter's own links at them."""
+    titles = [m.group(2) for m in SECTION_RE.finditer(body)]
+    ids = anchors.unique([anchors.slug(t) for t in titles])
+    it = iter(ids)
+    body = SECTION_RE.sub(lambda m: f'<h{m.group(1)} id="{prefix}-{next(it)}">{m.group(2)}</h{m.group(1)}>', body)
+    local = set(ids)
+
+    def relink(m: re.Match) -> str:
+        target = m.group(1)
+        if target in local:
+            return f'href="#{prefix}-{target}"'
+        if re.match(r"(ch\d+|about-this-book)(-|$)", target):
+            return m.group(0)
+        sys.exit(f"{prefix}: link to #{target} matches no heading in this chapter")
+
+    return LOCAL_LINK_RE.sub(relink, body), {f"{prefix}-{i}" for i in ids}
+
+
+def count_questions(body: str) -> str:
+    """Append the number of questions to the summary line of a question list."""
+    def add(m: re.Match) -> str:
+        n = m.group(4).count("<li>")
+        return f"{m.group(1)}{m.group(2)} ({n}){m.group(3)}{m.group(4)}"
+    return QUESTIONS_RE.sub(add, body)
+
+
 def build() -> None:
     parts = read_manifest()
     if not parts:
         sys.exit("SUMMARY.md lists no chapters")
 
-    md = markdown.Markdown(extensions=["tables", "fenced_code", "sane_lists", "attr_list"])
+    md = markdown.Markdown(extensions=["tables", "fenced_code", "sane_lists", "attr_list", "md_in_html"])
+    all_ids: set[str] = set()
+    cross_links: list[tuple[str, str]] = []
 
     toc: list[str] = []
     chapters: list[str] = []
@@ -223,15 +259,25 @@ def build() -> None:
             counter += 1
             if not path.exists():
                 sys.exit(f"missing chapter file: {path}")
-            chapter_id = f"ch{counter}-{slugify(label)}"
+            # Ids follow the chapter's number, not its position in the manifest,
+            # so a link to Chapter 13 keeps working when a page is added before it.
+            chapter_id = anchors.chapter_prefix(path)
             md.reset()
             body = render_ansi(wrap_tables(md.convert(path.read_text(encoding="utf-8"))))
+            body, section_ids = anchor_sections(body, chapter_id)
+            body = count_questions(body)
             # The chapter's own H1 becomes the anchor target.
             body = body.replace("<h1>", f'<h1 id="{chapter_id}">', 1)
+            all_ids |= section_ids | {chapter_id}
+            cross_links += [(chapter_id, t) for t in LOCAL_LINK_RE.findall(body)]
             chapters.append(f'<section class="chapter">{body}</section>')
             toc.append(f'<li><a href="#{chapter_id}">{html.escape(label)}</a></li>')
 
         toc.append("</ul></li>")
+
+    broken = [(c, t) for c, t in cross_links if t not in all_ids]
+    if broken:
+        sys.exit("links to sections that do not exist:\n" + "\n".join(f"  {c}: #{t}" for c, t in broken))
 
     page = TEMPLATE.format(
         title=html.escape(TITLE),
@@ -391,6 +437,22 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
   justify-content: center; text-decoration: none; font-size: 1.1rem;
 }
 #top-link.show { display: flex; }
+details.questions {
+  margin: 1.5rem 0 2rem; border: 1px solid var(--rule); border-radius: 6px;
+  background: var(--quote-bg); font-family: system-ui, sans-serif; font-size: .9rem;
+}
+details.questions > summary {
+  cursor: pointer; padding: .75rem 1rem; font-weight: 600; list-style: none;
+}
+details.questions > summary::-webkit-details-marker { display: none; }
+details.questions > summary::before { content: "▸  "; color: var(--accent); }
+details.questions[open] > summary::before { content: "▾  "; }
+details.questions[open] > summary { border-bottom: 1px solid var(--rule); }
+details.questions > p { margin: 1rem 1rem .3rem; }
+details.questions > ul { margin: 0 1rem .8rem; padding-left: 1.1rem; }
+details.questions li { margin: .25rem 0; }
+details.questions a { text-decoration: none; }
+details.questions a:hover { text-decoration: underline; }
 @media print {
   body { background: #fff; color: #000; font-size: 10.5pt; }
   nav.toc, #top-link { display: none; }
@@ -407,6 +469,13 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
 """
 
 JS = """
+// Question lists are collapsed on screen and printed open. tools/build_pdf.ps1
+// loads the page with #print-all; beforeprint covers printing from a browser.
+function openAllDetails() {
+  document.querySelectorAll('details').forEach(function (d) { d.open = true; });
+}
+if (location.hash === '#print-all') openAllDetails();
+window.addEventListener('beforeprint', openAllDetails);
 var topLink = document.getElementById('top-link');
 window.addEventListener('scroll', function () {
   topLink.classList.toggle('show', window.scrollY > 900);

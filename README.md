@@ -41,7 +41,8 @@ sandbox/
 tools/
   build_html.py           Markdown to one self-contained HTML file
   build_pdf.ps1           that HTML to PDF via headless Edge
-  check_refs.py           verifies every "see Chapter N" points somewhere real
+  check_refs.py           verifies every chapter and section link points somewhere real
+  anchors.py              defines section ids, shared by the build and check_refs.py
   verify_transcripts.py   checks every transcript against a fresh run of its script
   audit_examples.py       checks every option in a table has an example
 build/                    generated output, not tracked

@@ -3,94 +3,10 @@
 #
 #   bash sandbox/scripts/ch13-diff.sh [dir]
 #
-# Questions this chapter answers, in the order the chapter answers them, with
-# the section of this script that produces each example. "text" means the
-# answer is prose or a table with no transcript. The list only grows: an
-# example that teaches something not on it means the list was incomplete.
-#
-# What it is, Synopsis, Options at a glance
-#   What does git diff do, and does it change anything?                      text
-#   What does each form of the command compare?                               text
-#   Inside a repository, does "git diff a b" compare a with b?                N1
-#   Which options exist, and where is each one shown?                         text
-# Reading the output
-#   What does each line of a diff mean?                                       1, 2
-#   What do new, deleted and mode-changed files look like?                    N2
-#   What does "\ No newline at end of file" mean?                             N2
-#   What does a rename with edits look like?                                  N2
-#   What is the text after the second @@, and why can it look unrelated?     1, N2
-# Choosing what to compare
-#   What do git diff <commit> and git diff --staged <commit> compare?         N3
-#   How do I swap the two sides?                                              N3
-#   How do I compare one file across commits, or two different files?        N3
-#   How do I limit the diff to my subdirectory?                               N3
-#   Why does a new file not show up in git diff?                              N3
-#   What does --staged show before the first commit, and why does HEAD fail?  N3
-# Comparing commits
-#   Is "git diff A B" the same as "git diff A..B"? What does -- do?           6
-# Two dots and three dots
-#   What is the difference between .. and ...? What is --merge-base?          7
-# git diff, git show and git log -p
-#   Do they print the same thing? How do I diff the first commit?             N4
-#   How do the three treat merge commits?                                     text
-# How much context
-#   How many unchanged lines are shown, and how do I change it?               3
-#   How do I see the whole function around a change?                          N2
-#   How do I join nearby hunks into one?                                      N2
-# Summaries instead of content
-#   What do --stat, --numstat, --shortstat, --name-only, --name-status show?  4
-#   What do --summary and --compact-summary add?                              N5
-#   Is the number in --stat real, and what is scaled?                         N5
-#   What does --dirstat show, and how does each parameter change it?          4, N5
-# Word-level diffs
-#   How do I diff words instead of lines, and what modes are there?           5, N6
-#   Are --color-words and --word-diff=color the same?                         N6
-#   Is plain the default mode, and does none turn word diff off?              N6
-#   How do I control what counts as a word?                                   N6
-# Searching history through diffs
-#   What do -S and -G find, and when do they give different answers?          8, N7
-#   What do --pickaxe-regex and --pickaxe-all change?                         N7
-#   Do they work with git diff as well as git log?                            N7
-#   Does -S or -G find a line that only moved, in one file or to another?    N7
-# Whitespace
-#   What exactly separates -b, -w and --ignore-space-at-eol?                  N8
-#   Does ignoring whitespace in the diff change what gets committed?          N8
-#   How do I ignore blank lines, or carriage returns?                         N8
-#   How do I find whitespace errors before committing, and what is flagged?   N8
-# Renames and copies
-#   How does Git know a file was renamed?                                     10
-#   What is the default threshold, why is -M5 not 5%, what does -M100% do?    N9
-#   When is a copy detected, and when only with --find-copies-harder?         N9
-# Moved code
-#   How do I tell moved code from changed code?                               N10
-#   What does each --color-moved mode do, and is default really zebra?        N10
-# Algorithms
-#   Do the diff algorithms ever really disagree, and why?                     N11
-#   Which ones give identical output, and which have a shorter spelling?      N11
-#   Can I choose which lines stay put?                                        N11
-# Keeping only some kinds of change
-#   How do I keep only added, deleted, modified, renamed, copied or
-#   type-changed files, or exclude one kind?                                  N12
-# Prefixes, output files, and file names
-#   What are a/ and b/ for, and how do I change or remove them?               N13
-#   Why do some diffs show i/ and w/, and how do I force a/ and b/ back?      N13
-#   How do I write the result to a file?                                      N13
-#   Why do non-ASCII file names come out as octal numbers? What does -z do?   N13
-# Binary files
-#   What does a binary change look like, and can I force a text diff?         N14
-#   Can a binary change be applied as a patch, by patch or by git apply?      N14
-# Exit codes
-#   How does a script tell whether there are differences?                     13
-#   Does git diff --quiet notice untracked files?                             13
-# git diff and the diff command
-#   What can plain diff not do that git diff can?                             N1
-#   Do they exit the same way?                                                N1
-#   Outside a repository, do I need --no-index?                               N1
-#   Can the patch command apply git diff output, including renames?           N1
-# The pager, Commands that look similar, The settings
-#   How do I get out of the pager, or avoid it?                               text
-#   How does git diff differ from difftool, range-diff, status -v, plumbing?  text
-#   Which settings change git diff's defaults?                                text
+# The questions this chapter answers are listed in the chapter itself, at the
+# top of book/part-02-everyday-work/13-diff.md, and that list is the only copy.
+# tools/verify_transcripts.py ties every transcript in the chapter to the output
+# of this script, so no mapping between questions and sections is kept here.
 #
 # No -e here on purpose: many examples in this chapter are about exit codes,
 # and a non-zero exit is the answer being demonstrated, not a failure.

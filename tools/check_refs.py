@@ -5,6 +5,11 @@ A reader with no internet cannot recover from "see Chapter 47" when Chapter 47
 turns out to be about something else, so the numbering in OUTLINE.md is the
 contract and this checks the text against it.
 
+It also checks links to sections. Every `[text](#slug)` must lead to a heading
+in the same chapter, and every `[text](#ch13-slug)` to a heading in that
+chapter. In a chapter with a question list, every section must be the target of
+at least one question, so the list cannot fall behind the chapter.
+
     python tools/check_refs.py          # report and exit non-zero on a problem
     python tools/check_refs.py --map    # also print who references what
 """
@@ -15,6 +20,8 @@ import pathlib
 import re
 import sys
 
+import anchors
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 BOOK = ROOT / "book"
 OUTLINE = ROOT / "OUTLINE.md"
@@ -23,6 +30,40 @@ OUTLINE_CHAPTER = re.compile(r"^- \[[ x]\] (\d+)\. (.+?)\s*$", re.M)
 OUTLINE_APPENDIX = re.compile(r"^- \[[ x]\] ([A-Z])\. (.+?)\s*$", re.M)
 REF_CHAPTER = re.compile(r"\bChapter (\d+)\b")
 REF_APPENDIX = re.compile(r"\bAppendix ([A-Z])\b")
+SECTION_LINK = re.compile(r"\]\(#([^)\s]+)\)")
+QUESTIONS = re.compile(r'<details class="questions"[^>]*>(.*?)</details>', re.S)
+
+
+def section_link_problems() -> list[str]:
+    """Links to sections that do not exist, and sections no question points to."""
+    files = [p for p in sorted(BOOK.rglob("*.md")) if p.name != "SUMMARY.md"]
+    headings = {}
+    for path in files:
+        text = path.read_text(encoding="utf-8")
+        headings[anchors.chapter_prefix(path)] = (path, text, anchors.markdown_headings(text))
+
+    problems = []
+    for prefix, (path, text, heads) in headings.items():
+        local = {slug for _, _, slug in heads}
+        name = path.relative_to(ROOT)
+        for target in SECTION_LINK.findall(text):
+            if target in local:
+                continue
+            m = re.match(r"(ch\d+|about-this-book)(?:-(.+))?$", target)
+            if m and m.group(1) in headings:
+                other = {s for _, _, s in headings[m.group(1)][2]}
+                if m.group(2) is None or m.group(2) in other:
+                    continue
+            problems.append(f"{name}: link to #{target} leads to no heading")
+
+        block = QUESTIONS.search(text)
+        if block:
+            asked = set(SECTION_LINK.findall(block.group(1)))
+            for level, title, slug in heads:
+                if level == 2 and slug not in asked:
+                    problems.append(f"{name}: no question points to the section \"{title}\"")
+    return problems
+
 
 
 TABLE_START = "| Chapter | Refers to |"
@@ -82,6 +123,8 @@ def main() -> int:
                 found, key=lambda s: (s.split()[0], int(s.split()[1]) if s.split()[1].isdigit() else s)
             )
 
+    problems += section_link_problems()
+
     if "--map" in sys.argv:
         width = max(len(k) for k in ref_map) if ref_map else 0
         for name, refs in ref_map.items():
@@ -98,7 +141,7 @@ def main() -> int:
         for p in problems:
             print("  " + p, file=sys.stderr)
         return 1
-    print("all cross-references resolve")
+    print("all chapter, appendix and section references resolve")
     return 0
 
 

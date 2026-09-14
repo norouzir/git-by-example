@@ -194,6 +194,8 @@ Defined in Chapter 1, so changing one means editing that chapter too.
 |---|---|
 | Transcripts | fenced ` ```console `, commands prefixed `$ `, output unprefixed |
 | Coloured transcripts | fenced ` ```ansi `, escapes written as the visible characters `\e[...m`; generate with `sb_run_ansi`. Only where the option shown is about colour; everything else stays plain |
+| Links to a section | `[text](#slug)` within the chapter, `[text](#ch5-slug)` to another chapter's section, `#ch5` to a chapter. The slug is the heading in lowercase with every run of other characters turned into `-`; `tools/anchors.py` defines it |
+| Question list | `<details class="questions" markdown="1">` right after "What it is", bold section links as group headings, one linked question per bullet. The build adds the count to the summary line |
 | Placeholders | `<angle-brackets>` |
 | Trimmed output | `...` on its own line |
 | Call-outs | blockquote opening with **Since Git X.Y.**, **Windows.**, **Careful.**, or **Worth knowing.** |
@@ -279,6 +281,11 @@ environment so the printed command stays what a reader types. `TZ` is pinned to
 UTC because `diff -u` and `--date=local` print local time. `sb_touch` sets file
 modification times to the sandbox clock for tools that print them.
 
+**Backslashes in the build's CSS.** The stylesheet in `tools/build_html.py` is an
+ordinary Python string, so a CSS escape like `B8` is read by Python as an
+octal escape and reaches the page as a control character. Write the character
+itself (`▸`) instead of its CSS escape.
+
 **Quoting through `sb_run`.** `sb_run` joins its arguments and evals them, so
 inner quotes are lost: `sb_run git branch 'bad name'` runs
 `git branch bad name`, which is a different command with a different error.
@@ -296,7 +303,8 @@ tools/build_html.py      Markdown to one self-contained HTML file
 tools/build_pdf.ps1      that HTML to PDF via headless Edge
 tools/verify_transcripts.py  checks transcripts against a fresh run
 tools/audit_examples.py  checks every table option is shown, pointed, or excused
-tools/check_refs.py      checks every chapter reference resolves
+tools/check_refs.py      checks every chapter, appendix and section link, and question coverage
+tools/anchors.py         the one definition of section ids, shared by the build and the checker
 build/                   generated, not tracked
 OUTLINE.md               approved structure, stable chapter numbers
 DECISIONS.md             why the book is the way it is

@@ -58,10 +58,15 @@ $ git commit -m "Add the parser"
 |---|---|
 | `$` at the start of a line | A command you type. The `$` is not part of it. |
 | Lines with no `$` | Output from Git. You do not type these. |
-| `#` at the end of a line | A comment added for the book, not part of the command. |
+| `# note` on a line of its own | A note added for the book, not output. A few Git commands also print lines starting with `#`; the text around them says so. |
 | `<angle-brackets>` | A placeholder. Substitute your own value and remove the brackets. |
 | `[...]` in a synopsis | An optional part. |
 | `...` on its own line | Output was trimmed because the omitted part is not relevant. |
+
+A few transcripts are in colour. Each shows an option whose whole purpose is
+colour, such as highlighting code that moved, and the colours are the ones a
+terminal shows. Everything else is plain, because on a phone plain text is easier
+to read. Chapter 2 explains how the coloured examples were captured.
 
 When the prompt shows a directory or branch, it means the working directory or
 current branch matters to what follows:
@@ -124,13 +129,36 @@ unmarked has worked for a decade and will keep working.
 Parts 1 and 2 are the only ones meant to be read in order. Everything after is
 a reference you enter from wherever your question is.
 
-## Four ways to find an answer
+## How a chapter is organised
+
+A chapter about a single command is laid out the same way every time, so you
+always know where to look:
+
+| Section | What you find there |
+|---|---|
+| What it is | What the command does, in a few short paragraphs |
+| Questions this chapter answers | A collapsed list of questions; tap it to open, and tap a question to jump to its answer |
+| Synopsis | Every form of the command, and what each form compares or does |
+| Options at a glance | Every option on one line, with a link to the section that shows it |
+| The sections after that | Reading the output first, then the options and the unusual cases, each with examples |
+| Comparisons | How the command differs from others that look similar, including ones outside Git |
+| The settings | The configuration that changes the command's defaults |
+
+The question list is the quickest way into a long chapter. The questions are
+written the way you would ask them while stuck, not in the book's own terms, so
+you can recognise yours without knowing the answer first.
+
+## Five ways to find an answer
 
 Since you cannot search the web, the book has to be searchable itself. There
-are four doors in:
+are five doors in:
 
 **You know the command.** Appendix A lists every command and every option used
 in the book, alphabetically, with the page that explains it.
+
+**You have a question about a command you know.** Open that command's chapter
+and tap "Questions this chapter answers", just below the explanation at the
+start. Each question links to its answer.
 
 **You have an error message.** Appendix B lists error messages verbatim,
 alphabetically, each with its cause and its fix. Look up the exact text Git
@@ -138,7 +166,8 @@ printed at you.
 
 **You know what you want to do but not what it is called.** Appendix G has
 decision tables. "I committed to the wrong branch" is a row, and the row tells
-you which command you need.
+you which command you need. It also gathers the question lists of every chapter
+into one place, for when you do not know which chapter to open.
 
 **You know the concept.** Appendix E is a glossary, and every term defined in
 it appears in bold the first time the book uses it.
