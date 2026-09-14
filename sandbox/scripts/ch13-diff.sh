@@ -51,6 +51,7 @@
 #   What do -S and -G find, and when do they give different answers?          8, N7
 #   What do --pickaxe-regex and --pickaxe-all change?                         N7
 #   Do they work with git diff as well as git log?                            N7
+#   Does -S or -G find a line that only moved, in one file or to another?    N7
 # Whitespace
 #   What exactly separates -b, -w and --ignore-space-at-eol?                  N8
 #   Does ignoring whitespace in the diff change what gets committed?          N8
@@ -430,6 +431,24 @@ sb_run "git log -S frotz --pickaxe-all --oneline --name-only -1"
 sb_say "    -S also filters git diff"
 sb_run "git diff HEAD~1 HEAD --name-only"
 sb_run "git diff HEAD~1 HEAD --name-only -S frotz"
+
+sb_say "    a line that only moves, within one file and between files"
+sb_fresh "$SANDBOX_ROOT/pickaxe-moved" >/dev/null
+sb_write lib.c "int main() {" "    frotz(nitfol, one);" "}" "" "void other() {" "}"
+sb_commit "Add the call"
+sb_write lib.c "int main() {" "}" "" "void other() {" "    frotz(nitfol, one);" "}"
+sb_commit "Move the call into other"
+sb_run "git log --oneline"
+sb_run "git log -S 'frotz(nitfol' --oneline"
+sb_run "git log -G 'frotz\\(nitfol' --oneline"
+sb_fresh "$SANDBOX_ROOT/pickaxe-moved-files" >/dev/null
+sb_write a.c "int main() {" "    frotz(nitfol, one);" "}"
+sb_write b.c "void other() {" "}"
+sb_commit "Add the call"
+sb_write a.c "int main() {" "}"
+sb_write b.c "void other() {" "    frotz(nitfol, one);" "}"
+sb_commit "Move the call to another file"
+sb_run "git log -S 'frotz(nitfol' --oneline --name-status"
 
 # =============================================================================
 sb_say "--- N8. whitespace ---"

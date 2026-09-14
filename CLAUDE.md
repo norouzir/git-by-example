@@ -78,10 +78,19 @@ command follows this order:
    for `git apply`, and so on.
 6. **Reference tables**, such as settings.
 
-The same rule applies inside every section: a section that introduces an option
-or a concept opens with one or two sentences saying what it is and how it is
-written, and only then shows the example. Never open a section with a transcript
-of something not yet named.
+This order is about the chapter as a whole. Inside a section the three-layer
+rule from the top of this contract applies unchanged: a section may open with
+its example, and a sentence goes before the example only when the heading and
+the example together cannot be understood without it. That is the case when the
+example uses syntax not yet introduced (`git -c` before Chapter 62), or depends
+on a setup the transcript does not show and the reader would misread without
+knowing. A sentence that restates the heading, or describes what the transcript
+already shows, does not belong before or after it.
+
+An earlier version of this contract said every section must open with prose.
+The author pointed out that contradicts the three-layer rule, and 33 lead
+sentences added to Chapter 13 under it were removed again. Do not reintroduce
+it.
 
 Never refer forward to explain something. A pointer to where a topic is covered
 in full is fine; relying on a later section for the reader to understand this
@@ -106,7 +115,12 @@ The tools do not see ambiguity. Before a chapter is delivered, check by hand:
 - Every table header says what its first column is.
 - Every term is defined before the first place it is used, including in the
   options table near the top.
-- Every section opens by saying what it is about.
+- Every example is understandable from its heading and itself, or has the one
+  sentence that makes it so, and no sentence merely restates either.
+- Nothing correct was removed. Compare against the previous version of the
+  chapter sentence by sentence before delivering a rework; a reworded sentence
+  must keep its meaning, and a removed one needs a reason (it was wrong, or
+  untested and could not be verified).
 - Every claim of equivalence ("the same as", "identical to") is demonstrated,
   or attributed in the text to Git's documentation where it says so.
 - The question list in the generator matches the chapter, in the chapter's order.

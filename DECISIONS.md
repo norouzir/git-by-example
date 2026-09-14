@@ -295,8 +295,26 @@ reader, and the section leaned on material taught later in the same chapter.
 
 **The order is now fixed** for every chapter about a command: what it is, its
 synopsis, its options at a glance, then the details in teaching order, then
-comparisons with similar commands, then reference tables. Within a section, the
-thing being shown is named before it is shown. CLAUDE.md spells this out.
+comparisons with similar commands, then reference tables. CLAUDE.md spells this out.
+
+**Corrected the same day.** A first version of this rule also required every
+section to open with prose before its example, and 33 lead sentences were added
+to Chapter 13 under it. The author pointed out that this contradicts the
+three-layer rule: an example that is clear on its own needs no sentence in front
+of it. The author's complaint had been about the order of the chapter, not of
+each section. The lead sentences were removed again, apart from three that carry
+something the example cannot show: why a diff chapter switches to `git log`,
+what `git -c` means before Chapter 62 introduces it, and one fact about comparing
+commits, which moved after its example.
+
+**Nothing correct is removed in a rework.** Checking the reordered chapter
+against its earlier versions, sentence by sentence, found content lost along
+the way: the phrase describing `git range-diff` as a diff of diffs, the note
+that `-G` also finds commits that only moved a line, and three smaller
+sentences. They were restored, the `-G` claim after testing it, which also
+showed that `-S` does find a line moved to a different file. Sentences removed
+on purpose were ones that were wrong, such as the claim that the `--stat`
+numbers are proportional, or that could not be verified.
 
 **Tables of values show complete syntax.** The author also found a table of
 `--color-moved` modes headed "Mode", with no indication of what a mode is or
