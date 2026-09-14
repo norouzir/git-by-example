@@ -46,6 +46,7 @@ tools/
   compare_versions.py     lists sentences, rows and headings a chapter lost since a commit
   verify_transcripts.py   checks every transcript against a fresh run of its script
   audit_examples.py       checks every option in a table has an example
+  first_version.py        finds the release that introduced an option, for version badges
 build/                    generated output, not tracked
 ```
 

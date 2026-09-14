@@ -476,3 +476,40 @@ question list and section references.
 
 **Rejected.** Printing every section in the contents page, which at the size of
 the finished book would run to dozens of pages and duplicate the bookmarks.
+
+---
+
+## 2026-09-14. The Part 2 rework runs without the first two checkpoints
+
+After approving Chapter 13's question list, the author asked for the other seven
+Part 2 chapters to be reworked in one go, with nothing sent to them along the
+way. That waives, for this round only, the question lists sent first and the
+first chapter sent early. Everything else stands: each chapter is committed on
+its own, after every check passes and every removal is accounted for, and the
+checkpoints apply again from Part 3.
+
+The risk this accepts is the one the checkpoints guard against: a mistake no
+tool sees, repeated in every chapter before the author reads one. Chapter 13
+having been corrected and approved makes that less likely, which is why the
+author judged it acceptable here.
+
+---
+
+## 2026-09-14. Version badges confirmed from Git's source when release notes are silent
+
+Writing badges for Chapter 9 showed that the release notes do not mention every
+option. `git clone --revision`, `git clone --tags` and `git init
+--initial-branch` appear in none of them, so "confirm the release from the
+release notes" had no answer to give, and guessing is what the rule forbids.
+
+`tools/first_version.py` reads a file of Git's source as it was at each release
+tag and binary-searches for the first release that contains a pattern. For a
+badge it searches the command's C source for the option's exact definition,
+because documentation can lag behind: `git clone --tags` works from 2.49 but was
+documented only in 2.52. It needs the network, which is acceptable because it is
+used for writing the book, never by its reader.
+
+**Rejected.** Badging from the documentation's history alone, which gives the
+wrong release when the documentation lagged; and a loose pattern such as the
+bare option name, which matched an unrelated string and answered 2.11 for an
+option added in 2.49.

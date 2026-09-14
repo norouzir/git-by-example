@@ -146,12 +146,12 @@ fall short of the current standard; see Outstanding below.
 
 Work that must be finished before the first release, most urgent first.
 
-- **Part 2, rework to the Chapter 13 standard.** Chapters 9, 10, 11, 12, 14, 15
+- **Part 2, rework to the Chapter 13 standard.** Chapters 10, 11, 12, 14, 15
   and 16 were written before the standard in CLAUDE.md existed. Chapter 13 is
-  the calibration and is waiting for the author's approval; the other seven
-  follow it, through the checkpoints in CLAUDE.md, starting with their question
-  lists in one message. Each needs: the chapter order, a question list, every
-  table option demonstrated or excused, comparisons with similar commands, and
+  the approved calibration and Chapter 9 has been reworked to it; the rest
+  follow, one commit each, without the first two checkpoints (see DECISIONS.md,
+  2026-09-14). Each needs: the chapter order, a question list, every table
+  option demonstrated or excused, comparisons with similar commands, and
   transcripts that match a fresh run.
 - **Tables of bare values** still in Chapter 10 (`--untracked-files` values) and
   Chapter 12 (`--cleanup` modes). Fixed during the rework above.
@@ -177,7 +177,7 @@ editing every chapter in the left column.
 
 | Chapter | Refers to |
 |---|---|
-| 1 | Appendix A, Appendix B, Appendix E, Appendix G, Appendix H |
+| 1 | Appendix A, Appendix B, Appendix E, Appendix G, Appendix H, Chapter 2 |
 | 2 | Chapter 3, Chapter 12, Chapter 17, Chapter 40, Chapter 61, Chapter 62 |
 | 3 | Chapter 13, Chapter 17, Chapter 23, Chapter 26, Chapter 40, Chapter 41, Chapter 42, Chapter 43, Chapter 56, Chapter 66 |
 | 4 | Chapter 13, Chapter 15, Chapter 29, Chapter 33, Chapter 37, Chapter 57, Chapter 71, Chapter 72, Chapter 75 |
@@ -185,7 +185,7 @@ editing every chapter in the left column.
 | 6 | Chapter 4, Chapter 12, Chapter 18, Chapter 27, Chapter 28, Chapter 29, Chapter 33, Chapter 37, Chapter 41, Chapter 47, Chapter 77, Chapter 79 |
 | 7 | Chapter 18, Chapter 22, Chapter 30, Chapter 36, Chapter 70 |
 | 8 | Chapter 16, Chapter 37, Chapter 60 |
-| 9 | Chapter 3, Chapter 7, Chapter 15, Chapter 16, Chapter 40, Chapter 41, Chapter 44, Chapter 46, Chapter 57, Chapter 60, Chapter 61, Chapter 62, Chapter 67, Chapter 71, Chapter 81 |
+| 9 | Chapter 3, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 14, Chapter 15, Chapter 16, Chapter 23, Chapter 40, Chapter 41, Chapter 43, Chapter 44, Chapter 46, Chapter 50, Chapter 56, Chapter 57, Chapter 60, Chapter 61, Chapter 62, Chapter 66, Chapter 67, Chapter 71, Chapter 72, Chapter 81 |
 | 10 | Chapter 5, Chapter 7, Chapter 16, Chapter 18, Chapter 26, Chapter 41, Chapter 45, Chapter 57, Chapter 80 |
 | 11 | Chapter 8, Chapter 14, Chapter 60, Chapter 65, Chapter 66 |
 | 12 | Chapter 2, Chapter 3, Chapter 4, Chapter 5, Chapter 6, Chapter 28, Chapter 35, Chapter 36, Chapter 43, Chapter 53, Chapter 67, Chapter 68 |

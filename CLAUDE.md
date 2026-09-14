@@ -41,7 +41,17 @@ bash sandbox/scripts/selftest-reproducibility.sh
 
 **Badge anything newer than Git 2.23.** A reader on an older Git gets an
 `unknown option` error that says nothing about versions. Confirm the release
-from the local release notes before writing the badge, never from memory.
+from the local release notes before writing the badge, never from memory. The
+release notes do not mention every option; when they are silent, use
+`tools/first_version.py` on the command's C source:
+
+```sh
+python tools/first_version.py builtin/clone.c 'OPT_STRING\(0, "revision"'
+```
+
+Match the option's definition exactly. A loose pattern matches unrelated
+strings and gives a release that is far too early, and the documentation can
+lag behind the code by several releases.
 
 ## Style contract
 
@@ -332,9 +342,15 @@ UTC because `diff -u` and `--date=local` print local time. `sb_touch` sets file
 modification times to the sandbox clock for tools that print them.
 
 **Backslashes in the build's CSS.** The stylesheet in `tools/build_html.py` is an
-ordinary Python string, so a CSS escape like `B8` is read by Python as an
+ordinary Python string, so a CSS escape like `\25B8` is read by Python as an
 octal escape and reaches the page as a control character. Write the character
 itself (`▸`) instead of its CSS escape.
+
+The same thing happened to this file: the sentence above held a control
+character where `\25B8` belongs from the day it was written, because text containing a
+backslash was passed through a shell command into Python. A doubled backslash
+did not survive that route either. Edit prose with the file tools, and when a
+script must write a backslash, build it from its byte value (`bytes([92])`).
 
 **Heading levels in the built page.** In a chapter's Markdown, `#` is the chapter
 title and `##` a section. `tools/build_html.py` moves every chapter heading down
@@ -367,6 +383,7 @@ tools/audit_examples.py  checks every table option is shown, pointed, or excused
 tools/check_refs.py      checks every chapter, appendix and section link, and question coverage
 tools/anchors.py         the one definition of section ids, shared by the build and the checker
 tools/compare_versions.py  lists what a chapter lost since an earlier version
+tools/first_version.py   finds the first Git release whose source matches a pattern, for badges
 build/                   generated, not tracked
 OUTLINE.md               approved structure, stable chapter numbers
 DECISIONS.md             why the book is the way it is
