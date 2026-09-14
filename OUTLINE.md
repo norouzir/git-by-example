@@ -146,18 +146,18 @@ fall short of the current standard; see Outstanding below.
 
 Work that must be finished before the first release, most urgent first.
 
-- **Part 2, rework to the Chapter 13 standard.** Chapters 10, 11, 12, 14, 15
-  and 16 were written before the standard in CLAUDE.md existed. Chapter 13 is
-  the approved calibration and Chapter 9 has been reworked to it; the rest
-  follow, one commit each, without the first two checkpoints (see DECISIONS.md,
-  2026-09-14). Each needs: the chapter order, a question list, every table
-  option demonstrated or excused, comparisons with similar commands, and
-  transcripts that match a fresh run.
-- **Tables of bare values** still in Chapter 10 (`--untracked-files` values) and
-  Chapter 12 (`--cleanup` modes). Fixed during the rework above.
+- **Part 2, rework to the Chapter 13 standard.** Chapters 12, 14, 15 and 16
+  were written before the standard in CLAUDE.md existed. Chapter 13 is the
+  approved calibration, and Chapters 9, 10 and 11 have been reworked to it; the
+  rest follow, one commit each, without the first two checkpoints (see
+  DECISIONS.md, 2026-09-14). Each needs: the chapter order, a question list,
+  every table option demonstrated or excused, comparisons with similar commands,
+  and transcripts that match a fresh run.
+- **A table of bare values** still in Chapter 12 (`--cleanup` modes). Fixed
+  during the rework above.
 - **Transcripts that do not match a fresh run**, found by
-  `tools/verify_transcripts.py`: Chapters 7 and 8 have two each. Chapters 9 to 16
-  are fixed during the rework.
+  `tools/verify_transcripts.py`: Chapters 7 and 8 have two each. Chapters 12 and
+  14 to 16 are fixed during the rework.
 - **Chapters 1 to 3 have no generator script**, so their transcripts cannot be
   verified at all. Every chapter must pass every check before release.
 - **Parts 0 and 1 against the new standard.** Not yet reviewed for the chapter
@@ -187,7 +187,7 @@ editing every chapter in the left column.
 | 8 | Chapter 16, Chapter 37, Chapter 60 |
 | 9 | Chapter 3, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 14, Chapter 15, Chapter 16, Chapter 23, Chapter 40, Chapter 41, Chapter 43, Chapter 44, Chapter 46, Chapter 50, Chapter 56, Chapter 57, Chapter 60, Chapter 61, Chapter 62, Chapter 66, Chapter 67, Chapter 71, Chapter 72, Chapter 77, Chapter 81 |
 | 10 | Chapter 5, Chapter 7, Chapter 8, Chapter 9, Chapter 11, Chapter 12, Chapter 13, Chapter 14, Chapter 16, Chapter 17, Chapter 18, Chapter 20, Chapter 23, Chapter 26, Chapter 41, Chapter 42, Chapter 43, Chapter 45, Chapter 55, Chapter 57, Chapter 60, Chapter 62, Chapter 69, Chapter 75, Chapter 80 |
-| 11 | Chapter 8, Chapter 14, Chapter 60, Chapter 65, Chapter 66 |
+| 11 | Chapter 5, Chapter 8, Chapter 9, Chapter 10, Chapter 12, Chapter 13, Chapter 14, Chapter 15, Chapter 16, Chapter 18, Chapter 30, Chapter 55, Chapter 57, Chapter 60, Chapter 62, Chapter 63, Chapter 65, Chapter 66, Chapter 75 |
 | 12 | Chapter 2, Chapter 3, Chapter 4, Chapter 5, Chapter 6, Chapter 28, Chapter 35, Chapter 36, Chapter 43, Chapter 53, Chapter 67, Chapter 68 |
 | 13 | Chapter 4, Chapter 5, Chapter 10, Chapter 11, Chapter 17, Chapter 18, Chapter 21, Chapter 26, Chapter 30, Chapter 35, Chapter 57, Chapter 61, Chapter 62, Chapter 63, Chapter 65, Chapter 66, Chapter 67, Chapter 75, Chapter 76 |
 | 14 | Chapter 11, Chapter 26, Chapter 78 |
