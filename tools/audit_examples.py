@@ -71,8 +71,9 @@ def command_lines(text: str) -> str:
 
 
 def is_used(option: str, commands: str) -> bool:
-    # an option ends at whitespace, a value, a quote, or a shell operator
-    end = r"\s='\";|&)<>"
+    # an option ends at whitespace, a value, a quote, a shell operator, or a
+    # colon, which separates a value from its argument in `--fixup=amend:<commit>`
+    end = r"\s='\";|&)<>:"
     if option.startswith("--"):
         tail = rf"(?=$|[{end}])"
         return re.search(r"(?<![\w-])" + re.escape(option) + tail, commands, re.M) is not None

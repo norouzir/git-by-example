@@ -368,6 +368,33 @@ inner quotes are lost: `sb_run git branch 'bad name'` runs
 `git branch bad name`, which is a different command with a different error.
 Pass the whole thing as one string instead: `sb_run "git branch 'bad name'"`.
 
+**`cd` through `sb_run`.** `sb_run` runs the command in a pipeline, which is a
+subshell, so `sb_run "cd .."` prints the command and changes nothing. When a
+transcript needs to show a `cd`, print it with `sb_run` and then run a plain
+`cd` on the next line.
+
+**A transcript block must be one unbroken run of the generator's output.** The
+verifier looks for each block's lines in order, with nothing in between except
+where the block says `...`. A block that leaves out a command the generator ran
+in the middle, even a quiet `git reset -q`, does not match. Either show the
+command, or reorder the generator so it runs in the order the chapter teaches.
+
+**Progress lines.** Git ends progress lines such as `Rebasing (1/1)` with a
+carriage return, not a newline. The verifier splits on both, so the block must
+show the progress text and the next line as two lines, and the chapter should
+say that a terminal draws one over the other.
+
+**Two slashes in an argument.** Git Bash on Windows rewrites an argument that
+starts with `//` into `/`, before Git sees it, as part of converting paths. A
+value such as `core.commentString=//` arrives as `/`. Use other characters in
+examples.
+
+**Commands that reach outside the sandbox.** The sandbox isolates Git's
+configuration, not the rest of the machine. `git commit -S` started GPG, which
+created `~/.gnupg` in the real home directory of the machine running the script.
+Do not run signing, credential or network commands in generator scripts; point
+to the chapter that covers them instead.
+
 ## Layout
 
 ```
