@@ -18,7 +18,7 @@ hash is real and reproducible.
 | Format | File | Best for |
 |---|---|---|
 | HTML, single file | `build/git-by-example.html` | Reading on a phone with no internet |
-| PDF | `build/git-by-example.pdf` | Printing and archiving |
+| PDF | `build/git-by-example.pdf` | Printing and archiving. Every section is in the reader's bookmarks panel |
 | Markdown source | `book/` | Editing, searching, diffing |
 
 The HTML build is self-contained. No fonts, scripts, or stylesheets are loaded

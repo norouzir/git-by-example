@@ -203,14 +203,25 @@ def render_ansi(body: str) -> str:
     )
 
 
-SECTION_RE = re.compile(r"<h([234])>(.*?)</h\1>", re.S)
+# Inside a chapter, Markdown "#" is the chapter title and "##" a section. In the
+# built page every chapter heading moves down one level, so that a part is h1,
+# a chapter h2, a section h3 and a subsection h4. PDF bookmarks are built from
+# heading levels, and this is what nests chapters under their part.
+HEADING_TAG_RE = re.compile(r"<(/?)h([1-5])(?=[\s>])")
+SECTION_RE = re.compile(r"<h([345])>(.*?)</h\1>", re.S)
 LOCAL_LINK_RE = re.compile(r'href="#([^"]+)"')
 QUESTIONS_RE = re.compile(r'(<details class="questions">\s*<summary>)(.*?)(</summary>)(.*?</details>)', re.S)
 
 
-def anchor_sections(body: str, prefix: str) -> tuple[str, set[str]]:
-    """Give every h2-h4 a book-wide id and point the chapter's own links at them."""
-    titles = [m.group(2) for m in SECTION_RE.finditer(body)]
+def shift_headings(body: str) -> str:
+    return HEADING_TAG_RE.sub(lambda m: f"<{m.group(1)}h{int(m.group(2)) + 1}", body)
+
+
+def anchor_sections(body: str, prefix: str) -> tuple[str, list[tuple[int, str, str]]]:
+    """Give every section heading a book-wide id and point the chapter's own links
+    at them. Returns the body and (level, id, title html) for each section."""
+    matches = list(SECTION_RE.finditer(body))
+    titles = [m.group(2) for m in matches]
     ids = anchors.unique([anchors.slug(t) for t in titles])
     it = iter(ids)
     body = SECTION_RE.sub(lambda m: f'<h{m.group(1)} id="{prefix}-{next(it)}">{m.group(2)}</h{m.group(1)}>', body)
@@ -224,7 +235,24 @@ def anchor_sections(body: str, prefix: str) -> tuple[str, set[str]]:
             return m.group(0)
         sys.exit(f"{prefix}: link to #{target} matches no heading in this chapter")
 
-    return LOCAL_LINK_RE.sub(relink, body), {f"{prefix}-{i}" for i in ids}
+    sections = [(int(m.group(1)), f"{prefix}-{i}", m.group(2)) for m, i in zip(matches, ids)]
+    return LOCAL_LINK_RE.sub(relink, body), sections
+
+
+def toc_entry(chapter_id: str, label: str, sections: list[tuple[int, str, str]]) -> str:
+    """A chapter in the contents: its link, and a collapsed list of its sections."""
+    link = f'<a href="#{chapter_id}">{html.escape(label)}</a>'
+    if not sections:
+        return f'<li class="toc-chapter">{link}</li>'
+    items = "".join(
+        f'<li class="toc-level-{level}"><a href="#{sid}">{title}</a></li>'
+        for level, sid, title in sections if level in (3, 4)
+    )
+    return (
+        f'<li class="toc-chapter">{link}'
+        f'<details class="toc-sections"><summary aria-label="Sections of {html.escape(label)}"></summary>'
+        f'<ul>{items}</ul></details></li>'
+    )
 
 
 def count_questions(body: str) -> str:
@@ -263,15 +291,16 @@ def build() -> None:
             # so a link to Chapter 13 keeps working when a page is added before it.
             chapter_id = anchors.chapter_prefix(path)
             md.reset()
-            body = render_ansi(wrap_tables(md.convert(path.read_text(encoding="utf-8"))))
-            body, section_ids = anchor_sections(body, chapter_id)
+            body = render_ansi(wrap_tables(shift_headings(md.convert(path.read_text(encoding="utf-8")))))
+            body, sections = anchor_sections(body, chapter_id)
+            section_ids = {sid for _, sid, _ in sections}
             body = count_questions(body)
             # The chapter's own H1 becomes the anchor target.
-            body = body.replace("<h1>", f'<h1 id="{chapter_id}">', 1)
+            body = body.replace("<h2>", f'<h2 id="{chapter_id}">', 1)
             all_ids |= section_ids | {chapter_id}
             cross_links += [(chapter_id, t) for t in LOCAL_LINK_RE.findall(body)]
             chapters.append(f'<section class="chapter">{body}</section>')
-            toc.append(f'<li><a href="#{chapter_id}">{html.escape(label)}</a></li>')
+            toc.append(toc_entry(chapter_id, label, sections))
 
         toc.append("</ul></li>")
 
@@ -364,6 +393,22 @@ nav.toc li { margin: .3rem 0; }
 nav.toc .toc-part > a { font-weight: 700; }
 nav.toc a { color: var(--fg); text-decoration: none; border-bottom: 1px solid transparent; }
 nav.toc a:hover { border-bottom-color: var(--accent); }
+nav.toc li.toc-chapter { position: relative; padding-right: 2.8rem; }
+nav.toc details.toc-sections > summary {
+  position: absolute; top: -.45rem; right: 0; width: 2.6rem; height: 2.4rem;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; list-style: none; color: var(--accent); border-radius: 4px;
+}
+nav.toc details.toc-sections > summary::-webkit-details-marker { display: none; }
+nav.toc details.toc-sections > summary::before { content: "▸"; font-size: 1.4rem; }
+nav.toc details.toc-sections[open] > summary::before { content: "▾"; }
+nav.toc details.toc-sections > ul {
+  margin: .35rem 0 .7rem; padding-left: .8rem; border-left: 1px solid var(--rule);
+  font-family: system-ui, sans-serif; font-size: .86rem;
+}
+nav.toc details.toc-sections li { margin: .25rem 0; }
+nav.toc li.toc-level-4 { padding-left: 1rem; font-size: .82rem; }
+nav.toc li.toc-level-4 a { color: var(--muted); }
 main { padding-bottom: 6rem; }
 h1.part-title {
   margin: 5rem 0 0; padding-top: 2.5rem; border-top: 3px double var(--rule);
@@ -371,11 +416,11 @@ h1.part-title {
   color: var(--muted); font-family: system-ui, sans-serif; font-weight: 600;
 }
 .chapter { margin-top: 3rem; }
-.chapter h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 1.5rem;
+.chapter h2 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 1.5rem;
   letter-spacing: -.015em; }
-.chapter h2 { font-size: 1.2rem; margin: 2.5rem 0 .8rem;
+.chapter h3 { font-size: 1.2rem; margin: 2.5rem 0 .8rem;
   font-family: system-ui, sans-serif; }
-.chapter h3 { font-size: 1.02rem; margin: 1.8rem 0 .6rem;
+.chapter h4 { font-size: 1.02rem; margin: 1.8rem 0 .6rem;
   font-family: system-ui, sans-serif; }
 p { margin: 0 0 1.1rem; }
 a { color: var(--accent); }
@@ -455,7 +500,10 @@ details.questions a { text-decoration: none; }
 details.questions a:hover { text-decoration: underline; }
 @media print {
   body { background: #fff; color: #000; font-size: 10.5pt; }
-  nav.toc, #top-link { display: none; }
+  #top-link { display: none; }
+  nav.toc { page-break-after: always; }
+  nav.toc a { color: #000; }
+  nav.toc details.toc-sections > summary { display: none; }
   footer.book { color: #444; page-break-before: avoid; }
   main { max-width: none; }
   .chapter { page-break-before: always; }
@@ -463,7 +511,7 @@ details.questions a:hover { text-decoration: underline; }
   pre, .ansi span { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   pre { border: 1px solid #ccc; background: #f6f6f6;
     white-space: pre-wrap; word-break: break-word; }
-  h1, h2, h3 { page-break-after: avoid; }
+  h1, h2, h3, h4 { page-break-after: avoid; }
   table, pre, blockquote { page-break-inside: avoid; }
 }
 """
@@ -471,8 +519,10 @@ details.questions a:hover { text-decoration: underline; }
 JS = """
 // Question lists are collapsed on screen and printed open. tools/build_pdf.ps1
 // loads the page with #print-all; beforeprint covers printing from a browser.
+// The section lists in the contents stay closed in print: the PDF carries the
+// same tree as bookmarks.
 function openAllDetails() {
-  document.querySelectorAll('details').forEach(function (d) { d.open = true; });
+  document.querySelectorAll('details.questions').forEach(function (d) { d.open = true; });
 }
 if (location.hash === '#print-all') openAllDetails();
 window.addEventListener('beforeprint', openAllDetails);

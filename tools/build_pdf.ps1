@@ -36,6 +36,8 @@ $browserArgs = @(
     "--disable-gpu"
     "--user-data-dir=$profile"
     "--no-pdf-header-footer"
+    # Bookmarks built from the heading levels: part, chapter, section, subsection.
+    "--generate-pdf-document-outline"
     "--print-to-pdf=$pdf"
     $uri
 )

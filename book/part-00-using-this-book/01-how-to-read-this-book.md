@@ -129,6 +129,12 @@ unmarked has worked for a decade and will keep working.
 Parts 1 and 2 are the only ones meant to be read in order. Everything after is
 a reference you enter from wherever your question is.
 
+The contents at the start of the book lists every part and chapter. Tap the
+arrow beside a chapter to see its sections and subsections, each one a link;
+tapping the chapter's name still takes you straight to it. In the PDF, the
+contents page lists parts and chapters, and the full tree of sections is in
+your PDF reader's bookmarks panel.
+
 ## How a chapter is organised
 
 A chapter about a single command is laid out the same way every time, so you

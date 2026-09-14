@@ -149,9 +149,10 @@ Work that must be finished before the first release, most urgent first.
 - **Part 2, rework to the Chapter 13 standard.** Chapters 9, 10, 11, 12, 14, 15
   and 16 were written before the standard in CLAUDE.md existed. Chapter 13 is
   the calibration and is waiting for the author's approval; the other seven
-  follow it. Each needs: the chapter order, a question list, every table option
-  demonstrated or excused, comparisons with similar commands, and transcripts
-  that match a fresh run.
+  follow it, through the checkpoints in CLAUDE.md, starting with their question
+  lists in one message. Each needs: the chapter order, a question list, every
+  table option demonstrated or excused, comparisons with similar commands, and
+  transcripts that match a fresh run.
 - **Tables of bare values** still in Chapter 10 (`--untracked-files` values) and
   Chapter 12 (`--cleanup` modes). Fixed during the rework above.
 - **Transcripts that do not match a fresh run**, found by

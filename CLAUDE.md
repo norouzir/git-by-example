@@ -210,7 +210,22 @@ of real output that is permitted.
 
 ## Workflow
 
-Deliver one part at a time and stop for feedback before starting the next.
+The author gives instructions a part at a time ("do Part 7"). A part is several
+hundred pages, far too much to deliver in one uninterrupted run: every mistake a
+tool cannot see would be copied into every chapter before the author saw one.
+So inside each part there are three checkpoints:
+
+1. **Question lists first.** Before writing any chapter of the part, send the
+   question lists for all of its chapters in one message, and wait for the
+   author's answer. Scope and structure are cheapest to correct here.
+2. **Chapter by chapter.** Write, run every check, and commit each chapter on
+   its own.
+3. **The first chapter goes to the author as soon as it is done**, and work
+   continues without waiting. If the author finds a systematic problem, fix it
+   in that chapter before it spreads to the others.
+
+When the part is finished, deliver it and stop for feedback before starting the
+next one.
 
 ### Keep the project record current
 
@@ -320,6 +335,17 @@ modification times to the sandbox clock for tools that print them.
 ordinary Python string, so a CSS escape like `B8` is read by Python as an
 octal escape and reaches the page as a control character. Write the character
 itself (`▸`) instead of its CSS escape.
+
+**Heading levels in the built page.** In a chapter's Markdown, `#` is the chapter
+title and `##` a section. `tools/build_html.py` moves every chapter heading down
+one level, so the page reads part h1, chapter h2, section h3, subsection h4. PDF
+bookmarks are built from those levels, and without the shift chapters would sit
+beside their part instead of inside it. CSS in the build targets the shifted
+levels.
+
+**Checking a browser's version.** `msedge --version` does not print a version on
+Windows; it hangs. Read the file version instead:
+`(Get-Item msedge.exe).VersionInfo.ProductVersion` in PowerShell.
 
 **Quoting through `sb_run`.** `sb_run` joins its arguments and evals them, so
 inner quotes are lost: `sb_run git branch 'bad name'` runs
