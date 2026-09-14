@@ -146,16 +146,16 @@ fall short of the current standard; see Outstanding below.
 
 Work that must be finished before the first release, most urgent first.
 
-- **Part 2, rework to the Chapter 13 standard.** Chapters 15 and 16 were
+- **Part 2, rework to the Chapter 13 standard.** Chapter 16 was
   written before the standard in CLAUDE.md existed. Chapter 13 is the approved
-  calibration, and Chapters 9 to 12 and 14 have been reworked to it; the rest follow,
+  calibration, and Chapters 9 to 12, 14 and 15 have been reworked to it; the last follows,
   one commit each, without the first two checkpoints (see DECISIONS.md,
   2026-09-14). Each needs: the chapter order, a question list, every table
   option demonstrated or excused, comparisons with similar commands, and
   transcripts that match a fresh run.
 - **Transcripts that do not match a fresh run**, found by
-  `tools/verify_transcripts.py`: Chapters 7 and 8 have two each. Chapters 15 and
-  16 are fixed during the rework.
+  `tools/verify_transcripts.py`: Chapters 7 and 8 have two each. Chapter
+  16 is fixed during the rework.
 - **Chapters 1 to 3 have no generator script**, so their transcripts cannot be
   verified at all. Every chapter must pass every check before release.
 - **Parts 0 and 1 against the new standard.** Not yet reviewed for the chapter
@@ -189,7 +189,7 @@ editing every chapter in the left column.
 | 12 | Chapter 2, Chapter 3, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 10, Chapter 11, Chapter 17, Chapter 18, Chapter 26, Chapter 28, Chapter 30, Chapter 35, Chapter 36, Chapter 43, Chapter 53, Chapter 55, Chapter 61, Chapter 62, Chapter 67, Chapter 68, Chapter 75 |
 | 13 | Chapter 4, Chapter 5, Chapter 10, Chapter 11, Chapter 17, Chapter 18, Chapter 21, Chapter 26, Chapter 30, Chapter 35, Chapter 57, Chapter 61, Chapter 62, Chapter 63, Chapter 65, Chapter 66, Chapter 67, Chapter 75, Chapter 76 |
 | 14 | Chapter 10, Chapter 11, Chapter 17, Chapter 18, Chapter 26, Chapter 30, Chapter 31, Chapter 33, Chapter 57, Chapter 60, Chapter 73, Chapter 76, Chapter 78 |
-| 15 | Chapter 4, Chapter 8, Chapter 13, Chapter 14, Chapter 60 |
+| 15 | Chapter 4, Chapter 5, Chapter 8, Chapter 11, Chapter 13, Chapter 14, Chapter 17, Chapter 30, Chapter 37, Chapter 57, Chapter 60, Chapter 75 |
 | 16 | Chapter 4, Chapter 8, Chapter 11, Chapter 37 |
 
 Do not maintain that table by hand. Regenerate it, and check that nothing
