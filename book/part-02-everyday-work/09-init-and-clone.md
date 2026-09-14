@@ -1503,8 +1503,8 @@ reference copy may or may not exist.
 > If commits are deleted from the source and its objects are cleaned away, the
 > borrowing clone loses objects it needs and becomes corrupt, with no warning
 > when it happens. The cleaning is not something you have to run: ordinary
-> commands such as `git commit` start it automatically now and then (Chapter
-> 77). Only borrow from a repository that you control and that never discards
+> commands such as `git commit` start it automatically now and then
+> (Chapter 77). Only borrow from a repository that you control and that never discards
 > history.
 
 The same documentation adds two details about the borrowing clone itself.

@@ -185,8 +185,8 @@ editing every chapter in the left column.
 | 6 | Chapter 4, Chapter 12, Chapter 18, Chapter 27, Chapter 28, Chapter 29, Chapter 33, Chapter 37, Chapter 41, Chapter 47, Chapter 77, Chapter 79 |
 | 7 | Chapter 18, Chapter 22, Chapter 30, Chapter 36, Chapter 70 |
 | 8 | Chapter 16, Chapter 37, Chapter 60 |
-| 9 | Chapter 3, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 14, Chapter 15, Chapter 16, Chapter 23, Chapter 40, Chapter 41, Chapter 43, Chapter 44, Chapter 46, Chapter 50, Chapter 56, Chapter 57, Chapter 60, Chapter 61, Chapter 62, Chapter 66, Chapter 67, Chapter 71, Chapter 72, Chapter 81 |
-| 10 | Chapter 5, Chapter 7, Chapter 16, Chapter 18, Chapter 26, Chapter 41, Chapter 45, Chapter 57, Chapter 80 |
+| 9 | Chapter 3, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 14, Chapter 15, Chapter 16, Chapter 23, Chapter 40, Chapter 41, Chapter 43, Chapter 44, Chapter 46, Chapter 50, Chapter 56, Chapter 57, Chapter 60, Chapter 61, Chapter 62, Chapter 66, Chapter 67, Chapter 71, Chapter 72, Chapter 77, Chapter 81 |
+| 10 | Chapter 5, Chapter 7, Chapter 8, Chapter 9, Chapter 11, Chapter 12, Chapter 13, Chapter 14, Chapter 16, Chapter 17, Chapter 18, Chapter 20, Chapter 23, Chapter 26, Chapter 41, Chapter 42, Chapter 43, Chapter 45, Chapter 55, Chapter 57, Chapter 60, Chapter 62, Chapter 69, Chapter 75, Chapter 80 |
 | 11 | Chapter 8, Chapter 14, Chapter 60, Chapter 65, Chapter 66 |
 | 12 | Chapter 2, Chapter 3, Chapter 4, Chapter 5, Chapter 6, Chapter 28, Chapter 35, Chapter 36, Chapter 43, Chapter 53, Chapter 67, Chapter 68 |
 | 13 | Chapter 4, Chapter 5, Chapter 10, Chapter 11, Chapter 17, Chapter 18, Chapter 21, Chapter 26, Chapter 30, Chapter 35, Chapter 57, Chapter 61, Chapter 62, Chapter 63, Chapter 65, Chapter 66, Chapter 67, Chapter 75, Chapter 76 |
