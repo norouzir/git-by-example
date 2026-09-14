@@ -395,6 +395,13 @@ created `~/.gnupg` in the real home directory of the machine running the script.
 Do not run signing, credential or network commands in generator scripts; point
 to the chapter that covers them instead.
 
+**Commands whose result depends on the shell.** The sandbox runs bash, so every
+transcript shows bash. Where PowerShell or cmd behave differently, as with an
+unquoted `*` or single quotes, test those shells directly and describe the
+result in a **Windows.** call-out that says it was tested outside the sandbox.
+Never present it as a transcript. The author found this gap in Chapter 11, where
+`git add *` was missing from the ways to stage everything.
+
 ## Layout
 
 ```

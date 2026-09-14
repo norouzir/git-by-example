@@ -513,3 +513,24 @@ used for writing the book, never by its reader.
 wrong release when the documentation lagged; and a loose pattern such as the
 bare option name, which matched an unrelated string and answered 2.11 for an
 option added in 2.49.
+
+---
+
+## 2026-09-15. Shell-dependent commands: bash transcripts, other shells in prose
+
+The author asked why `git add *` was missing from Chapter 11's ways to stage
+everything, then suggested adding the quoted forms too. Testing showed the
+result depends on the shell. In Git Bash the shell expands `*`, so names
+starting with a dot and deletions at the top are left out, and an ignored name
+makes the command fail. In PowerShell and cmd, `*` reaches Git unchanged and
+behaves like `git add .`. Single quotes fail in cmd, while double quotes work
+in all three shells.
+
+**Decided.** Both forms became rows of the table, with columns for names
+starting with a dot and for ignored files, so the difference is visible in the
+table itself, followed by bash transcripts. The PowerShell and cmd results are
+described in a Windows call-out, because the sandbox can only produce bash
+output and a transcript must never be anything but real sandbox output.
+
+**Rejected.** Separate rows for `'*'` and `"*"`, which differ only in cmd, where
+one sentence says so.

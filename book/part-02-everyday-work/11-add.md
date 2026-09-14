@@ -43,10 +43,12 @@ can be undone, and [Undoing an add](#undoing-an-add) shows how.
 - [Can I see what `git add` would do without doing it?](#checking-before-you-commit-to-it)
 - [Can `git add` tell me which files it added?](#checking-before-you-commit-to-it)
 
-**[The four ways to say "everything"](#the-four-ways-to-say-everything)**
+**[The ways to say "everything"](#the-ways-to-say-everything)**
 
-- [What is the difference between `git add -u`, `git add -A` and `git add .`?](#the-four-ways-to-say-everything)
-- [I typed `git add` on its own and nothing happened. Why?](#the-four-ways-to-say-everything)
+- [What is the difference between `git add -u`, `git add -A` and `git add .`?](#the-ways-to-say-everything)
+- [I typed `git add` on its own and nothing happened. Why?](#the-ways-to-say-everything)
+- [Is `git add *` the same as `git add .`?](#a-star-with-and-without-quotes)
+- [Should I write `*`, `'*'` or `"*"`?](#a-star-with-and-without-quotes)
 
 **[Where `.` and `-A` differ](#where-and-a-differ)**
 
@@ -163,8 +165,8 @@ git add [--verbose | -v] [--dry-run | -n] [--force | -f] [--interactive | -i] [-
 |---|---|---|
 | `-n`, `--dry-run` | Show what would be added, change nothing | [Checking before you commit to it](#checking-before-you-commit-to-it) |
 | `-v`, `--verbose` | Print each path as it is added or removed | [Checking before you commit to it](#checking-before-you-commit-to-it) |
-| `-u`, `--update` | Only files already tracked | [The four ways to say "everything"](#the-four-ways-to-say-everything) |
-| `-A`, `--all`, `--no-ignore-removal` | Everything, from the repository root | [The four ways to say "everything"](#the-four-ways-to-say-everything) |
+| `-u`, `--update` | Only files already tracked | [The ways to say "everything"](#the-ways-to-say-everything) |
+| `-A`, `--all`, `--no-ignore-removal` | Everything, from the repository root | [The ways to say "everything"](#the-ways-to-say-everything) |
 | `--no-all`, `--ignore-removal` | Add and modify, but do not record deletions | [A directory](#a-directory) |
 | `--pathspec-from-file=<file>` | Read pathspecs from a file, one per line | [Reading paths from a file](#reading-paths-from-a-file) |
 | `--pathspec-file-nul` | Those pathspecs are NUL-separated | [Reading paths from a file](#reading-paths-from-a-file) |
@@ -308,7 +310,7 @@ add 'dir/z.txt'
 
 The two commands print the same; only the first changed the index.
 
-## The four ways to say "everything"
+## The ways to say "everything"
 
 Starting from a modified file, a deleted file, and two untracked ones:
 
@@ -340,12 +342,14 @@ A  src/two.txt
 $ git reset -q
 ```
 
-| Form | Modified | Deleted | Untracked |
-|---|---|---|---|
-| `git add -u` | yes | yes | **no** |
-| `git add -A` | yes | yes | yes |
-| `git add .` | yes | yes | yes |
-| `git add :/` | yes | yes | yes |
+| Form | Modified | Deleted | Untracked | Names starting with a dot | An ignored file |
+|---|---|---|---|---|---|
+| `git add -u` | yes | yes | **no** | like any other name | skipped silently |
+| `git add -A` | yes | yes | yes | like any other name | skipped silently |
+| `git add .` | yes | yes | yes | like any other name | skipped silently |
+| `git add :/` | yes | yes | yes | like any other name | skipped silently |
+| `git add "*"`, `git add '*'` | yes | yes | yes | like any other name | skipped silently |
+| `git add *` in Git Bash, Linux or macOS | yes | **only inside a directory** | yes | **left out** | **refused, exit 1** |
 
 From the top of the repository, `.` and `-A` are identical, which is why so
 many people believe they are the same command.
@@ -358,6 +362,127 @@ Nothing specified, nothing added.
 hint: Maybe you wanted to say 'git add .'?
 hint: Disable this message with "git config set advice.addEmptyPathspec false"
 ```
+
+### A star, with and without quotes
+
+The last two rows look alike and are not. This repository has one change of
+every kind: `a.txt` and `.gitignore` changed, `b.txt` deleted at the top and
+`src/gone.txt` deleted inside `src`, three new files `c.txt`, `src/new.txt` and
+`.env`, and `debug.log`, which `.gitignore` ignores:
+
+```console
+$ git status --short
+ M .gitignore
+ M a.txt
+ D b.txt
+ D src/gone.txt
+?? .env
+?? c.txt
+?? src/new.txt
+$ echo *
+a.txt c.txt debug.log src
+$ git add *; echo "exit $?"
+The following paths are ignored by one of your .gitignore files:
+debug.log
+hint: Use -f if you really want to add them.
+hint: Disable this message with "git config set advice.addIgnoredFile false"
+exit 1
+$ git status --short
+ M .gitignore
+M  a.txt
+ D b.txt
+A  c.txt
+D  src/gone.txt
+A  src/new.txt
+?? .env
+```
+
+`echo *` shows what the shell does before Git even starts: it replaces `*` with
+the names in the current directory, and Git receives that list instead. Each
+difference in the last row of the table comes from that list:
+
+- Bash leaves out names starting with a dot, so `.gitignore` and `.env` never
+  reached Git.
+- `b.txt` no longer exists, so no name could stand for it, and its deletion
+  stayed unstaged. `src/gone.txt` was staged only because `src` was on the
+  list, and a directory records the deletions inside it
+  ([A directory](#a-directory)).
+- `debug.log` was named explicitly, so Git refused it, added everything else,
+  and exited with 1, as [Ignored files](#ignored-files) shows. A script that
+  stops on errors stops here.
+
+With quotes, the shell passes `*` to Git unchanged, and Git reads it as a
+pathspec that matches every path:
+
+```console
+$ git reset -q
+$ git add "*" && git status --short
+A  .env
+M  .gitignore
+M  a.txt
+D  b.txt
+A  c.txt
+D  src/gone.txt
+A  src/new.txt
+$ git reset -q
+$ git add '*' && git status --short
+A  .env
+M  .gitignore
+M  a.txt
+D  b.txt
+A  c.txt
+D  src/gone.txt
+A  src/new.txt
+$ git reset -q
+$ git add . && git status --short
+A  .env
+M  .gitignore
+M  a.txt
+D  b.txt
+A  c.txt
+D  src/gone.txt
+A  src/new.txt
+$ git reset -q
+```
+
+All three staged the same, and `debug.log` was skipped without a word. A quoted
+star is not a way to reach the whole repository, though. From a subdirectory it
+covers only that directory, exactly as `.` does:
+
+```console
+$ cd src
+$ git add "*" && git status --short
+ M ../.gitignore
+ M ../a.txt
+ D ../b.txt
+D  gone.txt
+A  new.txt
+?? ../.env
+?? ../c.txt
+$ git reset -q
+$ git add . && git status --short
+ M ../.gitignore
+ M ../a.txt
+ D ../b.txt
+D  gone.txt
+A  new.txt
+?? ../.env
+?? ../c.txt
+$ git reset -q
+```
+
+> **Windows.** PowerShell and cmd do not expand `*` themselves, so in them
+> `git add *` reaches Git unchanged and behaves like `git add "*"`. The quotes
+> differ as well: cmd does not treat `'` as a quote, so `git add '*'` passes the
+> quote characters along and fails with
+> `fatal: pathspec ''*'' did not match any files`. `git add "*"` staged the same
+> files in Git Bash, PowerShell and cmd. The sandbox runs only bash, so the two
+> Windows shells were tested with Git 2.55 directly, and are described here
+> rather than shown.
+
+A star is never needed to stage everything: `git add -A` says it in every shell,
+and `git add .` for the current directory. When a pattern is what you want, put
+it in double quotes, which work the same in all three shells.
 
 ## Where `.` and `-A` differ
 

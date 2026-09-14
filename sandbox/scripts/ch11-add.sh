@@ -345,3 +345,37 @@ sb_write first.txt "first"
 sb_run "git add first.txt"
 sb_run "git restore --staged first.txt"
 sb_run "git rm --cached -q first.txt && git status --short"
+
+sb_say "--- M11. a star, with and without quotes ---"
+sb_fresh "$SANDBOX_ROOT/star" >/dev/null
+sb_write .gitignore "*.log"
+sb_write a.txt "a"
+sb_write b.txt "b"
+sb_write src/one.txt "one"
+sb_write src/gone.txt "gone"
+sb_commit "Base"
+sb_write a.txt "a, changed"
+sb_write .gitignore "*.log" "*.tmp"
+rm b.txt src/gone.txt
+sb_write c.txt "new"
+sb_write src/new.txt "new"
+sb_write .env "SECRET=1"
+sb_write debug.log "noise"
+sb_run "git status --short"
+sb_run "echo *"
+sb_run "git add *; echo \"exit \$?\""
+sb_run "git status --short"
+sb_run "git reset -q"
+sb_run 'git add "*" && git status --short'
+sb_run "git reset -q"
+sb_run "git add '*' && git status --short"
+sb_run "git reset -q"
+sb_run "git add . && git status --short"
+sb_run "git reset -q"
+sb_run "cd src"
+cd src
+sb_run 'git add "*" && git status --short'
+sb_run "git reset -q"
+sb_run "git add . && git status --short"
+sb_run "git reset -q"
+cd ..
