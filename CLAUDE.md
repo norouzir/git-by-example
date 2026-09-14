@@ -67,6 +67,7 @@ command follows this order:
 
 1. **What it is.** A short explanation of the command itself, and the one
    question its plain form answers. Define any term the next sections rely on.
+   Then the collapsed list of questions the chapter answers (see below).
 2. **Synopsis.** The forms from Git's own documentation, what each part means,
    and what each form does.
 3. **Options at a glance.** Every option, one line each, with the section where
@@ -123,7 +124,8 @@ The tools do not see ambiguity. Before a chapter is delivered, check by hand:
   untested and could not be verified).
 - Every claim of equivalence ("the same as", "identical to") is demonstrated,
   or attributed in the text to Git's documentation where it says so.
-- The question list in the generator matches the chapter, in the chapter's order.
+- The question list covers every section, in the chapter's order, in the
+  reader's words, and gives no answer away.
 
 ### What complete means
 
@@ -142,10 +144,20 @@ show it. "What is the difference between X and Y" and "can I use X instead of Y"
 are among the most important questions the book answers. So is the neighbour
 outside Git: `diff` for `git diff`, `patch` for `git apply`, and so on.
 
-**Start each generator script with its question list.** Every question the
-chapter answers, and the script section that answers it. The list finds gaps. It
-only grows; an example teaching something not on it means the list was
-incomplete. It never rejects an example.
+**Every chapter lists the questions it answers, in the chapter itself.** It
+sits directly after "What it is", as a collapsed block grouped by the chapter's
+sections, each question linking to the section or subsection that answers it.
+This list is the single source; generator scripts do not keep a copy.
+
+- Write each question as a reader who does not know the answer would ask it,
+  in the words they would use while stuck. "I set the rename threshold to 5 and
+  nothing changed. Why?", not "Why is -M5 not 5%?". Never put the answer, or a
+  term the reader cannot know yet, into the question.
+- The list finds gaps. It only grows: an example that teaches something not on
+  it means the list was incomplete, and the question is added. It never rejects
+  an example.
+- `tools/check_refs.py` fails on a question link that leads nowhere and on a
+  section no question points to.
 
 **Every option named in a table needs one of:**
 
@@ -181,7 +193,7 @@ Defined in Chapter 1, so changing one means editing that chapter too.
 | Convention | Form |
 |---|---|
 | Transcripts | fenced ` ```console `, commands prefixed `$ `, output unprefixed |
-| Coloured transcripts | fenced ` ```ansi `, escapes written as the visible characters `\e[...m`; generate with `sb_run_ansi` |
+| Coloured transcripts | fenced ` ```ansi `, escapes written as the visible characters `\e[...m`; generate with `sb_run_ansi`. Only where the option shown is about colour; everything else stays plain |
 | Placeholders | `<angle-brackets>` |
 | Trimmed output | `...` on its own line |
 | Call-outs | blockquote opening with **Since Git X.Y.**, **Windows.**, **Careful.**, or **Worth knowing.** |
@@ -221,7 +233,9 @@ simplify it in the chapter; change the generator instead. The verifier catches
 the difference.
 
 No release until the whole book is complete and every check passes on every
-chapter. See DECISIONS.md for why.
+chapter. See DECISIONS.md for why. Work that must be done before then, including
+chapters already marked written that fall short of the current standard, is
+listed under "Outstanding" in OUTLINE.md. Keep that list current.
 
 ## Things that have already bitten
 

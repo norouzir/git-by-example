@@ -8,7 +8,8 @@ order. Inserting a chapter means appending it at the end of its part and
 accepting a gap in reading order, or renumbering every reference in the book.
 Prefer the former.
 
-Status marks: `[x]` written, `[ ]` not yet.
+Status marks: `[x]` written, `[ ]` not yet. A chapter marked written may still
+fall short of the current standard; see Outstanding below.
 
 ## Part 0. Using This Book
 
@@ -141,6 +142,27 @@ Status marks: `[x]` written, `[ ]` not yet.
 - [ ] H. Windows Notes, Collected
 - [ ] I. Exercises with Answers
 
+## Outstanding
+
+Work that must be finished before the first release, most urgent first.
+
+- **Part 2, rework to the Chapter 13 standard.** Chapters 9, 10, 11, 12, 14, 15
+  and 16 were written before the standard in CLAUDE.md existed. Chapter 13 is
+  the calibration and is waiting for the author's approval; the other seven
+  follow it. Each needs: the chapter order, a question list, every table option
+  demonstrated or excused, comparisons with similar commands, and transcripts
+  that match a fresh run.
+- **Tables of bare values** still in Chapter 10 (`--untracked-files` values) and
+  Chapter 12 (`--cleanup` modes). Fixed during the rework above.
+- **Transcripts that do not match a fresh run**, found by
+  `tools/verify_transcripts.py`: Chapters 7 and 8 have two each. Chapters 9 to 16
+  are fixed during the rework.
+- **Chapters 1 to 3 have no generator script**, so their transcripts cannot be
+  verified at all. Every chapter must pass every check before release.
+- **Parts 0 and 1 against the new standard.** Not yet reviewed for the chapter
+  order, question lists, or option coverage. Decide with the author how much of
+  the standard applies to chapters about concepts rather than one command.
+
 ## Out of scope
 
 Continuous integration. GitHub Actions, GitLab CI and their relatives are large
@@ -166,7 +188,7 @@ editing every chapter in the left column.
 | 10 | Chapter 5, Chapter 7, Chapter 16, Chapter 18, Chapter 26, Chapter 41, Chapter 45, Chapter 57, Chapter 80 |
 | 11 | Chapter 8, Chapter 14, Chapter 60, Chapter 65, Chapter 66 |
 | 12 | Chapter 2, Chapter 3, Chapter 4, Chapter 5, Chapter 6, Chapter 28, Chapter 35, Chapter 36, Chapter 43, Chapter 53, Chapter 67, Chapter 68 |
-| 13 | Chapter 4, Chapter 5, Chapter 17, Chapter 18, Chapter 21, Chapter 57, Chapter 65 |
+| 13 | Chapter 4, Chapter 5, Chapter 10, Chapter 11, Chapter 17, Chapter 18, Chapter 21, Chapter 26, Chapter 30, Chapter 35, Chapter 57, Chapter 61, Chapter 62, Chapter 63, Chapter 65, Chapter 66, Chapter 67, Chapter 75, Chapter 76 |
 | 14 | Chapter 11, Chapter 26, Chapter 78 |
 | 15 | Chapter 4, Chapter 8, Chapter 13, Chapter 14, Chapter 60 |
 | 16 | Chapter 4, Chapter 8, Chapter 11, Chapter 37 |

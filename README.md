@@ -54,6 +54,9 @@ settled question is not reopened without new information.
 ## Building
 
 ```sh
+python tools/verify_transcripts.py 13   # a chapter's transcripts match a fresh run
+python tools/audit_examples.py 13       # every option in its tables has an example
+python tools/check_refs.py              # every chapter and section link resolves
 python tools/build_html.py
 powershell -File tools/build_pdf.ps1
 ```

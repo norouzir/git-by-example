@@ -327,3 +327,74 @@ demonstrated, pointed to, or excused in writing.
 word by word, so any class of mistake found once has to become something that
 is checked every time, either by a tool or by the pre-delivery checklist in
 CLAUDE.md.
+
+---
+
+## 2026-09-12. The title is Git by Example
+
+Chosen over "Git Handbook". At least two published books and GitHub's own guide
+already use "Git Handbook", so it names nothing in particular. "Handbook"
+describes the format; "by example" describes what makes this book different,
+and that belongs in the title. The subtitle, *A Complete Offline Handbook*,
+keeps the other word.
+
+---
+
+## 2026-09-12. The colophon names the model, and thanks Amin Hedayati
+
+The first version of the colophon said the prose was drafted by "an AI
+assistant". That was the one vague sentence on a page that pins the Git version,
+the build date and the commit. It now names Claude Opus 5 and the Ultracode
+effort setting, and says later parts may name a different model so the sentence
+stays true as the book grows. The effort setting is recorded as the author
+stated it; the model cannot see its own setting.
+
+The Thanks section opens with Amin Hedayati, who made the writing of this book
+possible.
+
+---
+
+## 2026-09-13. Colour only where colour is the point
+
+Most transcripts stay plain even though a terminal would colour them. Plain text
+reads better on a phone and in both themes, and colour adds nothing to a diff
+whose lines already begin with `+` and `-`. Colour is used where the option being
+shown is about colour: `--color-words`, `--color-moved`, whitespace-error
+highlighting. The author reviewed the coloured sections of Chapter 13 and
+accepted them.
+
+---
+
+## 2026-09-14. Every chapter lists the questions it answers, inside the book
+
+Chapter 13 grew to about fifty pages, and its section headings are too broad to
+find an answer by: nothing in "Whitespace" says the difference between `-b` and
+`-w` is in there. The author asked whether the question lists should be in the
+book. They should, per chapter.
+
+**Form.** A collapsed "Questions this chapter answers" block directly after the
+chapter's "What it is" section, so the explanation of the command is still the
+first thing read. In the HTML it opens with a tap; in the PDF it prints open.
+The questions are grouped by the chapter's sections and each one links to the
+section or subsection that answers it.
+
+**Wording.** Questions are written from the point of view of a reader who does
+not know the answer yet, in the words they would use while stuck: "I set the
+rename threshold to 5 and nothing changed. Why?" rather than "Why is -M5 not
+5%?". The working list that used to sit in each generator script referred to
+script sections and gave answers away. It is replaced by the list in the
+chapter, which becomes the single source.
+
+**Links.** Section headings get anchors unique across the whole book, because
+the book is one HTML file and headings such as "Synopsis" repeat in every
+chapter. Anchors are prefixed with the chapter number. `tools/check_refs.py`
+fails on a link that no longer leads to a heading, and on a section of a chapter
+that no question points to, so the list and the chapter cannot drift apart. The
+"Covered in" column of the options table becomes links for the same price.
+
+**Rejected.** One list per Part, which puts hundreds of questions far from their
+answers and is unusable on a phone. A separate appendix of questions and
+answers, which would duplicate the book. Instead, when the appendices are
+written, Appendix G will gather every chapter's questions into one linked list
+beside its decision tables, for a reader who does not know which chapter to
+open.
