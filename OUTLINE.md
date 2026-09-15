@@ -47,7 +47,7 @@ fall short of the current standard; see Outstanding below.
 
 ## Part 4. Branching and Merging
 
-- [ ] 23. branch
+- [x] 23. branch
 - [ ] 24. switch, checkout, and detached HEAD
 - [ ] 25. merge
 - [ ] 26. Conflicts
@@ -196,6 +196,7 @@ editing every chapter in the left column.
 | 20 | Chapter 6, Chapter 17, Chapter 18, Chapter 19, Chapter 21, Chapter 22, Chapter 24 |
 | 21 | Chapter 11, Chapter 13, Chapter 17, Chapter 18, Chapter 19, Chapter 20, Chapter 22, Chapter 23, Chapter 36, Chapter 57, Chapter 65, Chapter 77 |
 | 22 | Chapter 6, Chapter 7, Chapter 9, Chapter 17, Chapter 18, Chapter 19, Chapter 20, Chapter 23, Chapter 30, Chapter 32, Chapter 41, Chapter 46, Chapter 47, Chapter 56, Chapter 57, Chapter 60, Chapter 62, Chapter 68, Chapter 71, Chapter 72, Chapter 73, Chapter 74, Chapter 75, Chapter 81 |
+| 23 | Chapter 3, Chapter 7, Chapter 10, Chapter 17, Chapter 18, Chapter 22, Chapter 24, Chapter 25, Chapter 30, Chapter 32, Chapter 36, Chapter 41, Chapter 42, Chapter 43, Chapter 47, Chapter 56, Chapter 57, Chapter 61, Chapter 62, Chapter 74, Chapter 77, Chapter 79 |
 
 Do not maintain that table by hand. Regenerate it, and check that nothing
 points at a chapter that does not exist:

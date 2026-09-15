@@ -38,3 +38,7 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 21. grep and Searching History](part-03-reading-history/21-grep-and-searching-history.md)
 - [Chapter 22. shortlog, describe, rev-list, rev-parse](part-03-reading-history/22-shortlog-describe-rev-list-rev-parse.md)
 
+
+## Part 4. Branching and Merging
+
+- [Chapter 23. branch](part-04-branching-and-merging/23-branch.md)

@@ -568,3 +568,14 @@ commands that compare against real file times, such as `git gc --prune=now`,
 and could change transcripts that are correct today. Also rejected: avoiding
 relative dates in examples, which would leave the options that most need an
 example without one.
+
+---
+
+## 2026-09-15. Part 4 runs without the first two checkpoints
+
+As for Part 3, the author asked for Part 4 to be written to the end with nothing
+sent along the way ("no need to send me anything; do it to the end of Part 4"),
+after Part 3 was delivered. The question lists sent first and the first chapter
+sent early are waived for this part only. Each chapter is still committed on its
+own after every check passes, and the part is delivered and stops for feedback
+at the end.
