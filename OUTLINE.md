@@ -146,6 +146,9 @@ fall short of the current standard; see Outstanding below.
 
 Work that must be finished before the first release, most urgent first.
 
+- **Part 3 review by the author.** Chapters 17 to 22 were written to the
+  Chapter 13 standard and pass all three checks (2026-09-15), without the first
+  two checkpoints (see DECISIONS.md). None has been read by the author yet.
 - **Part 2 review by the author.** Every Part 2 chapter now meets the Chapter 13
   standard and passes all three checks (2026-09-14). Chapter 13 was approved;
   Chapters 9 to 12 and 14 to 16 were reworked without the first two checkpoints

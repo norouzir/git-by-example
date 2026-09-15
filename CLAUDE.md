@@ -345,6 +345,18 @@ the real current time; call `sb_pin_now` once at the top of a generator that
 shows them, and "now" follows the sandbox clock instead. It is opt-in because it
 also moves "now" for `git gc --prune=now` and the like.
 
+**`sb_fresh` restarts the clock.** A second example repository made with
+`sb_fresh` sets the sandbox clock back to its start. Commits in the first
+repository afterwards get earlier dates, and with `sb_pin_now` its relative dates
+count from the wrong "now" (`in the future`). Save `SANDBOX_NOW` before and
+restore it with `sb_settime` when going back, as the `back_to_*` helpers in
+`ch17`, `ch18` and `ch22` do.
+
+**`sb_run_ansi` only sets `color.ui`.** A command that ignores `color.ui`, such as
+`git for-each-ref` with `%(color:...)`, stays plain under it, although a reader's
+terminal shows colour. Give that command its own `--color` in the printed
+command, and say in the chapter what happens without it.
+
 **Decorations in transcripts.** `--decorate` defaults to `auto`, which shows
 branch and tag names only on a terminal, and the sandbox is not one. A reader
 sees `(HEAD -> main)` where the transcript shows nothing. Pass `--decorate`
@@ -399,6 +411,38 @@ verifier looks for each block's lines in order, with nothing in between except
 where the block says `...`. A block that leaves out a command the generator ran
 in the middle, even a quiet `git reset -q`, does not match. Either show the
 command, or reorder the generator so it runs in the order the chapter teaches.
+
+**Errors and output in one transcript.** `sb_run` sends both streams into a
+pipe, where standard output is buffered and standard error is not, so an error
+can appear above output the command printed before it. `git rev-parse nosuch`
+printed the name and then failed, but the transcript showed the error first.
+When a command prints both, show them separately with `>/dev/null` and
+`2>/dev/null`, as `ch22` does, and never describe terminal order you have not
+seen.
+
+**Commands that read standard input.** `git shortlog` with no revision reads
+standard input whenever it is not a terminal, which in a generator means waiting
+forever. Put `exec </dev/null` near the top of such a generator, as `ch22` does,
+and name the revision in every command that should read the repository.
+
+**A checkout straight after a commit.** A file written and committed in the
+same second can look modified to Git, and `git switch` then refuses with "local
+changes would be overwritten". Run `git update-index -q --really-refresh`
+before switching in a generator, as `ch22` does.
+
+**Commands that fetch in a partial clone.** A partial clone's missing objects
+are fetched from its server whenever a command needs them, even a plain
+`git rev-list --objects`, and the example's state changes under later commands.
+Run the commands that inspect missing objects first.
+
+**Headings with an apostrophe.** The apostrophe becomes a `-` in the section id:
+"Reading shortlog's output" is `#reading-shortlog-s-output`. `check_refs.py`
+catches the broken link, but only after the question list is written.
+
+**A table row that is a form, not an option.** `audit_examples.py` reads a cell
+starting with `` `-w40,2,4 `` as the option `-w40`, which no command uses. When
+the rows compare forms of one option, start each cell with the whole command,
+`` `git shortlog -w40,2,4` ``, which the audit does not treat as an option row.
 
 **Progress lines.** Git ends progress lines such as `Rebasing (1/1)` with a
 carriage return, not a newline. The verifier splits on both, so the block must
