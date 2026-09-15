@@ -36,4 +36,5 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 19. blame](part-03-reading-history/19-blame.md)
 - [Chapter 20. bisect](part-03-reading-history/20-bisect.md)
 - [Chapter 21. grep and Searching History](part-03-reading-history/21-grep-and-searching-history.md)
+- [Chapter 22. shortlog, describe, rev-list, rev-parse](part-03-reading-history/22-shortlog-describe-rev-list-rev-parse.md)
 
