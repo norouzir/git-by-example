@@ -217,6 +217,30 @@ def shift_headings(body: str) -> str:
     return HEADING_TAG_RE.sub(lambda m: f"<{m.group(1)}h{int(m.group(2)) + 1}", body)
 
 
+# In a table row, a pipe that belongs to the cell is written \| so that it does
+# not end the cell. GitHub then shows a plain |, even inside `code`. Python-
+# Markdown keeps the backslash inside code, so --no-walk[=(sorted\|unsorted)]
+# came out with a stray \. The escaped pipes of table rows are swapped for a
+# placeholder before conversion and for a plain | afterwards. Lines inside
+# fenced code blocks are left alone: a graph line such as |\ \| is output.
+TABLE_PIPE = "@@TABLEPIPE@@"
+
+
+def protect_table_pipes(text: str) -> str:
+    out, in_code = [], False
+    for line in text.split("\n"):
+        if line.startswith("```"):
+            in_code = not in_code
+        elif not in_code and line.startswith("|"):
+            line = line.replace("\\|", TABLE_PIPE)
+        out.append(line)
+    return "\n".join(out)
+
+
+def restore_table_pipes(body: str) -> str:
+    return body.replace(TABLE_PIPE, "|")
+
+
 def anchor_sections(body: str, prefix: str) -> tuple[str, list[tuple[int, str, str]]]:
     """Give every section heading a book-wide id and point the chapter's own links
     at them. Returns the body and (level, id, title html) for each section."""
@@ -291,7 +315,8 @@ def build() -> None:
             # so a link to Chapter 13 keeps working when a page is added before it.
             chapter_id = anchors.chapter_prefix(path)
             md.reset()
-            body = render_ansi(wrap_tables(shift_headings(md.convert(path.read_text(encoding="utf-8")))))
+            source = protect_table_pipes(path.read_text(encoding="utf-8"))
+            body = render_ansi(wrap_tables(shift_headings(restore_table_pipes(md.convert(source)))))
             body, sections = anchor_sections(body, chapter_id)
             section_ids = {sid for _, sid, _ in sections}
             body = count_questions(body)

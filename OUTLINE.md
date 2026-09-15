@@ -42,7 +42,7 @@ fall short of the current standard; see Outstanding below.
 - [x] 18. Revision Syntax and show
 - [x] 19. blame
 - [x] 20. bisect
-- [ ] 21. grep and Searching History
+- [x] 21. grep and Searching History
 - [ ] 22. shortlog, describe, rev-list, rev-parse
 
 ## Part 4. Branching and Merging
@@ -191,6 +191,7 @@ editing every chapter in the left column.
 | 18 | Chapter 5, Chapter 6, Chapter 7, Chapter 9, Chapter 13, Chapter 14, Chapter 17, Chapter 22, Chapter 24, Chapter 26, Chapter 32, Chapter 36, Chapter 41, Chapter 43, Chapter 50, Chapter 75 |
 | 19 | Chapter 13, Chapter 17, Chapter 18, Chapter 21, Chapter 22, Chapter 62 |
 | 20 | Chapter 6, Chapter 17, Chapter 18, Chapter 19, Chapter 21, Chapter 22, Chapter 24 |
+| 21 | Chapter 11, Chapter 13, Chapter 17, Chapter 18, Chapter 19, Chapter 20, Chapter 22, Chapter 23, Chapter 36, Chapter 57, Chapter 65, Chapter 77 |
 
 Do not maintain that table by hand. Regenerate it, and check that nothing
 points at a chapter that does not exist:

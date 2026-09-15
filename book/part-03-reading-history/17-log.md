@@ -942,12 +942,15 @@ $ git log --oneline -P --grep='(?i)DIVIDE'
 cc42788 Add divide
 ```
 
-| Option | Pattern is | "mul or div" is written |
-|---|---|---|
-| `--basic-regexp` | a basic regular expression, the default | `\(mul\|div\)` |
-| `-E`, `--extended-regexp` | an extended regular expression | `(mul\|div)` |
-| `-F`, `--fixed-strings` | plain text; nothing is special | not possible |
-| `-P`, `--perl-regexp` | a Perl-compatible regular expression, with extras such as `(?i)` | `(mul\|div)` |
+| Option | Pattern is |
+|---|---|
+| `--basic-regexp` | a basic regular expression, the default |
+| `-E`, `--extended-regexp` | an extended regular expression |
+| `-F`, `--fixed-strings` | plain text; nothing is special |
+| `-P`, `--perl-regexp` | a Perl-compatible regular expression, with extras such as `(?i)` |
+
+"mul or div" is written `\(mul\|div\)` in a basic expression and `(mul|div)` in
+an extended or Perl-compatible one; plain text has no way to say it.
 
 `^` matches at the start of any line of the message, not only the subject:
 `Refs:` is never the first line. The

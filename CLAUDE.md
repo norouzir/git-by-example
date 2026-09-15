@@ -366,6 +366,13 @@ backslash was passed through a shell command into Python. A doubled backslash
 did not survive that route either. Edit prose with the file tools, and when a
 script must write a backslash, build it from its byte value (`bytes([92])`).
 
+**A pipe inside a table cell.** Write it `\|`, as everywhere in the book.
+GitHub shows a plain `|`, even inside backticks, and `tools/build_html.py` now
+does the same, so `--no-walk[=(sorted\|unsorted)]` reads correctly on both.
+That also means a table cell cannot show a real backslash before a pipe: a basic
+regular expression such as `\(a\|b\)` goes in the prose under the table, not in
+a cell.
+
 **Heading levels in the built page.** In a chapter's Markdown, `#` is the chapter
 title and `##` a section. `tools/build_html.py` moves every chapter heading down
 one level, so the page reads part h1, chapter h2, section h3, subsection h4. PDF
