@@ -42,3 +42,4 @@ the book. Adding a chapter means adding a line here.
 ## Part 4. Branching and Merging
 
 - [Chapter 23. branch](part-04-branching-and-merging/23-branch.md)
+- [Chapter 24. switch, checkout, and detached HEAD](part-04-branching-and-merging/24-switch-checkout-and-detached-head.md)

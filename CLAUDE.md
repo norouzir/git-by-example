@@ -416,9 +416,11 @@ command, or reorder the generator so it runs in the order the chapter teaches.
 pipe, where standard output is buffered and standard error is not, so an error
 can appear above output the command printed before it. `git rev-parse nosuch`
 printed the name and then failed, but the transcript showed the error first.
-When a command prints both, show them separately with `>/dev/null` and
-`2>/dev/null`, as `ch22` does, and never describe terminal order you have not
-seen.
+When a command prints both, either show them separately with `>/dev/null` and
+`2>/dev/null`, as `ch22` does, or keep the transcript and say in the chapter
+which line goes to which stream and the order Git's source prints them in, as
+`ch24` does for `git switch`. Never describe a terminal order that neither a
+transcript nor the source shows.
 
 **Commands that read standard input.** `git shortlog` with no revision reads
 standard input whenever it is not a terminal, which in a generator means waiting
