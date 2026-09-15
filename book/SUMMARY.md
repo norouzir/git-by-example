@@ -32,4 +32,5 @@ the book. Adding a chapter means adding a line here.
 ## Part 3. Reading History
 
 - [Chapter 17. log](part-03-reading-history/17-log.md)
+- [Chapter 18. Revision Syntax and show](part-03-reading-history/18-revision-syntax-and-show.md)
 
