@@ -51,7 +51,7 @@ fall short of the current standard; see Outstanding below.
 - [x] 24. switch, checkout, and detached HEAD
 - [x] 25. merge
 - [x] 26. Conflicts
-- [ ] 27. Merge Strategies and Options
+- [x] 27. Merge Strategies and Options
 
 ## Part 5. Rewriting History
 

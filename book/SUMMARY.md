@@ -45,3 +45,4 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 24. switch, checkout, and detached HEAD](part-04-branching-and-merging/24-switch-checkout-and-detached-head.md)
 - [Chapter 25. merge](part-04-branching-and-merging/25-merge.md)
 - [Chapter 26. Conflicts](part-04-branching-and-merging/26-conflicts.md)
+- [Chapter 27. Merge Strategies and Options](part-04-branching-and-merging/27-merge-strategies-and-options.md)
