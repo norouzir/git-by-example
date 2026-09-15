@@ -403,6 +403,18 @@ starts with `//` into `/`, before Git sees it, as part of converting paths. A
 value such as `core.commentString=//` arrives as `/`. Use other characters in
 examples.
 
+**An argument that starts with a slash.** Git Bash also rewrites a single leading
+`/` as a path under the Git install: `git blame -L '/regex/,/regex/'` reached Git
+as `C:/Program Files/Git/regex/...` and failed with a usage line. Values with a
+`:` in them, such as `git log -L '/re/,+1:file'`, are left alone. Where the
+transcript must show the Linux form, run that one command as
+`MSYS_NO_PATHCONV=1 sb_run "..."`, which keeps the printed command unchanged,
+and describe the Git Bash behaviour in a Windows call-out, as `ch19` does.
+
+**Times Git takes from the real clock.** `sb_pin_now` fixes relative dates, but
+not everything: `git blame` dates uncommitted lines and `--contents` input with
+the real time. Use `-s`, or cut the time lines with `...`.
+
 **Commands that reach outside the sandbox.** The sandbox isolates Git's
 configuration, not the rest of the machine. `git commit -S` started GPG, which
 created `~/.gnupg` in the real home directory of the machine running the script.
