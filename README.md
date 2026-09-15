@@ -80,7 +80,8 @@ bash sandbox/scripts/ch12-commit.sh /tmp/playground
 ```
 
 The harness pins the author, the committer, the clock, and the configuration,
-so the commit hashes it produces are identical on any machine. See Chapter 2
+so the commit hashes it produces are identical on any machine. Scripts that show
+relative dates such as "3 hours ago" also pin "now" to the sandbox clock. See Chapter 2
 for why that matters and how it works.
 
 ## Version

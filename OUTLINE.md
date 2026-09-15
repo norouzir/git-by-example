@@ -38,7 +38,7 @@ fall short of the current standard; see Outstanding below.
 
 ## Part 3. Reading History
 
-- [ ] 17. log
+- [x] 17. log
 - [ ] 18. Revision Syntax and show
 - [ ] 19. blame
 - [ ] 20. bisect
@@ -187,6 +187,7 @@ editing every chapter in the left column.
 | 14 | Chapter 10, Chapter 11, Chapter 17, Chapter 18, Chapter 26, Chapter 30, Chapter 31, Chapter 33, Chapter 57, Chapter 60, Chapter 73, Chapter 76, Chapter 78 |
 | 15 | Chapter 4, Chapter 5, Chapter 8, Chapter 11, Chapter 13, Chapter 14, Chapter 17, Chapter 30, Chapter 37, Chapter 57, Chapter 60, Chapter 75 |
 | 16 | Chapter 4, Chapter 8, Chapter 10, Chapter 11, Chapter 14, Chapter 37 |
+| 17 | Chapter 2, Chapter 4, Chapter 6, Chapter 7, Chapter 9, Chapter 12, Chapter 13, Chapter 18, Chapter 19, Chapter 20, Chapter 21, Chapter 22, Chapter 26, Chapter 27, Chapter 36, Chapter 38, Chapter 41, Chapter 47, Chapter 53, Chapter 56, Chapter 61, Chapter 62, Chapter 64, Chapter 68, Chapter 75 |
 
 Do not maintain that table by hand. Regenerate it, and check that nothing
 points at a chapter that does not exist:

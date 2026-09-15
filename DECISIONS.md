@@ -534,3 +534,37 @@ output and a transcript must never be anything but real sandbox output.
 
 **Rejected.** Separate rows for `'*'` and `"*"`, which differ only in cmd, where
 one sentence says so.
+
+---
+
+## 2026-09-15. Part 3 runs without the first two checkpoints
+
+The author asked for Part 3 to be written from start to finish with nothing sent
+to them along the way ("no need to show me anything; go to the end if you can").
+As for the Part 2 rework, that waives the question lists sent first and the
+first chapter sent early, for this part only. Each chapter is still committed
+on its own after every check passes, and the part is delivered and stops for
+feedback at the end.
+
+The risk is the same one: a mistake no tool sees, repeated across six chapters.
+The author accepted it, with Chapter 13, approved, as the calibration.
+
+---
+
+## 2026-09-15. Relative dates pinned through Git's test clock, opt-in
+
+Chapter 17 needs `--since='3 hours ago'`, `--date=relative` and `--date=human`,
+which are computed against the current time, so their transcripts would stop
+matching as real days pass. Git's own test suite fixes "now" with the
+`GIT_TEST_DATE_NOW` environment variable. The harness gained `sb_pin_now`, which
+sets it to the sandbox clock and keeps it there as the clock ticks.
+
+**Decided.** Opt-in, called once at the top of a generator that shows relative
+dates. The reader never sees it: the printed commands are unchanged, and the
+chapter says what "now" is in the example.
+
+**Rejected.** Setting it for every generator, because it also moves "now" for
+commands that compare against real file times, such as `git gc --prune=now`,
+and could change transcripts that are correct today. Also rejected: avoiding
+relative dates in examples, which would leave the options that most need an
+example without one.

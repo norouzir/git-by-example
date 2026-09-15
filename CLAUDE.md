@@ -339,7 +339,21 @@ explicitly. Do the same in any new tool.
 **Colour and time in the harness.** `sb_run_ansi` forces colour through the
 environment so the printed command stays what a reader types. `TZ` is pinned to
 UTC because `diff -u` and `--date=local` print local time. `sb_touch` sets file
-modification times to the sandbox clock for tools that print them.
+modification times to the sandbox clock for tools that print them. Relative
+dates (`--since='3 hours ago'`, `--date=relative`, `--date=human`) count from
+the real current time; call `sb_pin_now` once at the top of a generator that
+shows them, and "now" follows the sandbox clock instead. It is opt-in because it
+also moves "now" for `git gc --prune=now` and the like.
+
+**Decorations in transcripts.** `--decorate` defaults to `auto`, which shows
+branch and tag names only on a terminal, and the sandbox is not one. A reader
+sees `(HEAD -> main)` where the transcript shows nothing. Pass `--decorate`
+explicitly when the names matter, and say so where it could confuse.
+
+**Temporary commits in a shared example repository.** A later section's hashes
+depend on the clock and on every commit before it. To show something that needs
+an extra commit, commit without `sb_tick` and `git reset --hard HEAD~1`
+afterwards, as `ch17` does, and nothing after it changes.
 
 **Backslashes in the build's CSS.** The stylesheet in `tools/build_html.py` is an
 ordinary Python string, so a CSS escape like `\25B8` is read by Python as an
@@ -407,7 +421,7 @@ Never present it as a transcript. The author found this gap in Chapter 11, where
 ```
 book/SUMMARY.md          build manifest; order here is the book's order
 book/part-NN-*/          one directory per part, one file per chapter
-sandbox/lib/sandbox.sh   the harness; sb_fresh, sb_write, sb_commit, sb_run
+sandbox/lib/sandbox.sh   the harness; sb_fresh, sb_write, sb_commit, sb_run, sb_pin_now
 sandbox/lib/gitconfig    the pinned configuration examples run under
 sandbox/scripts/         one generator script per chapter
 tools/build_html.py      Markdown to one self-contained HTML file

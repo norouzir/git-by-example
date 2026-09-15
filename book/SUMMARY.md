@@ -29,3 +29,7 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 15. rm and mv](part-02-everyday-work/15-rm-and-mv.md)
 - [Chapter 16. Ignoring Files](part-02-everyday-work/16-ignoring-files.md)
 
+## Part 3. Reading History
+
+- [Chapter 17. log](part-03-reading-history/17-log.md)
+

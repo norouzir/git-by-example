@@ -61,7 +61,9 @@ To make the output stable, six sources of variation are removed:
 
 Time is set explicitly rather than left to the clock. It starts on a Monday
 morning and moves forward one hour per commit, which is why timestamps in the
-examples look like a plausible working day.
+examples look like a plausible working day. Where an example shows a relative
+date, such as "3 hours ago", "now" is the sandbox clock too, and the chapter says
+what time that is.
 
 The time zone needs pinning separately. Git stores an offset with every date,
 so its default output looks the same everywhere, but `--date=local` converts to

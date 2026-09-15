@@ -30,10 +30,28 @@ export GIT_COMMITTER_EMAIL="ada@example.com"
 SANDBOX_EPOCH_START=1767603600
 SANDBOX_TICK_SECONDS=3600
 SANDBOX_NOW=$SANDBOX_EPOCH_START
+SANDBOX_PIN_NOW=0
 
 sb_settime() {
 	export GIT_AUTHOR_DATE="@$SANDBOX_NOW +0000"
 	export GIT_COMMITTER_DATE="@$SANDBOX_NOW +0000"
+	if test "$SANDBOX_PIN_NOW" = 1
+	then
+		export GIT_TEST_DATE_NOW="$SANDBOX_NOW"
+	fi
+}
+
+# sb_pin_now : make "now" the sandbox clock too, for every later command.
+#
+# Relative dates ("3 hours ago", --since="2 weeks ago", --date=human) are
+# computed against the current time, so without this they change as real days
+# pass and a transcript stops matching. GIT_TEST_DATE_NOW is the hook Git's own
+# test suite uses to fix the current time. It is opt-in, because it also moves
+# "now" for things such as `git gc --prune=now`, which compare against real file
+# times.
+sb_pin_now() {
+	SANDBOX_PIN_NOW=1
+	sb_settime
 }
 sb_tick() {
 	SANDBOX_NOW=$((SANDBOX_NOW + ${1:-$SANDBOX_TICK_SECONDS}))
