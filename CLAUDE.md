@@ -451,6 +451,38 @@ carriage return, not a newline. The verifier splits on both, so the block must
 show the progress text and the next line as two lines, and the chapter should
 say that a terminal draws one over the other.
 
+**A demo that ends in a conflict.** While a merge, rebase or cherry-pick is
+stopped, `git switch` refuses ("cannot switch branch while merging") and every
+later merge says "Merging is not possible because you have unmerged files". One
+missing `git merge --abort` therefore breaks every remaining example in the
+script, quietly, and the output still ends with exit status 0 in places. End
+every conflicting demo with `--abort` (or resolve it), as `ch26` and `ch27` do,
+and grep the output for `not possible` and `cannot switch` after each run.
+
+**A short option whose value is a path.** `audit_examples.py` ends a short
+option at a space, a quote, a digit or `%`, so it does not see `-O` in
+`-O../order` and reports the row as missing. Write the value so the option is
+recognisable (`-Oorder`, with the file in the working directory), or give the
+row a written exception.
+
+**A prompt in a transcript.** A command that asks a question, such as
+`git mergetool` on a modify/delete conflict, hangs in a generator unless the
+answer is piped in: `printf 'd\n' | git mergetool ...`. Piped input is not
+echoed, so the prompt line has no newline after it; end the command with
+`; echo`, and say in the chapter that the `printf` stands for typing the answer.
+Never run an interactive tool without `--tool`, or Git starts vim.
+
+**Commands that need a terminal to be worth showing.** `git mergetool` with no
+tool configured picks one and starts it; in the sandbox that means a text editor
+with no terminal. Always name a tool in generators, and describe the guessing
+behaviour in prose.
+
+**A second repository committed to in the middle of a script.** Commits made in
+another repository move the shared sandbox clock, so the first repository's later
+commits, and every hash after them, change. Save `SANDBOX_NOW` before switching
+repositories and restore it with `sb_settime` afterwards, as `ch27` does for the
+vendored `lib` repository.
+
 **Two slashes in an argument.** Git Bash on Windows rewrites an argument that
 starts with `//` into `/`, before Git sees it, as part of converting paths. A
 value such as `core.commentString=//` arrives as `/`. Use other characters in
