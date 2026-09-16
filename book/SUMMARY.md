@@ -53,3 +53,4 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 28. The Golden Rule of Rewriting](part-05-rewriting-history/28-the-golden-rule-of-rewriting.md)
 - [Chapter 29. commit --amend](part-05-rewriting-history/29-commit-amend.md)
 - [Chapter 30. reset](part-05-rewriting-history/30-reset.md)
+- [Chapter 31. revert](part-05-rewriting-history/31-revert.md)
