@@ -441,6 +441,11 @@ Run the commands that inspect missing objects first.
 "Reading shortlog's output" is `#reading-shortlog-s-output`. `check_refs.py`
 catches the broken link, but only after the question list is written.
 
+**Headings with an underscore.** `tools/anchors.py` strips `_` along with the
+other Markdown emphasis characters before slugging, so a section called
+`ORIG_HEAD` is `#orighead`, not `#orig-head`. Ask the tool rather than guessing:
+`python -c "import anchors; print(anchors.slug('ORIG_HEAD'))"` from `tools/`.
+
 **A table row that is a form, not an option.** `audit_examples.py` reads a cell
 starting with `` `-w40,2,4 `` as the option `-w40`, which no command uses. When
 the rows compare forms of one option, start each cell with the whole command,

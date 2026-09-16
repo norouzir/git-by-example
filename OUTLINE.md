@@ -57,7 +57,7 @@ fall short of the current standard; see Outstanding below.
 
 - [x] 28. The Golden Rule of Rewriting
 - [x] 29. commit --amend
-- [ ] 30. reset
+- [x] 30. reset
 - [ ] 31. revert
 - [ ] 32. cherry-pick
 - [ ] 33. rebase
