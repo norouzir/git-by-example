@@ -146,6 +146,14 @@ fall short of the current standard; see Outstanding below.
 
 Work that must be finished before the first release, most urgent first.
 
+- **Part 5 review by the author.** Chapters 28 to 38 were written to the
+  Chapter 13 standard and pass all three checks (2026-09-16), with no
+  checkpoints at all, which is now the rule (see DECISIONS.md). None has been
+  read by the author yet.
+- **Chapter 37 needs a program that is not part of Git.** `git-filter-repo`
+  must be on `PATH` or that chapter's transcripts cannot be verified; CLAUDE.md
+  and README.md say how to install it. No other chapter needs anything beyond
+  Git itself.
 - **Part 4 review by the author.** Chapters 23 to 27 were written to the
   Chapter 13 standard and pass all three checks (2026-09-16), without the first
   two checkpoints (see DECISIONS.md). None has been read by the author yet.

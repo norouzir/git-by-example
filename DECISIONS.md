@@ -643,3 +643,63 @@ because both work by writing lines into the todo list and cannot be explained
 without it. `--update-refs` stays in Chapter 33 because it works without the
 list, with its `update-ref` todo line in Chapter 34. Chapter 33's options table
 points at Chapter 34 for the rows it does not demonstrate.
+
+---
+
+## 2026-09-16. Transcripts that cannot be reproducible, and how they are handled
+
+Part 5 turned up three kinds of output that no amount of pinning makes stable,
+and each needed a decision rather than a workaround.
+
+**Timings and progress counters.** `git filter-branch` prints
+`Rewrite <hash> (3/7) (1 seconds passed, remaining 2 predicted)`, and
+`git filter-repo` prints `New history written in 0.40 seconds`. Both depend on
+how fast the machine is. They are cut from the transcript with `...`, which the
+verifier already allows, and the chapter says the progress lines were cut. The
+alternative — filtering the command's output through `grep -v` — was rejected
+because the printed command must be exactly what a reader types.
+
+**Options that read the real clock.** `git rebase --reset-author-date` sets the
+author date to the moment it runs, which changes the resulting hash on every
+run. `GIT_TEST_DATE_NOW`, which `sb_pin_now` uses to fix relative dates, does
+not reach it; that was tested, not assumed. The option gets a written exception
+saying so, because a transcript of it cannot exist.
+
+**Editors that rename a temporary file.** `sed -i` works as `GIT_EDITOR` for
+`git commit`, but not for `git history` or `git replace --edit`, which hold the
+message file open: MSYS then fails with "Device or resource busy". The
+stand-in editor in those chapters is `cp ../message.txt`, which writes over the
+file in place. It also reads better: the reader sees a prepared message being
+put in, rather than a `sed` script.
+
+**And one case of the opposite.** Chapter 37 deliberately does *not* call
+`sb_pin_now`, because `git gc --prune=now` compares against real file times and
+a pinned clock would stop it pruning anything, which is the whole point of that
+section.
+
+---
+
+## 2026-09-16. Part 5 is written, and what the reader can now do
+
+Chapters 28 to 38 cover rewriting history: the rule itself, `commit --amend`,
+`reset`, `revert`, `cherry-pick`, `rebase` in two chapters, the fixup and
+`git history` shortcuts, `reflog`, removing secrets, and `replace` and `notes`.
+
+Three decisions inside the part are worth keeping:
+
+**The two rebase chapters are cut at the todo list.** `--exec` and
+`--rebase-merges` are in Chapter 34 with `-i`, although neither requires it,
+because both work by writing lines into the todo list and cannot be explained
+without showing it.
+
+**`git history` moves every descendant branch.** Its default is
+`--update-refs=branches`, which surprised the examples themselves: the first
+draft of Chapter 35's generator silently rewrote the branch its scratch copies
+were made from. The chapter says so twice, and the generator restores the
+branch before each demonstration.
+
+**Git 2.55 writes the todo list's onelines as comments.** A line reads
+`pick e1fa553 # Add the reader`, where Git's own documentation still shows
+`pick e1fa553 Add the reader`. Verified against the installed binary with an
+explicit `rebase.instructionFormat`, so it is the version's behaviour and not
+a configuration; Chapters 34 and 35 describe what a reader will actually see.
