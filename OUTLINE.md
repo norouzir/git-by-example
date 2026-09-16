@@ -60,7 +60,7 @@ fall short of the current standard; see Outstanding below.
 - [x] 30. reset
 - [x] 31. revert
 - [x] 32. cherry-pick
-- [ ] 33. rebase
+- [x] 33. rebase
 - [ ] 34. Interactive Rebase
 - [ ] 35. fixup, autosquash, and git history
 - [ ] 36. reflog
