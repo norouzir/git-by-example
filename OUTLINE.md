@@ -64,8 +64,8 @@ fall short of the current standard; see Outstanding below.
 - [x] 34. Interactive Rebase
 - [x] 35. fixup, autosquash, and git history
 - [x] 36. reflog
-- [ ] 37. Removing Files and Secrets from History
-- [ ] 38. replace, notes, and grafts
+- [x] 37. Removing Files and Secrets from History
+- [x] 38. replace, notes, and grafts
 
 ## Part 6. Remotes
 
