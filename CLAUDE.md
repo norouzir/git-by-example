@@ -27,6 +27,17 @@ installed Git. Check the documentation that ships with the install:
 
 Reach for the web only when something is not on disk.
 
+**One tool the book shows is not part of Git.** `git-filter-repo`, which Git's
+own documentation recommends in place of `git filter-branch`, is a single
+Python script that has to be installed separately; Chapter 37 shows it working,
+so `sandbox/scripts/ch37-*.sh` needs it on `PATH` or that chapter cannot be
+verified. Install the tagged release, not `main`, so the version is known:
+
+```sh
+curl -sSL -o ~/bin/git-filter-repo \
+  https://raw.githubusercontent.com/newren/git-filter-repo/v2.47.0/git-filter-repo
+```
+
 **Never invent output.** Every transcript in the book comes from actually
 running the commands through the sandbox harness. If an example cannot be run,
 it does not go in the book in transcript form.

@@ -84,6 +84,15 @@ so the commit hashes it produces are identical on any machine. Scripts that show
 relative dates such as "3 hours ago" also pin "now" to the sandbox clock. See Chapter 2
 for why that matters and how it works.
 
+One script needs a program that is not part of Git: Chapter 37 shows
+`git-filter-repo`, which Git's own documentation recommends in place of
+`git filter-branch`. Install the tagged release somewhere on your `PATH` before
+running `sandbox/scripts/ch37-removing-files-and-secrets.sh`:
+
+```sh
+curl -sSL -o ~/bin/git-filter-repo \n  https://raw.githubusercontent.com/newren/git-filter-repo/v2.47.0/git-filter-repo
+```
+
 ## Version
 
 The book targets **Git 2.55**. Features that need a version newer than 2.23 are
