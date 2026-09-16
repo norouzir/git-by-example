@@ -58,3 +58,4 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 33. rebase](part-05-rewriting-history/33-rebase.md)
 - [Chapter 34. Interactive Rebase](part-05-rewriting-history/34-interactive-rebase.md)
 - [Chapter 35. fixup, autosquash, and git history](part-05-rewriting-history/35-fixup-autosquash-and-git-history.md)
+- [Chapter 36. reflog](part-05-rewriting-history/36-reflog.md)
