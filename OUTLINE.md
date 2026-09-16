@@ -55,7 +55,7 @@ fall short of the current standard; see Outstanding below.
 
 ## Part 5. Rewriting History
 
-- [ ] 28. The Golden Rule of Rewriting
+- [x] 28. The Golden Rule of Rewriting
 - [ ] 29. commit --amend
 - [ ] 30. reset
 - [ ] 31. revert

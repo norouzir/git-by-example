@@ -46,3 +46,8 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 25. merge](part-04-branching-and-merging/25-merge.md)
 - [Chapter 26. Conflicts](part-04-branching-and-merging/26-conflicts.md)
 - [Chapter 27. Merge Strategies and Options](part-04-branching-and-merging/27-merge-strategies-and-options.md)
+
+
+## Part 5. Rewriting History
+
+- [Chapter 28. The Golden Rule of Rewriting](part-05-rewriting-history/28-the-golden-rule-of-rewriting.md)
