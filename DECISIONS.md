@@ -579,3 +579,67 @@ after Part 3 was delivered. The question lists sent first and the first chapter
 sent early are waived for this part only. Each chapter is still committed on its
 own after every check passes, and the part is delivered and stops for feedback
 at the end.
+
+---
+
+## 2026-09-16. The checkpoints are removed; a part runs to the end
+
+Part 5 opened with the first checkpoint: the question lists for all eleven
+chapters, sent for approval before any chapter was written. The author's answer
+was to delete the rule. Parts run from start to finish with nothing sent along
+the way, and the assistant interrupts only for a question that genuinely
+changes the work.
+
+**Why.** The checkpoints were agreed on 2026-09-14 and then waived by the
+author for Part 2's rework, for Part 3 and for Part 4 — every part since they
+were written. A rule waived every time it applies is not the rule; the waiver
+is. Keeping it meant renegotiating the same exemption at the start of each
+part, which costs the author a message and the assistant a stop.
+
+**What stays.** Chapters are written, checked and committed one at a time, so
+each is a complete unit in the history and a systematic problem is fixable
+without unpicking a part-sized commit. The part is still delivered at the end
+and still stops for feedback before the next one begins. Every tool check still
+has to pass before a part is called done.
+
+**What replaces the checkpoint.** A question is asked when it materially
+changes what gets written and cannot be settled from the installed
+documentation, the source, or a test in the sandbox — and then it is asked
+rather than guessed at. The three questions that opened Part 5 were of that
+kind: one was answered, and two the author handed back to the assistant's
+judgement.
+
+**The risk this accepts** is the one the checkpoints guarded against: a mistake
+no tool can see, repeated across a whole part before the author reads a word of
+it. Four parts have now been written this way without one being found, and
+Chapter 13 stays the calibration for what "complete" means.
+
+---
+
+## 2026-09-16. Part 5 scope: filter-repo, git replay, and where rebase is cut
+
+Three questions settled at the start of Part 5.
+
+**`git filter-repo` is installed into the sandbox and shown working.** Git's
+own documentation puts a warning at the top of `git filter-branch` telling the
+reader to use `git filter-repo` instead, so a chapter that demonstrates only
+`filter-branch` teaches the tool Git calls dangerous and leaves the recommended
+one as hearsay. It is not part of Git and had to be installed, which is
+acceptable for writing the book in the same way `tools/first_version.py` uses
+the network. Chapter 37 keeps full `filter-branch` coverage for a reader who
+cannot install anything, and says plainly that `filter-repo` is a separate
+download. The BFG is Java and stays prose-only.
+
+**`git replay` is a section of Chapter 33, not a chapter.** Git 2.54 added it
+and 2.55 gave it `--revert`; it is a rebase that needs no working tree and runs
+in a bare repository. It is experimental and small, and the outline has no
+number for it. Inserting a chapter would mean a gap in reading order or
+renumbering the whole book, which OUTLINE.md forbids for something this size,
+so it goes among rebase's neighbours where a reader meets it in context.
+
+**Chapter 33 is rebase without the todo list; Chapter 34 is the todo list.**
+`--exec` and `--rebase-merges` go to Chapter 34 although neither needs `-i`,
+because both work by writing lines into the todo list and cannot be explained
+without it. `--update-refs` stays in Chapter 33 because it works without the
+list, with its `update-ref` todo line in Chapter 34. Chapter 33's options table
+points at Chapter 34 for the rows it does not demonstrate.

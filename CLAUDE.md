@@ -220,19 +220,19 @@ of real output that is permitted.
 
 ## Workflow
 
-The author gives instructions a part at a time ("do Part 7"). A part is several
-hundred pages, far too much to deliver in one uninterrupted run: every mistake a
-tool cannot see would be copied into every chapter before the author saw one.
-So inside each part there are three checkpoints:
+The author gives instructions a part at a time ("do Part 7"). **Write the whole
+part to the end without stopping.** Nothing is sent ahead for approval: no
+question lists before the chapters, no first chapter delivered early. Chapters
+are still written, checked and committed one at a time, so that each one is a
+complete unit of work in the history.
 
-1. **Question lists first.** Before writing any chapter of the part, send the
-   question lists for all of its chapters in one message, and wait for the
-   author's answer. Scope and structure are cheapest to correct here.
-2. **Chapter by chapter.** Write, run every check, and commit each chapter on
-   its own.
-3. **The first chapter goes to the author as soon as it is done**, and work
-   continues without waiting. If the author finds a systematic problem, fix it
-   in that chapter before it spreads to the others.
+Stop and ask only when a question genuinely changes what gets written and
+cannot be settled from the installed documentation, the source, or a test in
+the sandbox. Scope questions of that size are rare; a question that can be
+answered by running something is not one of them, and neither is a preference
+the author has already left to judgement. When there is such a question, ask it
+rather than guessing, and carry on with everything that does not depend on the
+answer while waiting.
 
 When the part is finished, deliver it and stop for feedback before starting the
 next one.
