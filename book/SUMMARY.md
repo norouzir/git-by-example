@@ -54,3 +54,4 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 29. commit --amend](part-05-rewriting-history/29-commit-amend.md)
 - [Chapter 30. reset](part-05-rewriting-history/30-reset.md)
 - [Chapter 31. revert](part-05-rewriting-history/31-revert.md)
+- [Chapter 32. cherry-pick](part-05-rewriting-history/32-cherry-pick.md)
