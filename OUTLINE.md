@@ -56,7 +56,7 @@ fall short of the current standard; see Outstanding below.
 ## Part 5. Rewriting History
 
 - [x] 28. The Golden Rule of Rewriting
-- [ ] 29. commit --amend
+- [x] 29. commit --amend
 - [ ] 30. reset
 - [ ] 31. revert
 - [ ] 32. cherry-pick
