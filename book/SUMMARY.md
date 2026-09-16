@@ -56,3 +56,4 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 31. revert](part-05-rewriting-history/31-revert.md)
 - [Chapter 32. cherry-pick](part-05-rewriting-history/32-cherry-pick.md)
 - [Chapter 33. rebase](part-05-rewriting-history/33-rebase.md)
+- [Chapter 34. Interactive Rebase](part-05-rewriting-history/34-interactive-rebase.md)

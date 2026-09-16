@@ -61,7 +61,7 @@ fall short of the current standard; see Outstanding below.
 - [x] 31. revert
 - [x] 32. cherry-pick
 - [x] 33. rebase
-- [ ] 34. Interactive Rebase
+- [x] 34. Interactive Rebase
 - [ ] 35. fixup, autosquash, and git history
 - [ ] 36. reflog
 - [ ] 37. Removing Files and Secrets from History
