@@ -703,3 +703,78 @@ branch before each demonstration.
 `pick e1fa553 Add the reader`. Verified against the installed binary with an
 explicit `rebase.instructionFormat`, so it is the version's behaviour and not
 a configuration; Chapters 34 and 35 describe what a reader will actually see.
+
+---
+
+## 2026-09-17. Part 6 starts with Chapters 39 to 41, and git ls-remote goes in 39
+
+The author asked for Chapters 39, 40 and 41 of Part 6 rather than the whole
+part. They were written, checked and committed one at a time, and delivered
+together; Chapters 42 to 46 wait for the author's next instruction.
+
+**`git ls-remote` is a section of Chapter 39.** The outline gives it no chapter.
+Chapter 40 needs it to show what a transport returns, and Chapter 41 to show the
+server before a fetch, so it has to be taught before both; `git remote show`
+answers the same question in Chapter 39, which makes that its natural
+neighbour. Putting it in Chapter 41 would have made Chapter 40 use a command it
+had not yet explained.
+
+---
+
+## 2026-09-17. Chapter 40 is demonstrated without a server
+
+Authentication and the network were the one thing Chapter 2 said the sandbox
+cannot show. Chapter 40 shows everything Git itself does, and stops where a
+server would answer.
+
+**How.** A stand-in `ssh`, a four-line script the chapter prints, logs the
+command line Git gives `ssh` and runs the command locally. That turned out to be
+the most useful example in the chapter: it shows the real arguments for every
+URL form, for each SSH variant (`plink`, `tortoiseplink`, `simple`), with a
+port, with `-4`, and without protocol version 2, which a real `ssh` would never
+show. A stand-in askpass program shows the exact questions Git asks. Credential
+helpers run with their files and sockets inside the sandbox, whose `HOME` is
+the sandbox root. `https://` URLs appear only in commands Git refuses before it
+connects.
+
+**What is quoted instead.** Git's HTTP error messages are quoted from its
+source (`remote-curl.c`, `http.c`); `ssh`'s from OpenSSH's source; GitHub's
+greeting, its 13 August 2021 end of password authentication and its 15 March
+2022 end of `git://` from GitHub's documentation and announcements. None of
+them is presented as a transcript.
+
+**Rejected.** A local HTTP server, such as `git http-backend` behind Python,
+to produce real HTTPS transcripts. Its output would show a test server and a
+port number rather than anything a reader meets on a real host, the messages
+that matter most come from the host rather than from Git, and it would bring a
+background process, a port that may be taken and a firewall prompt into a
+generator whose only job is to be reproducible. Also rejected: leaving
+credentials out of transcripts entirely, which the rule "no credential commands
+in generators" would have implied; the rule's reason is not touching the real
+machine, and a sandboxed `HOME` meets it. CLAUDE.md records the safeguards.
+
+**A mistake made on the way.** One experiment, not the generator, ran
+`git ls-remote ftp://example.com/...`, which connected to the network before
+failing. Nothing was sent but the connection attempt. CLAUDE.md now says to try
+a new URL scheme in scratch first.
+
+---
+
+## 2026-09-17. Git 2.55 behaviour that looks like a bug is documented as observed
+
+Running the examples found four behaviours of Git 2.55 that contradict its
+own documentation or hints, or leave a repository in a half-changed state:
+
+- `git remote set-branches` without `--add` fails silently, with exit status 1,
+  once a remote has no fetch refspecs (Chapter 39).
+- `git remote remove` of a remote made with `-t` leaves `<name>/HEAD`, and a
+  later `git remote rename` to that name renames the configuration and then
+  stops, with "dangling symref already exists" (Chapter 39).
+- The hint printed by `remote.<name>.followRemoteHEAD=warn` suggests the value
+  `warn-if-not-branch-<name>`, which Git reads as a branch called
+  `branch-<name>` (Chapter 41).
+- `git fetch --atomic` prints the update it then does not make (Chapter 41).
+
+**Decided.** Each is shown as a transcript, with what the source says causes it
+and, where there is one, the repair. The book describes the Git a reader has.
+Whether to report them to the Git project is left to the author.

@@ -246,7 +246,9 @@ rather than guessing, and carry on with everything that does not depend on the
 answer while waiting.
 
 When the part is finished, deliver it and stop for feedback before starting the
-next one.
+next one. When the author names chapters instead of a part ("do 39, 40 and 41"),
+the same rules apply to those chapters, and the delivery comes after the last
+of them.
 
 ### Keep the project record current
 
@@ -511,6 +513,10 @@ as `C:/Program Files/Git/regex/...` and failed with a usage line. Values with a
 transcript must show the Linux form, run that one command as
 `MSYS_NO_PATHCONV=1 sb_run "..."`, which keeps the printed command unchanged,
 and describe the Git Bash behaviour in a Windows call-out, as `ch19` does.
+Quoting the argument does not stop the conversion. A one-letter path is worse:
+`/x` arrives as the drive `X:/`. The same conversion happens inside a script
+that Git runs, such as `ch40`'s `bin/ssh`, whenever it passes a `/...` path on
+to a Windows program.
 
 **Times Git takes from the real clock.** `sb_pin_now` fixes relative dates, but
 not everything: `git blame` dates uncommitted lines and `--contents` input with
@@ -521,6 +527,48 @@ configuration, not the rest of the machine. `git commit -S` started GPG, which
 created `~/.gnupg` in the real home directory of the machine running the script.
 Do not run signing, credential or network commands in generator scripts; point
 to the chapter that covers them instead.
+
+Chapter 40 is the one that covers them, and it shows how far that can safely
+go. Its generator sets `HOME` to the sandbox root and unsets `GIT_ASKPASS` and
+`SSH_ASKPASS`; credential commands use only `store --file` and
+`cache --socket` inside the sandbox; SSH URLs go through `bin/ssh`, a stand-in
+that prints the command line Git gives `ssh` and runs the command locally; and
+an `https://` URL appears only in a command Git refuses before connecting
+(`protocol.allow=never`, `transfer.credentialsInUrl=die`, `--get-url`). What a
+real server or `ssh` prints is quoted in prose from its source or
+documentation, never as a transcript. Test a new URL scheme in a scratch
+directory first: while preparing `ch40`, `git ls-remote ftp://example.com/...`
+really connected to the network.
+
+`ssh -G` ignores `HOME` and reads the real `~/.ssh/config`; pass `-F` with a
+file inside the sandbox, as `ch40` does.
+
+**Running a generator by hand into an old directory.** `sb_root` does not empty
+the directory it is given, so a second run into the same directory finds the
+first run's repositories, `git clone` fails quietly, and the transcripts are
+nonsense. Always run into a fresh `$(mktemp -d)`, as `verify_transcripts.py`
+does.
+
+**Writing files from Python on Windows.** `Path.write_text` turns `\n` into CRLF
+there, and a generator script edited that way is committed as LF by
+`.gitattributes` but left CRLF in the working copy. Use `write_bytes` on encoded
+text, or `newline="\n"`, as `tools/check_refs.py` now does, or the file tools.
+
+**Reusing a remote's name in a generator.** `git remote remove` deletes only the
+refs a remote's fetch refspecs cover, so a remote made with `git remote add -t`
+leaves `refs/remotes/<name>/HEAD` behind once it has been fetched, and a later
+`git remote rename` to that name stops halfway. Remove `<name>/HEAD` with
+`git remote set-head <name> -d` first, as `ch39` does before its hidden
+removals.
+
+**Packet traces.** With `GIT_TRACE_PACKET`, the client and the server write to
+the same standard error, and their lines interleave differently on every run.
+Keep one side's lines, `grep -o 'fetch[<>].*'`, as `ch40` and `ch41` do.
+
+**A fetch that has nothing to negotiate.** `git fetch --dry-run` downloads the
+objects and only spares the refs, so a trace of the fetch after it shows no
+`want` or `have` lines. Any example that traces negotiation needs a new commit
+on the server immediately before it.
 
 **Commands whose result depends on the shell.** The sandbox runs bash, so every
 transcript shows bash. Where PowerShell or cmd behave differently, as with an

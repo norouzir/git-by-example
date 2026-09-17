@@ -146,6 +146,16 @@ fall short of the current standard; see Outstanding below.
 
 Work that must be finished before the first release, most urgent first.
 
+- **Part 6 is half written.** Chapters 39 to 41 were written to the Chapter 13
+  standard and pass all three checks (2026-09-17), at the author's request for
+  those three chapters only. Chapters 42 to 46 are not started, and none of
+  39 to 41 has been read by the author.
+- **Chapter 36 says something its own transcript contradicts.** Under "When
+  entries expire", the text says `--expire=1.hour.ago` pruned seven entries and
+  left two, but the dry run above it prunes all nine and `git reflog show main`
+  afterwards prints nothing; "Where reflogs are kept" then describes the lines
+  of a `cat` that printed none. Found in passing while reading Chapter 36 for
+  Part 6; not yet fixed.
 - **Part 5 review by the author.** Chapters 28 to 38 were written to the
   Chapter 13 standard and pass all three checks (2026-09-16), with no
   checkpoints at all, which is now the rule (see DECISIONS.md). None has been

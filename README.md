@@ -90,8 +90,13 @@ One script needs a program that is not part of Git: Chapter 37 shows
 running `sandbox/scripts/ch37-removing-files-and-secrets.sh`:
 
 ```sh
-curl -sSL -o ~/bin/git-filter-repo \n  https://raw.githubusercontent.com/newren/git-filter-repo/v2.47.0/git-filter-repo
+curl -sSL -o ~/bin/git-filter-repo https://raw.githubusercontent.com/newren/git-filter-repo/v2.47.0/git-filter-repo
 ```
+
+Chapter 40's script also runs `ssh-keygen` and `ssh -G` from OpenSSH, which
+Git for Windows installs with Git and most Linux and macOS systems already have.
+It contacts no network and no real credential store: it sets `HOME` to the
+sandbox, and a stand-in script plays the part of `ssh`.
 
 ## Version
 
