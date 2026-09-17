@@ -825,3 +825,26 @@ own commit. The lesson is the existing rule applied to Git's own documentation:
 a behaviour stated in the book is run first, and attributing it to the
 documentation does not make an untested sentence safe.
 
+---
+
+## 2026-09-17. Chapter 45 is organised by situation, not by command
+
+The author asked for Chapter 45 after Chapters 42 to 44. It has no command of
+its own, so, like Chapter 44, it does not follow the synopsis-and-options order:
+it opens with a table of situations keyed by what `git status -sb` shows, then
+how a branch diverges, how to see both sides, and every way to reconcile.
+
+**What it does not repeat.** The rejection messages, forcing and leases are
+Chapter 43's; the pull settings and the fork point are Chapter 42's; the mess a
+merge makes of a rewritten branch is Chapter 28's. Chapter 45 points to them and
+shows only what they do not: reconciling one diverged state six ways side by
+side, a second push racing yours, a rebase meeting one conflict twice, telling
+your own rewritten commits from other people's with `--cherry-mark` and
+`git range-diff`, and the rejections that are not divergence.
+
+**An unverified claim caught before writing.** The first draft of the "which way"
+advice assumed a rebase repeats a conflict for every commit touching the line.
+The first test did not show that: a later commit applied cleanly. The example
+was rebuilt so that both of Ada's commits change the conflicting line itself,
+which does stop twice, and the text says that is the condition.
+

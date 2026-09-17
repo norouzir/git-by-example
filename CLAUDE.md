@@ -610,6 +610,12 @@ such a section in words instead ("Push refspecs in the configuration").
 made while a background run is still going can change or break that run. Wait
 for it to finish before editing, or check two fresh runs afterwards.
 
+**The reflog of a generator's repository.** The quiet `git reset --hard` that
+puts a branch back between demos is recorded in the reflog, so a later
+`git reflog` transcript shows entries such as `reset: moving to a842ca8...`
+that the chapter never mentions. Recover from `ORIG_HEAD` in the transcript
+instead, as `ch45` does, or show the reflog only before any hidden command.
+
 ## Layout
 
 ```
