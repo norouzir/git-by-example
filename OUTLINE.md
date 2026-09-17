@@ -156,6 +156,13 @@ Work that must be finished before the first release, most urgent first.
   afterwards prints nothing; "Where reflogs are kept" then describes the lines
   of a `cat` that printed none. Found in passing while reading Chapter 36 for
   Part 6; not yet fixed.
+- **Chapter 17 points to chapters that do not show what it promises.**
+  `tools/audit_examples.py` over the whole book (2026-09-17) reports two rows
+  of Chapter 17 as missing: `--show-notes`, `--standard-notes` and
+  `--no-standard-notes` point to Chapter 38, and `--min-parents=3` to
+  Chapter 27, and neither chapter demonstrates them. Either the examples go
+  into those chapters or the rows get their own. The same run reports
+  Chapter 4's `-e`, which belongs to the review of Parts 0 and 1 below.
 - **Part 5 review by the author.** Chapters 28 to 38 were written to the
   Chapter 13 standard and pass all three checks (2026-09-16), with no
   checkpoints at all, which is now the rule (see DECISIONS.md). None has been
