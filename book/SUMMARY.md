@@ -71,3 +71,4 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 42. pull](part-06-remotes/42-pull.md)
 - [Chapter 43. push](part-06-remotes/43-push.md)
 - [Chapter 44. Refspecs](part-06-remotes/44-refspecs.md)
+- [Chapter 45. Divergence and Rejected Pushes](part-06-remotes/45-divergence-and-rejected-pushes.md)
