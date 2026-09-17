@@ -69,3 +69,4 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 40. Protocols and Authentication](part-06-remotes/40-protocols-and-authentication.md)
 - [Chapter 41. fetch and Remote-Tracking Branches](part-06-remotes/41-fetch-and-remote-tracking-branches.md)
 - [Chapter 42. pull](part-06-remotes/42-pull.md)
+- [Chapter 43. push](part-06-remotes/43-push.md)
