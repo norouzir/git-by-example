@@ -74,7 +74,7 @@ fall short of the current standard; see Outstanding below.
 - [x] 41. fetch and Remote-Tracking Branches
 - [x] 42. pull
 - [x] 43. push
-- [ ] 44. Refspecs
+- [x] 44. Refspecs
 - [ ] 45. Divergence and Rejected Pushes
 - [ ] 46. Shallow, Partial, and Single-Branch Clones
 
@@ -245,6 +245,7 @@ editing every chapter in the left column.
 | 41 | Chapter 3, Chapter 6, Chapter 9, Chapter 10, Chapter 18, Chapter 22, Chapter 23, Chapter 24, Chapter 25, Chapter 28, Chapter 30, Chapter 33, Chapter 36, Chapter 39, Chapter 40, Chapter 42, Chapter 43, Chapter 44, Chapter 46, Chapter 47, Chapter 57, Chapter 61, Chapter 69, Chapter 71, Chapter 72, Chapter 77, Chapter 81 |
 | 42 | Chapter 2, Chapter 3, Chapter 9, Chapter 10, Chapter 13, Chapter 14, Chapter 18, Chapter 23, Chapter 24, Chapter 25, Chapter 26, Chapter 27, Chapter 28, Chapter 30, Chapter 31, Chapter 33, Chapter 34, Chapter 36, Chapter 39, Chapter 40, Chapter 41, Chapter 43, Chapter 44, Chapter 46, Chapter 55, Chapter 57, Chapter 62, Chapter 67, Chapter 68 |
 | 43 | Chapter 3, Chapter 9, Chapter 18, Chapter 23, Chapter 24, Chapter 28, Chapter 29, Chapter 36, Chapter 39, Chapter 40, Chapter 41, Chapter 42, Chapter 44, Chapter 45, Chapter 47, Chapter 50, Chapter 51, Chapter 57, Chapter 61, Chapter 62, Chapter 67, Chapter 68, Chapter 69, Chapter 72, Chapter 81 |
+| 44 | Chapter 6, Chapter 7, Chapter 9, Chapter 11, Chapter 18, Chapter 23, Chapter 38, Chapter 39, Chapter 41, Chapter 42, Chapter 43 |
 
 Do not maintain that table by hand. Regenerate it, and check that nothing
 points at a chapter that does not exist:
