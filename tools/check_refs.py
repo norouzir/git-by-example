@@ -90,8 +90,10 @@ def write_outline_table(ref_map: dict[str, list[str]], outline_text: str) -> Non
     table = "\n".join([TABLE_START, "|---|---|", *rows])
     start = outline_text.index(TABLE_START)
     end = outline_text.index("\n\n", start)
+    # newline="\n": on Windows, write_text would otherwise write CRLF.
     OUTLINE.write_text(
-        outline_text[:start] + table + outline_text[end:], encoding="utf-8"
+        outline_text[:start] + table + outline_text[end:], encoding="utf-8",
+        newline="\n",
     )
 
 
