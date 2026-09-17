@@ -70,7 +70,7 @@ fall short of the current standard; see Outstanding below.
 ## Part 6. Remotes
 
 - [x] 39. remote
-- [ ] 40. Protocols and Authentication
+- [x] 40. Protocols and Authentication
 - [ ] 41. fetch and Remote-Tracking Branches
 - [ ] 42. pull
 - [ ] 43. push
@@ -224,6 +224,7 @@ editing every chapter in the left column.
 | 37 | Chapter 12, Chapter 14, Chapter 15, Chapter 16, Chapter 21, Chapter 22, Chapter 28, Chapter 29, Chapter 34, Chapter 36, Chapter 38, Chapter 43, Chapter 50, Chapter 51, Chapter 58, Chapter 67, Chapter 74, Chapter 75, Chapter 77, Chapter 82 |
 | 38 | Chapter 6, Chapter 17, Chapter 28, Chapter 29, Chapter 35, Chapter 37, Chapter 44, Chapter 53, Chapter 69, Chapter 74, Chapter 75, Chapter 81 |
 | 39 | Chapter 3, Chapter 7, Chapter 9, Chapter 18, Chapter 22, Chapter 23, Chapter 24, Chapter 36, Chapter 40, Chapter 41, Chapter 42, Chapter 43, Chapter 44, Chapter 45, Chapter 46, Chapter 50, Chapter 62 |
+| 40 | Chapter 2, Chapter 3, Chapter 9, Chapter 39, Chapter 41, Chapter 50, Chapter 51, Chapter 57, Chapter 61, Chapter 67 |
 
 Do not maintain that table by hand. Regenerate it, and check that nothing
 points at a chapter that does not exist:

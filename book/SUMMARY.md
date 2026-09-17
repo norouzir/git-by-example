@@ -66,3 +66,4 @@ the book. Adding a chapter means adding a line here.
 ## Part 6. Remotes
 
 - [Chapter 39. remote](part-06-remotes/39-remote.md)
+- [Chapter 40. Protocols and Authentication](part-06-remotes/40-protocols-and-authentication.md)
