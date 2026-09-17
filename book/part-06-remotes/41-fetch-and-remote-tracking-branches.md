@@ -591,9 +591,11 @@ anything else would throw commits off the branch. `drafts` does not contain
 allows it, and the reverse, going back to the server's `deserts`, is then a
 rewrite too and is refused in its turn.
 
-Git's documentation lists the exceptions: into `refs/tags/` a changed tag needs
-forcing, as [A tag that moved](#a-tag-that-moved) shows, and outside
-`refs/heads/` and `refs/tags/` any update is accepted without `+`.
+Into `refs/tags/`, a changed tag needs forcing even when the new commit contains
+the old one, as [A tag that moved](#a-tag-that-moved) shows. Git's documentation
+adds that outside `refs/heads/` and `refs/tags/` any update is accepted without
+`+`; in Git 2.55 that holds only for objects that are not commits, and a commit
+that is not a fast-forward is rejected wherever it goes, as Chapter 44 shows.
 
 ```console
 $ git switch -q deserts && git fetch origin +deserts:deserts
