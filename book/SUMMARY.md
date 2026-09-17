@@ -61,3 +61,8 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 36. reflog](part-05-rewriting-history/36-reflog.md)
 - [Chapter 37. Removing Files and Secrets from History](part-05-rewriting-history/37-removing-files-and-secrets-from-history.md)
 - [Chapter 38. replace, notes, and grafts](part-05-rewriting-history/38-replace-notes-and-grafts.md)
+
+
+## Part 6. Remotes
+
+- [Chapter 39. remote](part-06-remotes/39-remote.md)
