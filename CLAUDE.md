@@ -577,6 +577,39 @@ result in a **Windows.** call-out that says it was tested outside the sandbox.
 Never present it as a transcript. The author found this gap in Chapter 11, where
 `git add *` was missing from the ways to stage everything.
 
+**A URL inside a merge message.** `git pull` and `git merge FETCH_HEAD` write
+"Merge branch 'main' of <url>" into the commit, so a remote whose URL is the
+sandbox's absolute path gives a different hash on every run, and so does every
+commit after it. Give the clone a relative URL first,
+`git remote set-url origin ../server/atlas.git`, as `ch42` does, and say in the
+chapter why the URL looks that way.
+
+**Push progress.** `Writing objects` ends with a transfer speed, and on some runs
+intermediate percentages such as `Counting objects:  33% (2/6)` appear too. Keep
+only the final lines, `grep -E '^(Enumerating|Counting|Compressing).*done|^Total|->'`,
+as `ch43` does, and say which line was left out.
+
+**Git's documentation can be wrong.** Chapter 41 repeated the documentation's
+statement that fetch accepts any update outside `refs/heads/` and `refs/tags/`
+without `+`; a Chapter 44 example showed it false for commits, and Chapter 41 had
+to be corrected. "Git's documentation says" does not replace running it: test
+the behaviour, and when the documentation and the test disagree, read the source
+and describe what the installed Git does.
+
+**`git config set` on a setting with several lines.** It refuses with "cannot
+overwrite multiple values with a single value", which silently leaves a
+generator's remote with the refspecs of the previous section. Use `--append` to
+add a line, and `git config unset --all` before setting one again, as `ch44`
+does.
+
+**A heading with `<name>` in it.** `tools/anchors.py` drops what looks like an
+HTML tag, so a heading `remote.\<name\>.push` gets the id `#remote-push`. Name
+such a section in words instead ("Push refspecs in the configuration").
+
+**Editing a generator while it runs.** Bash reads a script as it goes, so an edit
+made while a background run is still going can change or break that run. Wait
+for it to finish before editing, or check two fresh runs afterwards.
+
 ## Layout
 
 ```

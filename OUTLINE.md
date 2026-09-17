@@ -146,10 +146,18 @@ fall short of the current standard; see Outstanding below.
 
 Work that must be finished before the first release, most urgent first.
 
-- **Part 6 is half written.** Chapters 39 to 41 were written to the Chapter 13
-  standard and pass all three checks (2026-09-17), at the author's request for
-  those three chapters only. Chapters 42 to 46 are not started, and none of
-  39 to 41 has been read by the author.
+- **Part 6 is two thirds written.** Chapters 39 to 44 were written to the
+  Chapter 13 standard and pass all three checks (2026-09-17), at the author's
+  request for 39 to 41 and then for 42 to 44. Chapters 45 and 46 are not
+  started, and none of 39 to 44 has been read by the author. Chapter 45 must
+  build on what Chapter 43 already shows of rejected pushes (the `fetch first`
+  and `non-fast-forward` messages, `--atomic`, forcing and leases) and give the
+  full treatment of divergence that Chapters 10, 39 and 43 point to it for.
+- **Chapter 41 was corrected while writing Chapter 44.** It had repeated Git's
+  documentation that fetch accepts any update outside `refs/heads/` and
+  `refs/tags/` without `+`; testing showed that false for commits. Other
+  chapters may repeat documentation claims no transcript tested; the author's
+  review of Parts 2 to 6 is the moment to look for them.
 - **Chapter 36 says something its own transcript contradicts.** Under "When
   entries expire", the text says `--expire=1.hour.ago` pruned seven entries and
   left two, but the dry run above it prunes all nine and `git reflog show main`

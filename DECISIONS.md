@@ -774,7 +774,54 @@ own documentation or hints, or leave a repository in a half-changed state:
   `warn-if-not-branch-<name>`, which Git reads as a branch called
   `branch-<name>` (Chapter 41).
 - `git fetch --atomic` prints the update it then does not make (Chapter 41).
+- A fetch refspec without `+` rejects a commit that is not a fast-forward in
+  every namespace, although the documentation says updates outside
+  `refs/heads/` and `refs/tags/` are accepted; and `--no-show-forced-updates`
+  lets such an update through without `+`, printed as a fast-forward. Both are
+  read from `update_local_ref` in `builtin/fetch.c` (Chapter 44).
+- `receive.denyDeletes` and `receive.denyNonFastForwards` apply only to
+  branches; a tag can still be deleted, while the documentation speaks of refs
+  (Chapter 43).
+- `@{push}` fails with "cannot resolve 'simple' push to a single destination"
+  when a branch pushes to a remote other than its upstream's under
+  `push.default=simple`, while `git push` itself goes ahead (Chapter 43).
 
 **Decided.** Each is shown as a transcript, with what the source says causes it
 and, where there is one, the repair. The book describes the Git a reader has.
 Whether to report them to the Git project is left to the author.
+
+---
+
+## 2026-09-17. Chapters 42 to 44, and where Chapter 43 stops
+
+The author asked for Chapters 42, 43 and 44 and a push at the end. They were
+written, checked and committed one at a time, as before.
+
+**Chapter 43 shows rejected pushes, Chapter 45 explains divergence.** A chapter
+on `git push` that did not show `fetch first`, `non-fast-forward`, forcing and
+leases would leave the reader stuck at the most common push there is, so all of
+them are in Chapter 43 with the fix that gets the push through. What belongs to
+Chapter 45 is the situation behind them: every way to reconcile a diverged
+branch, how to see it coming, and how teams avoid it. Chapter 43 points there
+once, and Chapter 45 must not repeat its transcripts.
+
+**Chapter 44 is a chapter about a syntax, not a command,** so the order CLAUDE.md
+gives for command chapters is adapted as Chapter 40 did: "The forms at a glance"
+takes the place of a synopsis and options, followed by where refspecs come
+from, then the details for fetch and push, then neighbours and reference
+tables.
+
+**Hosting services' refspecs were checked on the web.** GitHub's
+`pull/ID/head`, GitLab's `refs/merge-requests/*/head` fetch line and Gerrit's
+`HEAD:refs/for/branch` are not Git facts and are not on disk, so they were read
+from each host's own documentation, and the example server holds such refs
+pushed by hand, which the chapter says.
+
+**A documentation claim turned out false, and an earlier chapter had repeated
+it.** Chapter 41 said, after Git's documentation, that fetch accepts any update
+outside `refs/heads/` and `refs/tags/` without `+`. The Chapter 44 example
+showed a rejection, the source confirmed it, and Chapter 41 was corrected in its
+own commit. The lesson is the existing rule applied to Git's own documentation:
+a behaviour stated in the book is run first, and attributing it to the
+documentation does not make an untested sentence safe.
+
