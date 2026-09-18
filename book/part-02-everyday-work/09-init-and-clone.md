@@ -1085,8 +1085,9 @@ hub
 `-o` names this one clone's remote. `clone.defaultRemoteName` changes the name
 for every clone. The command line wins when both are given.
 
-`upstream` is the common choice when you clone your own fork, so that `origin`
-can be added for the original project; Chapter 50 covers that arrangement.
+`upstream` is the common choice when you clone the original of a project you
+contribute to through your own fork, so that `origin` can be added for the
+fork; Chapter 50 covers that arrangement.
 
 ## Setting configuration during the clone
 
