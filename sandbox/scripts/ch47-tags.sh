@@ -73,6 +73,8 @@ sb_run "git tag -l 'v1.0*'"
 sb_run "git tag -l 'v1.0*' 'v1.1-*'"
 sb_run "git tag 'v1.0*'; echo \"exit \$?\""
 sb_run "git tag -i -l 'V1.1*'"
+sb_run "touch v1.0-notes.txt && git tag -l v1.0* && git tag -l 'v1.0*'"
+rm v1.0-notes.txt
 
 sb_say "Order"
 sb_run "git tag --sort=-version:refname"

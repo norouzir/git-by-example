@@ -56,6 +56,7 @@ same for both; where it does not, it says so.
 
 - [How do I list only some tags?](#patterns)
 - [I typed `git tag 'v1.*'` to list tags and got an error. Why?](#patterns)
+- [`git tag -l v1.0*` listed nothing, although those tags exist. Why?](#patterns)
 - [Why does `v1.1-rc1` come after `v1.1`, and how do I list the newest version first?](#order)
 - [How do I list tags in the order they were made?](#order)
 - [How do I see more of each message, or lay the list out differently?](#layout)
@@ -276,14 +277,26 @@ exit 128
 $ git tag -i -l 'V1.1*'
 v1.1
 v1.1-rc1
+$ touch v1.0-notes.txt && git tag -l v1.0* && git tag -l 'v1.0*'
+v1.0
+v1.0.1
 ```
 
 `-l` with patterns lists the tags matching any of them. A pattern is a shell
-wildcard, `*` for any run of characters and `?` for one, matched by Git itself,
-so it is quoted to keep the shell from expanding it first. Without `-l`, a
-name after `git tag` is a tag to create, and `*` cannot be part of a tag's name.
-`-i` matches regardless of case. Git's documentation says the other listing
-options, such as `--contains`, imply `-l`.
+wildcard, `*` for any run of characters and `?` for one, matched by Git itself.
+Without `-l`, a name after `git tag` is a tag to create, and `*` cannot be part
+of a tag's name. `-i` matches regardless of case. Git's documentation says the
+other listing options, such as `--contains`, imply `-l`. Quote the pattern: with
+a file called `v1.0-notes.txt` in the directory, bash turned the unquoted
+`v1.0*` into that file's name before Git saw it, and no tag has that name, so
+the first list came out empty. The file was removed afterwards.
+
+> **Windows.** Tested outside the sandbox with Git 2.55. PowerShell and cmd do
+> not expand `*` themselves, so an unquoted `git tag -l v1.0*` works in both.
+> PowerShell accepts single quotes too, but cmd passes them on as part of the
+> pattern, and there `git tag -l 'v1.0*'` lists nothing. Double quotes work in
+> all three shells. Chapter 22's note on `%` in cmd batch files applies to
+> `--format` here as well.
 
 ### Order
 
