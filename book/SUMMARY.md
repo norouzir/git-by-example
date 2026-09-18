@@ -73,3 +73,8 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 44. Refspecs](part-06-remotes/44-refspecs.md)
 - [Chapter 45. Divergence and Rejected Pushes](part-06-remotes/45-divergence-and-rejected-pushes.md)
 - [Chapter 46. Shallow, Partial, and Single-Branch Clones](part-06-remotes/46-shallow-partial-and-single-branch-clones.md)
+
+
+## Part 7. Collaboration
+
+- [Chapter 47. Tags](part-07-collaboration/47-tags.md)
