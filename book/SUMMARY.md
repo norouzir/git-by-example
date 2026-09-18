@@ -79,3 +79,4 @@ the book. Adding a chapter means adding a line here.
 
 - [Chapter 47. Tags](part-07-collaboration/47-tags.md)
 - [Chapter 48. Releases and Versioning](part-07-collaboration/48-releases-and-versioning.md)
+- [Chapter 49. Workflow Patterns](part-07-collaboration/49-workflow-patterns.md)
