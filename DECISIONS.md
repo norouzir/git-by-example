@@ -923,3 +923,63 @@ Git numbers its maintenance releases.
 Chapter 48 in full. They belong to Chapters 61 and 65; Chapter 48 shows only
 what a release needs from them, and OUTLINE.md records what those chapters now
 owe.
+
+---
+
+## 2026-09-18. Chapters 49 and 50, and how GitHub is shown without GitHub
+
+The author asked for Chapters 49 and 50 of Part 7. They were written, checked
+and committed one at a time.
+
+**Chapter 49 is organised by pattern, simplest first,** like Chapters 45 and 48:
+one shared branch, topic branches and the four ways a branch lands, then GitHub
+flow, trunk-based development, environment branches, Git flow and Git's own
+workflow. Each pattern is shown as the history it produces, because that is the
+part a reader cannot predict: pulling with a merge on a shared branch turns the
+first-parent history backwards, which Git's `howto/keep-canonical-history-correct`
+describes and a transcript now shows. Git's own workflow comes from
+`gitworkflows` and `howto/maintain-git`, installed with Git; the named
+workflows from their own pages (nvie.com, GitHub's documentation and Scott
+Chacon's 2011 post, GitLab's page, trunkbaseddevelopment.com), each dated in
+the text. Where sources disagree, the chapter says so rather than choosing: a
+fix made on the trunk and cherry-picked back, which trunk-based development
+prescribes, against a fix made on the oldest branch and merged upwards, which
+`gitworkflows` prescribes; and merging `main` into a topic, which GitHub's
+documentation recommends and `gitworkflows` discourages. The `git flow` tool is
+not installed; its absence is shown as Git's real "not a git command", and the
+article's own commands are run instead.
+
+**Chapter 50 reaches no server.** Two bare repositories named `github/ada/atlas.git`
+and `github/bob/atlas.git` stand in for the original and the fork, and what
+GitHub does on its side (the fork, `refs/pull/<n>/head` and `/merge`, deleting a
+merged branch) is done by hand in the generator, out of sight, and said so in
+the text. Two things made the stand-in faithful rather than approximate:
+`receive.hideRefs=refs/pull/` makes a push to a pull request's ref fail with
+Git's own "deny updating a hidden ref", the exact message GitHub's documentation
+quotes; and `git rebase --force-rebase` reproduces what GitHub's documentation
+says distinguishes "Rebase and merge" from `git rebase`, new hashes and a new
+committer even when the branch is already on top. Bob's commits carry his own
+name, so authors and committers can be told apart.
+
+**What only GitHub prints is quoted, never transcribed.** The `GH006`
+protected-branch refusal is quoted from GitHub's documentation as a plain
+block. The link GitHub prints after pushing a new branch is not in the chapter
+at all, because GitHub's documentation does not show it and any version of it
+would have been written from memory.
+
+**Claims removed because no source confirmed them,** found by checking each
+GitHub sentence against the documentation before delivery: that pull request
+numbers are shared with issues, that a closed pull request can be reopened,
+that `refs/pull/<n>/head` survives the deletion of the branch, the default
+author of a squash commit, and, in Chapter 49, that Git's own project never
+cherry-picks.
+
+**Rejected.** Pushing to a real GitHub repository to capture its output. It is
+an outward-facing action, the output would name a real account, and it would
+not reproduce: GitHub's messages change without a Git release.
+
+**Chapter 9 was corrected.** It said `upstream` is the usual name for the remote
+when you clone your own fork; GitHub's documentation, Chapter 39 and Chapter 50
+all name the fork `origin` and the original `upstream`. The sentence now
+describes the one case where `upstream` is chosen at clone time: cloning the
+original with `-o upstream` and adding the fork as `origin`.

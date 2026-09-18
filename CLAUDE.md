@@ -324,7 +324,11 @@ exits. `tools/build_pdf.ps1` passes its own `--user-data-dir` to prevent that.
 Do not remove that flag.
 
 **Large heredocs.** Writing a long chapter through a shell heredoc is fragile
-with this much mixed punctuation. Use the file-writing tool instead.
+with this much mixed punctuation. Use the file-writing tool instead. The same
+goes for a batch of edits: a Python heredoc full of quoted chapter text failed
+with "unexpected EOF" while preparing Chapter 49. Write the old and new texts
+to a scratch file with the file tool, and apply them with a short script that
+refuses to write anything unless each old text occurs exactly once.
 
 **Sandbox environment leaking.** The harness exports `GIT_AUTHOR_*`,
 `GIT_COMMITTER_*` and `GIT_CONFIG_GLOBAL`. Never source it in a shell that will
@@ -641,6 +645,27 @@ puts a branch back between demos is recorded in the reflog, so a later
 `git reflog` transcript shows entries such as `reset: moving to a842ca8...`
 that the chapter never mentions. Recover from `ORIG_HEAD` in the transcript
 instead, as `ch45` does, or show the reflog only before any hidden command.
+
+**A clone from a relative path stores an absolute one.** `git clone
+../github/bob/atlas.git` records `C:/.../bob/../github/bob/atlas.git`, which
+the sandbox then shows as `/home/ada/bob/../github/...`. Clone out of sight and
+`git remote set-url origin` to the relative path, as `ch45` and `ch50` do, and
+say in the chapter why the URL looks that way.
+
+**Two people in one generator.** The harness makes everyone Ada. Where it
+matters whose commit is whose, or an author differs from a committer, export all
+four `GIT_AUTHOR_*` and `GIT_COMMITTER_*` name and email variables whenever the
+script moves to the other person's clone, as `as_ada` and `as_bob` do in `ch50`.
+The clock stays shared, so hashes stay stable.
+
+**Standing in for a hosting service.** Nothing in a generator may reach GitHub
+or GitLab. Do what the service does on its own side by hand in a bare
+repository, out of sight, and say so in the chapter, as `ch44` and `ch50` do for
+`refs/pull/`. Look for Git's own way to behave like the service:
+`receive.hideRefs=refs/pull/` gives exactly the refusal GitHub's documentation
+quotes for a push to a pull request's ref. What only the service prints is
+quoted from its documentation as a plain block, never as a transcript; if its
+documentation does not show it, it stays out of the book.
 
 ## Layout
 
