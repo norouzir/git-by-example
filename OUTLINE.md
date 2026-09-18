@@ -146,10 +146,14 @@ fall short of the current standard; see Outstanding below.
 
 Work that must be finished before the first release, most urgent first.
 
-- **Part 6 has one chapter left.** Chapters 39 to 45 were written to the
-  Chapter 13 standard and pass all three checks (2026-09-17), at the author's
-  request for 39 to 41, then 42 to 44, then 45. Chapter 46 is not started. No
-  feedback from the author on any of 39 to 45 has been recorded yet.
+- **Part 6 is written.** Chapters 39 to 46 were written to the Chapter 13
+  standard and pass all three checks, at the author's request for 39 to 41,
+  then 42 to 44, then 45 (2026-09-17), then 46 (2026-09-18, finished in a
+  second session after the first stopped part-way). No feedback from the
+  author on any of 39 to 46 has been recorded yet.
+- **The verifier's new end-of-output check has been run over every chapter
+  once** (2026-09-18). It found blocks cut short in Chapters 6 and 29, now
+  restored; Chapters 7 and 8 still fail for the older reasons below.
 - **Chapter 41 was corrected while writing Chapter 44.** It had repeated Git's
   documentation that fetch accepts any update outside `refs/heads/` and
   `refs/tags/` without `+`; testing showed that false for commits. Other

@@ -456,7 +456,23 @@ before switching in a generator, as `ch22` does.
 **Commands that fetch in a partial clone.** A partial clone's missing objects
 are fetched from its server whenever a command needs them, even a plain
 `git rev-list --objects`, and the example's state changes under later commands.
-Run the commands that inspect missing objects first.
+Run the commands that inspect missing objects first. `git cat-file -t` on a
+missing object fetches it too; `git --no-lazy-fetch cat-file -e` checks without
+fetching. `rev-list --missing=print` cannot see objects below a missing tree, so
+after a filter that leaves out trees, count what the clone holds with
+`git count-objects -v` instead.
+
+**Counting the commands Git starts.** `GIT_TRACE=1` prints every command Git
+starts on two lines, `run_command:` and `start_command:`. Count the
+`run_command:` lines only. The first draft of Chapter 46 counted both, doubled
+every lazy fetch it reported, and a later correction built on those numbers was
+wrong again.
+
+**Picking up an interrupted chapter.** A previous session's list of what was
+left is a starting point, not a checklist. The list left for Chapter 46 had two
+wrong corrections and flagged a correct cross-reference as wrong; each item was
+tested before it was applied, and the files themselves were read for what the
+list had missed.
 
 **Headings with an apostrophe.** The apostrophe becomes a `-` in the section id:
 "Reading shortlog's output" is `#reading-shortlog-s-output`. `check_refs.py`

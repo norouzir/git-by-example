@@ -848,3 +848,41 @@ The first test did not show that: a later commit applied cleanly. The example
 was rebuilt so that both of Ada's commits change the conflicting line itself,
 which does stop twice, and the text says that is the condition.
 
+
+---
+
+## 2026-09-18. Chapter 46, and what testing changed in it
+
+The author asked for Chapter 46 to be finished after a session that stopped
+part-way, with a list of what was left, and for Chapters 47 and 48 after it.
+
+**The handover list was tested, not followed.** It was right about several
+unverified claims and wrong about three things: it gave `git blame` four lazy
+fetches and `git switch` two, both doubled by a trace that prints each started
+command twice, and it called the Chapter 19 reference for blame's `^` wrong,
+although Chapter 19 explains it. The chapter itself was then read for what the
+list had missed, which found a transcript missing a line of real output, a
+hidden `rm -rf` between two clones into the same directory, a claim that
+`git backfill drafts` works in a clone that has no branch `drafts`, and
+`GIT_TRACE` attributed to the wrong chapter.
+
+**`--filter=auto` is shown as it behaves, not as its documentation reads.** The
+filter comes only from advertised promisor remotes the client accepts and
+already has configured: with the default policy, and with `all` but no such
+remote, the clone sent no filter and is complete. Later fetches follow the
+server, as the documentation says, only while `promisor.acceptFromServer` is in
+the clone's own configuration; given with `git -c` for the clone alone, a later
+fetch sent no filter. Each case is a transcript or was tested.
+
+**Some statements in the draft had no source and were replaced by tests.**
+`--allow-unrelated-histories` "can conflict over every file" became a transcript
+where the one file changed on one side is an add/add conflict and the rest
+merge. The vague use of `uploadpack.allowAnySHA1InWant` became the one case
+found where it matters, a lazy fetch over protocol version 0. `git bisect`
+taking an unknown good commit as a path was read from `builtin/bisect.c`
+before being described. Filters that leave out trees are counted with
+`git count-objects`, because `--missing=print` cannot see below a missing tree.
+
+**Rejected.** Removing the statements the list called unsupported where a test
+could settle them instead. A removal loses content a reader needs; a test keeps
+it and makes it true.
