@@ -425,6 +425,14 @@ where the block says `...`. A block that leaves out a command the generator ran
 in the middle, even a quiet `git reset -q`, does not match. Either show the
 command, or reorder the generator so it runs in the order the chapter teaches.
 
+**A block must also run to the end of its last command's output.** Until
+2026-09-18 the verifier accepted a block that stopped early, and three got
+through: a missing `origin/drafts` in Chapter 46, the last line of a graph in
+Chapter 6, and the summary lines of an amend in Chapter 29. It now fails such a
+block. Show the output to its end, or close the block with `...` and say in the
+text what was cut. Blank lines at the very end, which a block cannot show, are
+allowed.
+
 **Errors and output in one transcript.** `sb_run` sends both streams into a
 pipe, where standard output is buffered and standard error is not, so an error
 can appear above output the command printed before it. `git rev-parse nosuch`

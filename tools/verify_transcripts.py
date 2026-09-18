@@ -13,7 +13,8 @@ Two things are allowed to differ, both documented in Chapter 1:
 
 Anything else that does not match is reported, which catches output that was
 trimmed without saying so, output that was retyped, and output that was
-invented.
+invented. A block must also stop where its last command's output stops: lines
+cut off the end without a closing `...` are reported too.
 
     python tools/verify_transcripts.py 13        one chapter
     python tools/verify_transcripts.py 9 13 16   several
@@ -73,12 +74,25 @@ def generator_output(number: int) -> list[str]:
     return [line.rstrip() for line in (result.stdout + result.stderr).splitlines()]
 
 
+def ends_cleanly(output: list[str], o: int) -> bool:
+    """Does the output of the block's last command stop where the block does?
+
+    After the last matched line, and any blank lines a block cannot show at its
+    end, must come the next command, a comment line such as the one `sb_say`
+    prints between sections, or the end of the run. Anything else is output the
+    block left out without a `...`.
+    """
+    while o < len(output) and output[o] == "":
+        o += 1
+    return o >= len(output) or output[o].startswith(("$ ", "# "))
+
+
 def matches(block: list[str], output: list[str]) -> tuple[bool, str]:
     """Is `block` found in `output`, in order, honouring `...` and notes?"""
     first = next((i for i, l in enumerate(block) if l not in ("...",) and not l.startswith("# ")), None)
     if first is None:
         return True, ""
-    best_fail = ""
+    best_fail, cut_short = "", ""
     for start, line in enumerate(output):
         if line != block[first]:
             continue
@@ -101,9 +115,12 @@ def matches(block: list[str], output: list[str]) -> tuple[bool, str]:
             else:
                 ok, best_fail = False, want
                 break
-        if ok:
+        if ok and (skipping or ends_cleanly(output, o)):
             return True, ""
-    return False, best_fail or block[first]
+        if ok and not cut_short:
+            rest = next(l for l in output[o:] if l != "")
+            cut_short = f"(the block ends, but the output goes on with) {rest}"
+    return False, cut_short or best_fail or block[first]
 
 
 def main() -> int:

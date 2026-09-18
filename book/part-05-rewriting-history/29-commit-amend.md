@@ -913,6 +913,10 @@ Cakes, without the hook
 #	new file:   cakes.md
 #
 # the hook was called with: commit HEAD
+[try e5fe7d4] Cakes, without the hook
+ Date: Mon Jan 5 11:00:00 2026 +0000
+ 1 file changed, 1 insertion(+)
+ create mode 100644 cakes.md
 ```
 
 `prepare-commit-msg` runs before the editor and can change the message. On an

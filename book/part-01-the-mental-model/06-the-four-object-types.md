@@ -171,6 +171,7 @@ $ git log --graph --oneline
 | * c357f58 Add a side file
 * | 6f7ab80 Say goodbye too
 |/
+* fbc085c Say hello
 ```
 
 | Parents | Called | Created by |
