@@ -151,6 +151,17 @@ Work that must be finished before the first release, most urgent first.
   then 42 to 44, then 45 (2026-09-17), then 46 (2026-09-18, finished in a
   second session after the first stopped part-way). No feedback from the
   author on any of 39 to 46 has been recorded yet.
+- **Part 7 is under way.** Chapters 47 and 48 were written to the Chapter 13
+  standard and pass all three checks (2026-09-18), at the author's request
+  together with the end of Chapter 46. Chapters 49 to 54 are not started. No
+  feedback from the author on 47 or 48 has been recorded yet.
+- **Chapters 47 and 48 leave work to later chapters,** which must show it when
+  they are written: Chapter 68 the signing options of `git tag` (`-s`, `-u`,
+  `--no-sign`, `tag.gpgSign`, `git verify-tag`), Chapter 61 `git archive` in
+  full and a bundle being cloned and fetched from, Chapter 65 `export-ignore`
+  and `export-subst`, Chapter 53 conventions that sort messages into features
+  and fixes. `tools/audit_examples.py` enforces the option rows once those
+  chapters exist; the prose promises need checking by hand.
 - **The verifier's new end-of-output check has been run over every chapter
   once** (2026-09-18). It found blocks cut short in Chapters 6 and 29, now
   restored; Chapters 7 and 8 still fail for the older reasons below.

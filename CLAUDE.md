@@ -431,7 +431,9 @@ through: a missing `origin/drafts` in Chapter 46, the last line of a graph in
 Chapter 6, and the summary lines of an amend in Chapter 29. It now fails such a
 block. Show the output to its end, or close the block with `...` and say in the
 text what was cut. Blank lines at the very end, which a block cannot show, are
-allowed.
+allowed. A blank line in the middle is not: a message printed with
+`git log --format=%B` or `git cat-file -p` ends with one, and when another
+command follows in the same block, that blank line has to be in the block.
 
 **Errors and output in one transcript.** `sb_run` sends both streams into a
 pipe, where standard output is buffered and standard error is not, so an error

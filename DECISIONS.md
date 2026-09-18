@@ -886,3 +886,40 @@ before being described. Filters that leave out trees are counted with
 **Rejected.** Removing the statements the list called unsupported where a test
 could settle them instead. A removal loses content a reader needs; a test keeps
 it and makes it true.
+
+---
+
+## 2026-09-18. Chapters 47 and 48, and where Part 7 starts
+
+**Chapter 47 is `git tag` in full, and points elsewhere for tags on the move.**
+Pushing, fetching, following, pruning and deleting tags on a server were
+already shown in Chapters 41 and 43, sorting and filtering refs in Chapter 22,
+and the object behind an annotated tag in Chapter 6. Chapter 47 gives those a
+table of pointers and shows only what falls between them: a tag deleted locally
+coming back with the next fetch, a tag and a branch sharing a name on push, and
+a published tag moved under a clone, with the recovery Git's documentation
+gives. Signing is left to Chapter 68 because it needs a key and a signing
+program, which a generator must not touch; `git tag -v` is shown only on
+unsigned tags, which never reach a signing program, with `HOME` inside the
+sandbox all the same.
+
+**Found by running, not by reading.** `git tag -m '#1 in the charts'` makes a
+tag with an empty message and no error, where `git commit -m` keeps the line;
+`git tag -f` without a message silently turns an annotated tag lightweight;
+`git reflog` shows nothing for an annotated tag's reflog, because the reflog
+walk skips entries that are not commits (`reflog-walk.c`). Each is a transcript.
+
+**Chapter 48 is organised by the steps of a release, like Chapter 45.** Git has
+no release command, so the chapter puts together tags, `git describe`,
+`git log`, `git archive` and cherry-pick in the order a release uses them, and
+points to the chapters that teach each command. Semantic Versioning and the
+release pages of GitHub and GitLab are not Git facts and not on disk: they were
+read from semver.org and from each service's documentation, and the chapter
+says when. Git's own practice is quoted from what is installed: `gitworkflows`
+for fixing the oldest branch and merging upwards, and the release notes for how
+Git numbers its maintenance releases.
+
+**Rejected.** Teaching `git archive`, `git bundle` and the export attributes in
+Chapter 48 in full. They belong to Chapters 61 and 65; Chapter 48 shows only
+what a release needs from them, and OUTLINE.md records what those chapters now
+owe.
