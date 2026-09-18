@@ -84,7 +84,7 @@ fall short of the current standard; see Outstanding below.
 - [x] 48. Releases and Versioning
 - [x] 49. Workflow Patterns
 - [x] 50. Forks and Pull Requests on GitHub
-- [ ] 51. Merge Requests on GitLab
+- [x] 51. Merge Requests on GitLab
 - [ ] 52. Code Review Mechanics
 - [ ] 53. Commit Message Conventions
 - [ ] 54. Collaboration Hazards

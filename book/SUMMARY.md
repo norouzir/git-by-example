@@ -81,3 +81,4 @@ the book. Adding a chapter means adding a line here.
 - [Chapter 48. Releases and Versioning](part-07-collaboration/48-releases-and-versioning.md)
 - [Chapter 49. Workflow Patterns](part-07-collaboration/49-workflow-patterns.md)
 - [Chapter 50. Forks and Pull Requests on GitHub](part-07-collaboration/50-forks-and-pull-requests-on-github.md)
+- [Chapter 51. Merge Requests on GitLab](part-07-collaboration/51-merge-requests-on-gitlab.md)
