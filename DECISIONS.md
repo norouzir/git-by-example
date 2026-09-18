@@ -983,3 +983,44 @@ when you clone your own fork; GitHub's documentation, Chapter 39 and Chapter 50
 all name the fork `origin` and the original `upstream`. The sentence now
 describes the one case where `upstream` is chosen at clone time: cloning the
 original with `-o upstream` and adding the fork as `origin`.
+
+---
+
+## 2026-09-18. Chapter 51 shows only what GitLab does differently
+
+The author asked for Chapter 51 after 49 and 50, and a push at the end.
+
+**Chapter 51 does not repeat Chapter 50.** Forks, the `upstream` remote,
+syncing, a branch per request and updating with a lease are the same on both
+services, so Chapter 51 points to Chapter 50 for them and shows what differs
+and Git can show: merge requests opened by `git push -o`, GitLab's three merge
+methods and its squash-plus-merge-commit, each built with the Git commands
+GitLab's documentation gives, the Rebase button seen from the contributor's
+clone, a fork of the default branch only, which GitLab's documentation says
+uses `--single-branch --no-tags`, pushing to a contributor's fork by URL as
+GitLab documents it, and a push rule. It ends with a table comparing the two
+services line by line.
+
+**Stand-ins, as in Chapter 50.** The project and the fork are bare repositories
+that accept push options and print them, as Chapter 43's hook does; that shows
+what a quoted title turns into on the server, and the unquoted mistake is a real
+transcript. A push rule is stood in for by a `pre-receive` hook, which GitLab's
+documentation says is how push rules work; its messages are its own and the
+chapter says GitLab's words differ. GitLab's replies are quoted only where its
+documentation shows them: the merge request link after a push, and the first
+line of a secret push protection refusal.
+
+**Found by testing.** `git push --force-with-lease` to a URL is refused as
+`stale info`, because there is no remote-tracking branch to compare with;
+`--force-with-lease=<branch>:<expected>` works, and the chapter shows both,
+where GitLab's documentation uses a plain `--force`. `git rebase --signoff`
+rewrites a branch that is already up to date ("rebase forced"). The
+PowerShell and cmd behaviour of a quoted push option was tested with a program
+that prints its arguments, and is described in a Windows call-out.
+
+**Left out for want of a source:** whether push options on a later push change
+an existing merge request (the first draft said so, and the push in that
+example lost its option); the Git versions GitLab's documentation gives for
+push options, which the release notes installed with Git do not confirm and
+which predate this book's baseline anyway; and the exact message GitLab prints
+when a push to a protected branch is refused.

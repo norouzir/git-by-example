@@ -328,7 +328,9 @@ with this much mixed punctuation. Use the file-writing tool instead. The same
 goes for a batch of edits: a Python heredoc full of quoted chapter text failed
 with "unexpected EOF" while preparing Chapter 49. Write the old and new texts
 to a scratch file with the file tool, and apply them with a short script that
-refuses to write anything unless each old text occurs exactly once.
+refuses to write anything unless each old text occurs exactly once. The file
+tool drops trailing spaces, and `remote:` lines in transcripts end with them,
+so a block holding such a line is edited with the Edit tool instead.
 
 **Sandbox environment leaking.** The harness exports `GIT_AUTHOR_*`,
 `GIT_COMMITTER_*` and `GIT_CONFIG_GLOBAL`. Never source it in a shell that will

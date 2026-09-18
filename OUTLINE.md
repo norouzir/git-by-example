@@ -154,17 +154,22 @@ Work that must be finished before the first release, most urgent first.
 - **Part 7 is under way.** Chapters 47 and 48 were written to the Chapter 13
   standard and pass all three checks (2026-09-18), at the author's request
   together with the end of Chapter 46; Chapters 49 and 50 followed the same
-  day, at the author's request for those two. Chapters 51 to 54 are not
-  started. No feedback from the author on 47 to 50 has been recorded yet.
-- **Chapters 49 and 50 leave work to later chapters.** Chapter 61 must show
+  day, at the author's request for those two, and Chapter 51 after them, with
+  a push at the end. Chapters 52 to 54 are not started. No feedback from the
+  author on 47 to 51 has been recorded yet.
+- **Chapters 49 to 51 leave work to later chapters.** Chapter 61 must show
   `git request-pull` in full (`-p`, `<local>:<remote>`) and the patch workflow
-  with `git format-patch` and `git am`, which both chapters point to; Chapter 51
-  must cover GitLab flow's environment branches from GitLab's side and merge
-  requests from forks, which Chapter 50's comparison table asserts; Chapter 67
-  the `update` hook that decides who may push where, with Git's
-  `howto/update-hook-example`; Chapter 68 signed commits, for GitHub's "Require
-  signed commits". Chapter 53 is where Chapter 50's closing keywords
-  (`Fixes #10`) meet commit message conventions.
+  with `git format-patch` and `git am`, which Chapters 49 and 50 point to;
+  Chapter 64 the shell aliases (`!sh -c '...' -`) that GitLab's `git mr` alias
+  in Chapter 51 is built with; Chapter 67 the `update` hook that decides who
+  may push where, with Git's `howto/update-hook-example`, and `pre-receive`
+  hooks such as Chapter 51's stand-in push rule; Chapter 68 signed commits, for
+  GitHub's "Require signed commits", GitLab's "Reject unsigned commits", and
+  GitLab's server-side rebase removing signatures. Chapter 53 is where the
+  closing keywords of Chapters 50 and 51 (`Fixes #10`) meet commit message
+  conventions. Chapter 51 has covered what Chapter 50's comparison table
+  asserted about GitLab: merge requests from forks, and GitLab flow's
+  environment branches as GitLab's protected branches see them.
 - **Chapters 47 and 48 leave work to later chapters,** which must show it when
   they are written: Chapter 68 the signing options of `git tag` (`-s`, `-u`,
   `--no-sign`, `tag.gpgSign`, `git verify-tag`), Chapter 61 `git archive` in
@@ -282,6 +287,7 @@ editing every chapter in the left column.
 | 48 | Chapter 9, Chapter 17, Chapter 18, Chapter 22, Chapter 23, Chapter 32, Chapter 37, Chapter 41, Chapter 43, Chapter 45, Chapter 47, Chapter 53, Chapter 61, Chapter 62, Chapter 65, Chapter 68 |
 | 49 | Chapter 17, Chapter 20, Chapter 23, Chapter 24, Chapter 25, Chapter 28, Chapter 30, Chapter 31, Chapter 32, Chapter 33, Chapter 41, Chapter 42, Chapter 43, Chapter 44, Chapter 45, Chapter 47, Chapter 48, Chapter 50, Chapter 51, Chapter 61, Chapter 67 |
 | 50 | Chapter 3, Chapter 9, Chapter 10, Chapter 13, Chapter 16, Chapter 17, Chapter 18, Chapter 23, Chapter 24, Chapter 25, Chapter 29, Chapter 31, Chapter 33, Chapter 34, Chapter 35, Chapter 36, Chapter 37, Chapter 39, Chapter 40, Chapter 41, Chapter 42, Chapter 43, Chapter 44, Chapter 45, Chapter 49, Chapter 51, Chapter 53, Chapter 61, Chapter 67, Chapter 68 |
+| 51 | Chapter 12, Chapter 17, Chapter 23, Chapter 24, Chapter 25, Chapter 29, Chapter 31, Chapter 33, Chapter 34, Chapter 35, Chapter 36, Chapter 37, Chapter 40, Chapter 41, Chapter 42, Chapter 43, Chapter 44, Chapter 45, Chapter 46, Chapter 49, Chapter 50, Chapter 59, Chapter 64, Chapter 67, Chapter 68 |
 
 Do not maintain that table by hand. Regenerate it, and check that nothing
 points at a chapter that does not exist:
