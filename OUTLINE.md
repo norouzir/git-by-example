@@ -81,7 +81,7 @@ fall short of the current standard; see Outstanding below.
 ## Part 7. Collaboration
 
 - [x] 47. Tags
-- [ ] 48. Releases and Versioning
+- [x] 48. Releases and Versioning
 - [ ] 49. Workflow Patterns
 - [ ] 50. Forks and Pull Requests on GitHub
 - [ ] 51. Merge Requests on GitLab
@@ -258,6 +258,7 @@ editing every chapter in the left column.
 | 45 | Chapter 10, Chapter 13, Chapter 18, Chapter 22, Chapter 23, Chapter 25, Chapter 26, Chapter 28, Chapter 29, Chapter 30, Chapter 32, Chapter 33, Chapter 34, Chapter 35, Chapter 36, Chapter 39, Chapter 41, Chapter 42, Chapter 43, Chapter 49, Chapter 50, Chapter 51 |
 | 46 | Chapter 6, Chapter 9, Chapter 17, Chapter 18, Chapter 19, Chapter 20, Chapter 22, Chapter 24, Chapter 25, Chapter 26, Chapter 39, Chapter 40, Chapter 41, Chapter 43, Chapter 44, Chapter 57, Chapter 59, Chapter 60, Chapter 61, Chapter 71 |
 | 47 | Chapter 3, Chapter 6, Chapter 7, Chapter 12, Chapter 17, Chapter 18, Chapter 22, Chapter 23, Chapter 24, Chapter 28, Chapter 35, Chapter 36, Chapter 39, Chapter 41, Chapter 43, Chapter 68, Chapter 74, Chapter 77 |
+| 48 | Chapter 9, Chapter 17, Chapter 18, Chapter 22, Chapter 23, Chapter 32, Chapter 37, Chapter 41, Chapter 43, Chapter 45, Chapter 47, Chapter 53, Chapter 61, Chapter 62, Chapter 65, Chapter 68 |
 
 Do not maintain that table by hand. Regenerate it, and check that nothing
 points at a chapter that does not exist:
