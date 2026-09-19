@@ -669,6 +669,23 @@ quotes for a push to a pull request's ref. What only the service prints is
 quoted from its documentation as a plain block, never as a transcript; if its
 documentation does not show it, it stays out of the book.
 
+**A loop in a printed command.** `for w in end start; do git ... --where=$w; done`
+shows every value in one transcript, but `audit_examples.py` sees only the
+literal `$w`, so each `--where=<value>` row is reported missing, and the reader
+has to expand the loop to know what to type. Write one command per value, as
+`ch53` does.
+
+**The end of a `git format-patch` file.** Every patch and cover letter ends with
+a signature, a line `-- ` and Git's version, which here reads
+`2.55.0.windows.5` and on another machine something else. Close the block with
+`...` before it and say what was cut, as `ch52` and `ch53` do.
+
+**An edit script that stops half-way.** A Python script that applies several
+replacements and exits on the first that fails writes nothing at all. After a
+failure, the file is as it was, including the replacements that looked done;
+read it again before assuming anything was applied. While preparing `ch53`,
+that left a generator one change behind the chapter.
+
 ## Layout
 
 ```

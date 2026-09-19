@@ -1024,3 +1024,65 @@ example lost its option); the Git versions GitLab's documentation gives for
 push options, which the release notes installed with Git do not confirm and
 which predate this book's baseline anyway; and the exact message GitLab prints
 when a push to a protected branch is refused.
+
+---
+
+## 2026-09-19. Chapters 52 and 53
+
+The author asked for Chapters 52 and 53 of Part 7. They were written, checked
+and committed one at a time.
+
+**Chapter 52 is organised by the steps of a review,** like Chapters 45, 48 and
+49, following one change through two rounds from both sides, and it is where
+`git range-diff` is taught in full: the three forms, shown to be equivalent,
+and every option with a transcript. Its synopsis and options sit inside the
+section on comparing versions, not at the top of the chapter, because the
+syntax means nothing until the reader knows what a second version is. Git's own
+practice is quoted from `ReviewingGuidelines`, `SubmittingPatches` and
+`MyFirstContribution`, which are installed with Git; Gerrit's model (a change
+per commit, `Change-Id`, patch sets, `refs/changes/`) from Gerrit's
+documentation, read on the web, with no transcript, since Chapter 44 already
+pushed to `refs/for/` on a plain server; GitHub's suggested changes from
+GitHub's documentation.
+
+**Found by testing in Chapter 52.** A whole-branch diff hides a debugging line
+that one commit adds and a later one removes, and only testing each commit
+shows the series broken in the middle. `git rebase -x --keep-base` tests the
+commits under review without rewriting them, shown by the hash being unchanged
+afterwards; its progress count starts at 2 because a leading `pick` already on
+its base is skipped (`skip_unnecessary_picks` in `sequencer.c`). After a
+rebase, a plain diff between the versions showed only a line that came from
+`main`, while `git range-diff` showed the series rebuilt; and the `A...B` form
+listed that commit from `main` as new. `git range-diff` ignores merges unless
+given `--diff-merges`; `--notes=<ref>` compares that ref's notes only;
+`--max-memory` is in `git range-diff -h` and not in the manual page.
+
+**Chapter 53 covers `git interpret-trailers` in full,** with the conventions
+of Git's project, the Linux kernel (from its documentation on submitting
+patches, read on the web) and Conventional Commits (its 1.0.0 specification).
+Examples of the conventions are written for the book's own project rather than
+copied from those pages.
+
+**Found by testing in Chapter 53.** A subject of two lines is joined into one,
+but `git format-patch` names the file after the first line only. A last
+paragraph that is a single link is a trailer to Git, key `https`, so `-s`
+glues the sign-off under it. `-s` adds a sign-off unless the last trailer is
+already that sign-off, read from `append_signoff` in `sequencer.c`. A
+`BREAKING CHANGE:` line is not a trailer, and a paragraph holding it and an
+unknown key is not a trailer block at all, while `BREAKING-CHANGE:` is; with
+`trailer.separators` containing `#`, `Refs #12` reads as `Refs: 12`.
+
+**Two more behaviours of Git 2.55 that differ from its documentation,** added
+to the list of 2026-09-17 and shown as observed: `trailer.<key>.cmd` adds no
+trailer unless `--trailer <key>` is given, although the documentation says it
+is called once to add one (`parse_trailers_from_config` in `trailer.c` does so
+only for the deprecated `.command`); and the value given with `--trailer` is
+appended to the command, so in a pipeline it reaches the last program, which
+the transcript shows failing with `sed`.
+
+**Rejected.** A loop over an option's values in one printed command, which a
+first draft of Chapter 53 used: the reader has to expand it, and the audit
+cannot see the values. Each value is its own command, and CLAUDE.md records the
+trap. Fixing the missing version badges found in Chapters 33 and 35 inside
+this work was also left out: they are recorded in OUTLINE.md for the review of
+Part 5.

@@ -155,8 +155,26 @@ Work that must be finished before the first release, most urgent first.
   standard and pass all three checks (2026-09-18), at the author's request
   together with the end of Chapter 46; Chapters 49 and 50 followed the same
   day, at the author's request for those two, and Chapter 51 after them, with
-  a push at the end. Chapters 52 to 54 are not started. No feedback from the
-  author on 47 to 51 has been recorded yet.
+  a push at the end. Chapters 52 and 53 followed on 2026-09-19, at the
+  author's request for those two. Chapter 54 is not started. No feedback from
+  the author on 47 to 53 has been recorded yet.
+- **Chapters 52 and 53 leave work to later chapters.** Chapter 56 must teach
+  `git worktree` in full, which Chapter 52 uses for reviewing beside your own
+  work (`add --detach`, `remove`, `prune`). Chapter 61 must show `git am -s`,
+  `format.signOff` and `--filename-max-length`, which Chapter 53 points to, and
+  can point back to Chapter 52 for `git format-patch -v<n>`, `--cover-letter`,
+  `--range-diff` and `--interdiff`, which are shown there. Chapter 67 must show
+  the `commit-msg` hook that runs `git interpret-trailers --trim-empty` on a
+  message made from a template with empty trailers, from Git's documentation,
+  which Chapter 53 describes without a transcript. Chapter 68 must show `-S`
+  beside Chapter 53's `-s`.
+- **Version badges missing in Chapters 33 and 35,** found while writing
+  Chapters 52 and 53 and confirmed from the release notes: Chapter 33 has none
+  for `git rebase --keep-base` (2.24), `--update-refs` (2.38) or `--trailer`
+  (2.54); Chapter 35 none for `git commit --fixup=amend:` and `reword:` (2.32)
+  or `git rebase --autosquash` without `-i` (2.44). Chapters 52 and 53 badge
+  the ones they use. Other chapters written before badges were checked by a
+  tool may have the same gap.
 - **Chapters 49 to 51 leave work to later chapters.** Chapter 61 must show
   `git request-pull` in full (`-p`, `<local>:<remote>`) and the patch workflow
   with `git format-patch` and `git am`, which Chapters 49 and 50 point to;
@@ -165,9 +183,9 @@ Work that must be finished before the first release, most urgent first.
   may push where, with Git's `howto/update-hook-example`, and `pre-receive`
   hooks such as Chapter 51's stand-in push rule; Chapter 68 signed commits, for
   GitHub's "Require signed commits", GitLab's "Reject unsigned commits", and
-  GitLab's server-side rebase removing signatures. Chapter 53 is where the
-  closing keywords of Chapters 50 and 51 (`Fixes #10`) meet commit message
-  conventions. Chapter 51 has covered what Chapter 50's comparison table
+  GitLab's server-side rebase removing signatures. Chapter 53 has taken up the
+  closing keywords of Chapters 50 and 51 (`Fixes #10`) beside the kernel's
+  `Fixes:` trailer. Chapter 51 has covered what Chapter 50's comparison table
   asserted about GitLab: merge requests from forks, and GitLab flow's
   environment branches as GitLab's protected branches see them.
 - **Chapters 47 and 48 leave work to later chapters,** which must show it when
