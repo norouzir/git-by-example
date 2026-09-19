@@ -2,8 +2,9 @@
 
 ## Why this chapter exists
 
-Most books print fake hashes. They write `a1b2c3d` because the real hash would
-be different on your machine anyway, so why bother.
+Most books print fake hashes, the strings of letters and digits Git uses to
+name every commit. They write `a1b2c3d` because the real hash would be
+different on your machine anyway, so why bother.
 
 This book prints real ones. Every hash you see was produced by running the
 command, and if you ever get to a computer and run the same commands, you will
@@ -13,6 +14,60 @@ keep, so it is worth explaining how it works.
 It matters because a reader with no computer has no way to check the book. The
 only thing you can do is trust it. Reproducible hashes are the closest thing to
 a receipt that the examples were not invented.
+
+<details class="questions" markdown="1">
+<summary>Questions this chapter answers</summary>
+
+**[Why this chapter exists](#why-this-chapter-exists)**
+
+- [Are the hashes in this book real? Would I get the same ones?](#why-this-chapter-exists)
+
+**[Why hashes normally differ](#why-hashes-normally-differ)**
+
+- [What exactly goes into a commit's hash?](#why-hashes-normally-differ)
+- [Why does the same change give a different hash on my machine?](#why-hashes-normally-differ)
+
+**[The six things that are pinned](#the-six-things-that-are-pinned)**
+
+- [What does the book fix so that its examples come out the same every time?](#the-six-things-that-are-pinned)
+- [Why are all the examples dated January 2026, and what is "now" in them?](#the-six-things-that-are-pinned)
+
+**[Ignoring your configuration](#ignoring-your-configuration)**
+
+- [How do I run Git as if I had no configuration, to see whether my settings cause a problem?](#ignoring-your-configuration)
+
+**[The pinned configuration, in full](#the-pinned-configuration-in-full)**
+
+- [Which settings were the examples made with?](#the-pinned-configuration-in-full)
+- [Why do the examples use `main` when my Git creates `master`?](#the-pinned-configuration-in-full)
+
+**[Building an example repository](#building-an-example-repository)**
+
+- [How are the example repositories built?](#building-an-example-repository)
+
+**[Proof that it works](#proof-that-it-works)**
+
+- [How is it checked that the same commands give the same hashes?](#proof-that-it-works)
+
+**[Remotes without a network](#remotes-without-a-network)**
+
+- [How can the book show pushing and fetching with no server?](#remotes-without-a-network)
+- [Can a folder or a USB stick be a remote?](#remotes-without-a-network)
+
+**[The one edit made to transcripts](#the-one-edit-made-to-transcripts)**
+
+- [Was any output in this book edited?](#the-one-edit-made-to-transcripts)
+- [Why do paths start with `/home/ada`?](#the-one-edit-made-to-transcripts)
+
+**[Coloured transcripts](#coloured-transcripts)**
+
+- [Why are some examples in colour and others not?](#coloured-transcripts)
+
+**[Reproducing this yourself](#reproducing-this-yourself)**
+
+- [How do I rebuild a chapter's examples myself?](#reproducing-this-yourself)
+
+</details>
 
 ## Why hashes normally differ
 
@@ -42,8 +97,8 @@ $ GIT_COMMITTER_DATE='2026-01-05 09:00:01 +0000' git commit -q --amend --no-edit
 `git commit --amend --no-edit` with nothing staged makes the same commit again,
 with the same files, author and message, and `GIT_COMMITTER_DATE` puts its
 commit time one second later. `%H` is the full hash and `%cd` the commit time.
-
-Not similar. Completely different, because that is what a hash function does.
+The two hashes are not similar but completely different, because that is what
+a hash function does.
 
 This is also the mechanism behind several things later in the book, including
 why `git rebase` cannot preserve commit hashes and why `git commit --amend`
@@ -66,7 +121,10 @@ Time is set explicitly rather than left to the clock. It starts on a Monday
 morning and moves forward one hour per commit, which is why timestamps in the
 examples look like a plausible working day. Where an example shows a relative
 date, such as "3 hours ago", "now" is the sandbox clock too, and the chapter says
-what time that is.
+what time that is. That holds for a time written in a command, such as
+`--since='3 hours ago'`; a default Git works out from the current time by
+itself, such as how long reflog entries last, still counts from the real clock
+(Chapter 36).
 
 The time zone needs pinning separately. Git stores an offset with every date,
 so its default output looks the same everywhere, but `--date=local` converts to
@@ -76,7 +134,7 @@ print different times.
 
 ## Ignoring your configuration
 
-The third and fourth rows deserve a note, because the mechanism is useful on
+The fourth and fifth rows deserve a note, because the mechanism is useful on
 its own. Git reads two environment variables:
 
 | Variable | Effect |
@@ -123,7 +181,8 @@ time, and because `main` is what you will meet in nearly every project today.
 
 ## Building an example repository
 
-Examples are built by a small shell harness. The parts that matter:
+Examples are built by a small shell *harness*: a file of shell functions that
+every example script loads before it runs a command. The parts that matter:
 
 ```sh
 export GIT_AUTHOR_NAME="Ada Lovelace"
