@@ -100,6 +100,12 @@ command follows this order:
    for `git apply`, and so on.
 6. **Reference tables**, such as settings.
 
+A chapter about an idea or a practice rather than one command, such as Part 1
+and Chapters 44, 45 and 48 to 53, has no synopsis or options table. It opens
+with what it is about and the question list, then follows the idea in teaching
+order; everything else in this contract applies to it unchanged. The author
+chose this for Parts 0 and 1 on 2026-09-19 (DECISIONS.md).
+
 This order is about the chapter as a whole. Inside a section the three-layer
 rule from the top of this contract applies unchanged: a section may open with
 its example, and a sentence goes before the example only when the heading and
@@ -679,6 +685,14 @@ has to expand the loop to know what to type. Write one command per value, as
 a signature, a line `-- ` and Git's version, which here reads
 `2.55.0.windows.5` and on another machine something else. Close the block with
 `...` before it and say what was cut, as `ch52` and `ch53` do.
+
+**A command run out of sight inside a block.** The verifier matches a block
+against the output, and a hidden command that prints nothing leaves no trace in
+it, so a block can pass while missing the very step it teaches: Chapter 5's
+section on `git commit -a` never showed `git commit -a`, and Chapters 7 and 8
+committed between two lines of one block. Print every command whose effect a
+block shows, with `sb_run`; keep hidden only set-up the text describes before
+the block.
 
 **`git config --global` in a generator.** The harness points
 `GIT_CONFIG_GLOBAL` at `sandbox/lib/gitconfig`, so a generator that runs

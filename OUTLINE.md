@@ -216,9 +216,11 @@ Work that must be finished before the first release, most urgent first.
   standard and passes all three checks (2026-09-14). Chapter 13 was approved;
   Chapters 9 to 12 and 14 to 16 were reworked without the first two checkpoints
   (see DECISIONS.md) and have not yet been read by the author.
-- **Parts 0 and 1 against the new standard.** Not yet reviewed for the chapter
-  order, question lists, or option coverage. Decide with the author how much of
-  the standard applies to chapters about concepts rather than one command.
+- **Parts 0 and 1 review by the author.** Chapters 1 to 8 were brought to the
+  standard on 2026-09-19 in the form the author chose: a question list for
+  every section, the manual checklist, examples where a reader would still be
+  unsure, and their structure as chapters about an idea kept. None has been
+  read by the author since.
 
 ## Out of scope
 
