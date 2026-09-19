@@ -40,8 +40,8 @@ sb_run "cat .git/HEAD"
 
 sb_say "--- 5. committing moves the branch the file points at ---"
 sb_run "cat .git/refs/heads/main"
-sb_write c.txt "third"
-sb_commit "Third commit"
+sb_run "echo third > c.txt && git add c.txt && git commit -m 'Third commit'"
+sb_tick
 sb_run "cat .git/refs/heads/main"
 sb_run "cat .git/refs/heads/feature"
 
@@ -91,3 +91,16 @@ sb_run "git branch 'bad name'" || true
 sb_run "git branch 'ends.lock'" || true
 sb_run "git branch 'has..dots'" || true
 sb_run "git branch -- '-leading-dash'" || true
+sb_run "git check-ref-format refs/heads/-x && echo valid"
+sb_run "git check-ref-format --branch -x" || true
+
+sb_say "--- 11b. a branch called @ ---"
+sb_run "git branch @ HEAD~1 && git log --oneline -1 @ && git log --oneline -1 heads/@"
+sb_run "git switch @" || true
+git update-ref -d refs/heads/@
+
+sb_say "--- 12. the same rule in a reftable repository ---"
+mkdir -p "$SANDBOX_ROOT/rt" && cd "$SANDBOX_ROOT/rt" && git init -q --ref-format=reftable
+git commit -q --allow-empty -m "Start"
+sb_run "git branch feature && git branch feature/login" || true
+sb_run "cat .git/HEAD && git symbolic-ref HEAD"

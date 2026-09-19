@@ -26,6 +26,71 @@ Creating a branch in a repository with a million commits writes forty-one bytes.
 
 The general name for such a file is a **ref**.
 
+<details class="questions" markdown="1">
+<summary>Questions this chapter answers</summary>
+
+**[A branch is a file](#a-branch-is-a-file)**
+
+- [What is a branch, physically?](#a-branch-is-a-file)
+- [Why is creating a branch instant, even in a huge repository?](#a-branch-is-a-file)
+
+**[HEAD is a file too](#head-is-a-file-too)**
+
+- [What is `HEAD`?](#head-is-a-file-too)
+- [How do I find out which branch I am on?](#head-is-a-file-too)
+
+**[Creating a branch writes one file](#creating-a-branch-writes-one-file)**
+
+- [What does `git branch` write to disk?](#creating-a-branch-writes-one-file)
+
+**[Switching a branch rewrites HEAD](#switching-a-branch-rewrites-head)**
+
+- [What does `git switch` change in the repository?](#switching-a-branch-rewrites-head)
+
+**[Committing moves the ref](#committing-moves-the-ref)**
+
+- [What happens to the branch when I commit?](#committing-moves-the-ref)
+
+**[Detached HEAD](#detached-head)**
+
+- [What is a detached HEAD, and is it an error?](#detached-head)
+- [Why did `git checkout` print a long warning where `git switch --detach` printed one line?](#two-ways-in-two-very-different-messages)
+
+**[Moving a branch by hand](#moving-a-branch-by-hand)**
+
+- [Can I point a branch at another commit without committing?](#moving-a-branch-by-hand)
+- [Why not just edit the file in `.git/refs`?](#moving-a-branch-by-hand)
+
+**[Listing refs](#listing-refs)**
+
+- [How do I list every ref and what it points at?](#listing-refs)
+
+**[Packed refs](#packed-refs)**
+
+- [My branch exists, so why is there no file for it in `.git/refs/heads`?](#packed-refs)
+- [What is reftable?](#packed-refs)
+
+**[The ref namespaces](#the-ref-namespaces)**
+
+- [What lives under `refs/`?](#the-ref-namespaces)
+- [What happens when a tag and a branch have the same name?](#the-ref-namespaces)
+
+**[A ref is a path, and paths collide](#a-ref-is-a-path-and-paths-collide)**
+
+- [Why can't I create `feature/login` when `feature` exists?](#a-ref-is-a-path-and-paths-collide)
+
+**[What names are legal](#what-names-are-legal)**
+
+- [Which characters can't a branch name contain?](#what-names-are-legal)
+- [Can a branch be called `@`?](#what-names-are-legal)
+- [How do I check a name in a script before using it?](#what-names-are-legal)
+
+**[The whole picture](#the-whole-picture)**
+
+- [What does the ref part of `.git` look like, all together?](#the-whole-picture)
+
+</details>
+
 ## HEAD is a file too
 
 ```console
@@ -97,14 +162,18 @@ time, but the branch bookkeeping is one line in one file.
 ```console
 $ cat .git/refs/heads/main
 fc91c231377e56c565047ff1da3e39e165519133
+$ echo third > c.txt && git add c.txt && git commit -m 'Third commit'
+[main bbe2461] Third commit
+ 1 file changed, 1 insertion(+)
+ create mode 100644 c.txt
 $ cat .git/refs/heads/main
 bbe24619aaf32918c971f64744c8593e996f3ff9
 $ cat .git/refs/heads/feature
 fc91c231377e56c565047ff1da3e39e165519133
 ```
 
-A commit happened in between. `main` now holds a different hash and `feature`
-is untouched, still pointing where it always did.
+`main` now holds the new commit's hash, and `feature` is untouched, still
+pointing where it always did.
 
 So the sequence for every ordinary commit is:
 
@@ -275,8 +344,10 @@ packed entry, and a later `git pack-refs` or `git gc` folds it back in.
 > a binary format designed for repositories with very large numbers of refs.
 > It is opt-in today, through `git init --ref-format=reftable`, and Git 3.0
 > will make it the default for new repositories. In a reftable repository the
-> files shown in this chapter do not exist, so read refs with `git rev-parse`
-> and `git for-each-ref` if you want your habits to survive that change.
+> files shown in this chapter do not hold the refs, as
+> [A ref is a path, and paths collide](#a-ref-is-a-path-and-paths-collide)
+> shows, so read refs with `git rev-parse` and `git for-each-ref` if you want
+> your habits to survive that change.
 
 ## The ref namespaces
 
@@ -291,8 +362,9 @@ Refs live under `refs/` in named namespaces:
 | `refs/notes/` | Notes attached to commits | `git notes` |
 
 When you write `main`, Git searches the namespaces in a fixed order to work out
-what you meant. That is why a tag and a branch with the same name is a bad idea
-and why Git warns when you create one. The unambiguous forms are always
+what you meant (Chapter 18 gives it). That is why a tag and a branch with the
+same name is a bad idea: Git lets you create one, and from then on warns
+`refname 'v1.0' is ambiguous` whenever you use the name, as Chapter 18 shows. The unambiguous forms are always
 available:
 
 | Shorthand | Full form |
@@ -333,8 +405,20 @@ This is the reason teams that use `feature/` prefixes never also use a bare
 suddenly unblock your `feature/login`. It is not a naming policy. It is a
 filesystem.
 
-> **Worth knowing.** The rule survives the move to reftable, even though there
-> is no directory involved any more, because too much tooling depends on it.
+The rule holds in a reftable repository too, where refs are not files at all.
+In one made with `git init --ref-format=reftable`:
+
+```console
+$ git branch feature && git branch feature/login
+fatal: 'refs/heads/feature' exists; cannot create 'refs/heads/feature/login'
+$ cat .git/HEAD && git symbolic-ref HEAD
+ref: refs/heads/.invalid
+refs/heads/main
+```
+
+The same refusal, word for word. `.git/HEAD` there is only a placeholder,
+pointing at a name no branch can have, and the real value is in the reftable
+files; `git symbolic-ref` reads it.
 
 ## What names are legal
 
@@ -382,15 +466,34 @@ The rules, as Git's own documentation states them:
 
 One rule applies to branch names but not to refs in general, and Git's
 documentation calls it out explicitly: **a dash may begin a ref component, but
-never a branch name.** So `refs/heads/-x` is a legal refname while
-`git branch -x` is refused, which is why `--branch` is described as stricter
-than a plain check.
+never a branch name.** So `refs/heads/-x` is a legal refname while the branch
+name `-x` is refused, which is why `--branch` is described as stricter than a
+plain check:
 
-> **Worth knowing.** The last row is narrower than it looks. A ref named
-> exactly `@` is forbidden, but a *branch* named `@` is legal, because its full
-> name is `refs/heads/@` and only the last component is `@`. Git will create it
-> and then `git rev-parse @` becomes genuinely ambiguous between your branch and
-> `HEAD`. Legal is not the same as advisable.
+```console
+$ git check-ref-format refs/heads/-x && echo valid
+valid
+$ git check-ref-format --branch -x
+fatal: '-x' is not a valid branch name
+```
+
+The last row is narrower than it looks. A ref named exactly `@` is forbidden,
+but a *branch* named `@` is legal, because its full name is `refs/heads/@` and
+only the last component is `@`:
+
+```console
+$ git branch @ HEAD~1 && git log --oneline -1 @ && git log --oneline -1 heads/@
+bbe2461 Third commit
+fc91c23 Second commit
+$ git switch @
+fatal: a branch is expected, got 'refs/heads/main'
+hint: If you want to detach HEAD at the commit, try again with the --detach option.
+```
+
+Git created it, pointing at the second commit. But `@` in a command still means
+`HEAD`, with no warning: `git log @` showed the third commit, and `git switch @`
+read it as `HEAD`, which is `main`. The branch can be reached only by a longer
+name such as `heads/@`. Legal is not the same as advisable.
 
 `git check-ref-format` is the authority, and it is what Git itself calls. If
 you generate branch names in a script, validating with
