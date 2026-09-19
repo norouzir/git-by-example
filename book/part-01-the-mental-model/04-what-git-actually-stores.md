@@ -69,6 +69,24 @@ $ git cat-file -s HEAD:poem.txt
 | `-p` | Its contents, formatted for the type |
 | `-e` | Nothing; exits 0 if the object exists, non-zero if not |
 
+`-e` prints nothing, so its answer is the exit status, which is what a script
+tests:
+
+```console
+$ git cat-file -e HEAD:poem.txt && echo exists
+exists
+$ git cat-file -e d531a8e56cfd2440190959775e87a1162a38907c || echo "missing, exit $?"
+missing, exit 1
+$ git cat-file -e HEAD:missing.txt || echo "missing, exit $?"
+fatal: path 'missing.txt' does not exist in 'HEAD'
+missing, exit 128
+```
+
+A well-formed name that no object has gives status 1, silently; this one is the
+poem's blob with its last character changed. A name Git cannot resolve at all,
+here a path the commit does not contain, is an error instead, with a message
+and status 128.
+
 ## The name is the content
 
 An object's name is not assigned. It is computed from the content, and you can

@@ -26,6 +26,9 @@ sb_run git cat-file -t HEAD
 sb_run git cat-file -t 'HEAD^{tree}'
 sb_run git cat-file -t 'HEAD:poem.txt'
 sb_run git cat-file -s 'HEAD:poem.txt'
+sb_run "git cat-file -e HEAD:poem.txt && echo exists"
+sb_run "git cat-file -e d531a8e56cfd2440190959775e87a1162a38907c || echo \"missing, exit \$?\""
+sb_run "git cat-file -e HEAD:missing.txt || echo \"missing, exit \$?\""
 
 sb_say "--- 5. change one line, commit again ---"
 sb_write poem.txt "roses are red" "violets are violet"
