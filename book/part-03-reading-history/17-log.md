@@ -1002,7 +1002,7 @@ f83a6b7 Rename the test file
 | `--merges` | two or more parents | `--min-parents=2` |
 | `--no-merges` | one parent or none | `--max-parents=1` |
 | `--max-parents=0` | no parents: root commits | |
-| `--min-parents=3` | three or more: octopus merges (Chapter 27) | |
+| `--min-parents=3` | three or more: octopus merges (Chapter 25; the strategy in Chapter 27) | |
 | `--no-min-parents` | any number again, after an earlier minimum | `--min-parents=0` |
 | `--no-max-parents` | any number again, after an earlier maximum | `--max-parents=-1` |
 

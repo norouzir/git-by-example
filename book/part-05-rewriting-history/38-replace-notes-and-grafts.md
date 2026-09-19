@@ -118,6 +118,7 @@ people already have — and why what they do is, by default, visible only to you
 - [How do I keep two independent sets of notes?](#notes-in-another-namespace)
 - [How do I make `git log` show a set that is not the default?](#notes-in-another-namespace)
 - [Which notes ref am I using?](#notes-in-another-namespace)
+- [An old script uses `--show-notes` and `--standard-notes`. What do they do?](#notes-in-another-namespace)
 
 **[Notes and rewritten commits](#notes-and-rewritten-commits)**
 
@@ -771,6 +772,60 @@ notes go. A short name such as `builds` is expanded to `refs/notes/builds`.
 
 `git notes get-ref` prints the ref currently in use, which is how a script finds
 out what it is about to write to.
+
+Three older options, which Git's documentation calls deprecated in favour of
+`--notes` and `--no-notes`, still work, and one does not mean what it seems to:
+
+```console
+$ git log -1 --show-notes=builds HEAD~1 | tail -8
+
+Notes:
+    Reviewed by Sam; ships in 2.1
+
+    Also tested on Windows, and on Linux.
+
+Notes (builds):
+    build 1482 passed
+$ git log -1 --show-notes=builds --no-standard-notes HEAD~1 | tail -3
+
+Notes (builds):
+    build 1482 passed
+$ git log -1 --notes=builds --standard-notes HEAD~1 | tail -8
+
+Notes:
+    Reviewed by Sam; ships in 2.1
+
+    Also tested on Windows, and on Linux.
+
+Notes (builds):
+    build 1482 passed
+```
+
+`--show-notes=builds` showed the default notes as well as the build note, where
+`--notes=builds` above showed only the build note. `--no-standard-notes` leaves
+out the default notes and keeps the ref named, and `--standard-notes` adds them
+to it. `diff <(...) <(...)` compares the output of two commands, in bash, and
+prints nothing when they are the same (Chapter 17 used it too):
+
+```console
+$ diff <(git log -1 --show-notes HEAD~1) <(git log -1 --notes HEAD~1) && echo same
+same
+$ diff <(git log -1 --show-notes=builds HEAD~1) <(git log -1 --notes=builds --notes HEAD~1) && echo same
+same
+$ diff <(git log -1 --show-notes=builds --no-standard-notes HEAD~1) <(git log -1 --notes=builds HEAD~1) && echo same
+same
+$ diff <(git log -1 --notes=builds --standard-notes HEAD~1) <(git log -1 --notes=builds --notes HEAD~1) && echo same
+same
+```
+
+So a script written with the old options can be read with this table:
+
+| Old option | Same result with |
+|---|---|
+| `git log --show-notes` | `git log --notes` |
+| `git log --show-notes=<ref>` | `git log --notes=<ref> --notes` |
+| `git log --show-notes=<ref> --no-standard-notes` | `git log --notes=<ref>` |
+| `git log --notes=<ref> --standard-notes` | `git log --notes=<ref> --notes` |
 
 ## Notes and rewritten commits
 

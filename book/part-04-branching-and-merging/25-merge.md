@@ -72,6 +72,7 @@ can be undone.
 **[Merging several branches at once](#merging-several-branches-at-once)**
 
 - [Can I merge several branches in one go?](#merging-several-branches-at-once)
+- [How do I find the merges that have more than two parents?](#merging-several-branches-at-once)
 
 **[When a merge stops](#when-a-merge-stops)**
 
@@ -852,6 +853,8 @@ tree c972dbb683cb5c005adc1d26e8fd3f73c5c27659
 parent e2356ff190eafe341deee7604ded777ce2fbd0c5
 parent 88f0e2cc83595d98df1c0c928f89c3b4d5e7b339
 parent 72353bdfe276ff6da7b93fd36b1e725f4735b9d8
+$ git log --oneline --min-parents=3
+7642394 Merge branches 'paths' and 'pond' into try
 $ git switch -q -C try main
 $ git merge --no-edit paths frost
 Trying simple merge with paths
@@ -872,7 +875,9 @@ e2356ff Water tomatoes more
 ```
 
 Naming several branches makes one merge commit with a parent for each, which Git
-calls an *octopus merge*, using the `octopus` strategy. It suits several
+calls an *octopus merge*, using the `octopus` strategy: `git cat-file` shows
+its three `parent` lines, and `git log --min-parents=3` lists only commits with
+three parents or more (Chapter 17). It suits several
 independent branches that do not touch the same lines. `frost` conflicted with
 `try`, so this one stopped with a conflict, and `--abort` cancelled it. Chapter
 27 describes the octopus strategy and its limits; merging such branches one at
