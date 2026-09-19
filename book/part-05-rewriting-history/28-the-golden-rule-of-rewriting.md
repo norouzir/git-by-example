@@ -298,9 +298,11 @@ $ git log --oneline -1 keys@{1}
 reflog, Chapter 30 uses it to undo a reset, and Chapter 79 is the full recovery
 procedure.
 
-**How long you have.** Reflog entries expire: 90 days for entries still
-reachable from the branch, 30 for the rest, and `git gc` deletes objects that
-nothing reaches once they are older than two weeks. In practice you have weeks,
+**How long you have.** Reflog entries expire. Those about the commits a
+rewrite replaced last 30 days by default in every version of Git; those still
+on the branch last 90 days in Git's documentation and up to Git 2.49, but 30 in
+Git 2.50 to 2.55 (Chapter 36). And `git gc` deletes objects that nothing
+reaches once they are older than two weeks. In practice you have weeks,
 not minutes. None of it helps in a clone that never had the commit, and none of
 it runs on the server, where reflogs are off by default.
 
@@ -788,7 +790,7 @@ it leaves a record of the decision that a rewrite would have erased.
 | `receive.denyNonFastForwards` | On the server: refuse any push that is not a fast-forward, `--force` included. Set by default in a repository created with `--shared` | Chapter 43 |
 | `advice.skippedCherryPicks` | Set to `false` to stop the "skipped previously applied commit" hint during a rebase | Chapter 33 |
 | `pull.rebase` | What `git pull` does with a diverged branch: merge, rebase, or refuse | Chapter 42 |
-| `gc.reflogExpire`, `gc.reflogExpireUnreachable` | How long the reflog keeps a replaced commit findable, 90 and 30 days | Chapter 36 |
+| `gc.reflogExpire`, `gc.reflogExpireUnreachable` | How long the reflog keeps a replaced commit findable: 30 days by default, in every version | Chapter 36 |
 | `core.logAllRefUpdates` | Whether reflogs are written at all; off in a bare repository, which is why a server has no safety net | Chapter 36 |
 
 The last two are the ones worth knowing before you need them: the reason a

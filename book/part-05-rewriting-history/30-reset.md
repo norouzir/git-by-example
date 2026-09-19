@@ -1013,6 +1013,6 @@ Git's documentation. These change its behaviour from elsewhere.
 |---|---|
 | `submodule.recurse` | Makes `--recurse-submodules` the default, so a reset updates submodule working trees too (Chapter 57) |
 | `core.logAllRefUpdates` | Whether the reflog that makes a reset undoable is written at all; off in a bare repository (Chapter 36) |
-| `gc.reflogExpire`, `gc.reflogExpireUnreachable` | How long that reflog keeps the commits you reset away, 90 and 30 days (Chapter 36) |
+| `gc.reflogExpire`, `gc.reflogExpireUnreachable` | How long that reflog keeps the commits you reset away: 30 days by default, in every version (Chapter 36) |
 | `gc.pruneExpire` | How long an unreachable object survives, two weeks, which is the window for recovering staged work (Chapter 77) |
 | `diff.context` | How much context `git reset -p` shows around each chunk (Chapter 13) |

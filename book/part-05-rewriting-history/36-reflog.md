@@ -18,13 +18,15 @@ reflog is the thing that still knows their names.
 | *entry* | one line of it: old value, new value, who, when, and a message |
 | *`<ref>@{<n>}`* | the value `<ref>` had `<n>` moves ago |
 | *`<ref>@{<time>}`* | the value it had at that time |
-| *unreachable* | a commit no branch or tag leads to; reflog entries about one expire sooner |
+| *unreachable* | a commit no branch or tag leads to; Git's documentation gives reflog entries about one a shorter life |
 | *expire* | delete entries older than a cut-off, which `git gc` does on its own |
 
 Two things to know before anything else. The reflog is **local**: it is never
 cloned, fetched or pushed, so it knows only what *this* repository did. And it
-**expires**: entries last 90 days by default, or 30 if what they point at is
-unreachable, so the net is wide but not infinite.
+**expires**: by default an entry lasts at least 30 days, and up to 90
+depending on your version of Git and on what the entry points at
+([When entries expire](#when-entries-expire)), so the net is wide but not
+infinite.
 
 <details class="questions" markdown="1">
 <summary>Questions this chapter answers</summary>
@@ -101,6 +103,7 @@ unreachable, so the net is wide but not infinite.
 
 - [How long do reflog entries last?](#when-entries-expire)
 - [Why is an entry gone after 30 days when I was told 90?](#when-entries-expire)
+- [Which versions of Git keep reflog entries for 90 days, and how do I make every version do the same?](#the-defaults-and-git-2-50)
 - [Can I stop them expiring at all?](#when-entries-expire)
 
 **[Where reflogs are kept](#where-reflogs-are-kept)**
@@ -620,21 +623,57 @@ keep reset: moving to HEAD@{1}
 Two cut-offs, not one, and the first dry run shows why that matters. Every
 entry here is hours old, well inside 90 days, and two of them would still be
 pruned: they mention `8079913`, the commit the amend replaced, which nothing
-reaches any more. Those fall under `--expire-unreachable`, which defaults to 30
-days — and 30 days ago is also in the past here, because the sandbox pins
-"now" to the example's own clock.
+reaches any more. Those fall under `--expire-unreachable`, which was not given,
+so its default applied. A time written in the command, such as `90.days.ago`,
+counts back from the sandbox's "now" (Chapter 2); a default counts back from the
+computer's real clock, which the sandbox does not move. By that clock the
+example's entries, dated January 2026, are months old, older than the default
+whatever it is.
 
 The second run sets both cut-offs and everything is kept, which is the proof
 that the unreachable rule was what pruned them.
 
-| Cut-off | Default | Applies to |
-|---|---|---|
-| `--expire=<time>`, `gc.reflogExpire` | 90 days | every entry |
-| `--expire-unreachable=<time>`, `gc.reflogExpireUnreachable` | 30 days | entries about commits nothing reaches |
+### The defaults, and Git 2.50
+
+| Cut-off | Applies to | Git's documentation, and Git up to 2.49 | Git 2.50 to 2.55 |
+|---|---|---|---|
+| `--expire=<time>`, `gc.reflogExpire` | every entry | 90 days | 30 days |
+| `--expire-unreachable=<time>`, `gc.reflogExpireUnreachable` | entries that mention a commit nothing reaches | 30 days | 90 days |
+
+Git 2.50 exchanged the two defaults. The documentation installed with Git 2.55
+still gives 90 and 30 days, and no release note mentions a change; the code has
+had 30 and 90 since the commit that moved the values into `reflog.h`,
+`85658275702b` ("builtin/reflog: stop storing default reflog expiry dates
+globally"), first released in Git 2.50. Git's development branch still had them
+that way in September 2026. The rule for every entry is applied first, so in
+those versions every entry older than 30 days is pruned, reachable or not, and
+the 90 days for unreachable entries never comes into play.
+
+This cannot be shown as a transcript, because the defaults count from the real
+clock and the example's hashes would change as the days passed. Tested outside
+the sandbox on 19 September 2026 with Git 2.55: in a repository whose entries
+were 60 days old, `git reflog expire --dry-run --verbose` with no options pruned
+every one of them. With `gc.reflogExpire=90.days.ago` and
+`gc.reflogExpireUnreachable=30.days.ago` set, it kept the entry about a commit
+still on the branch and pruned the two that mention the commit an amend
+replaced.
+
+What it means in practice:
+
+| The entry | Lasts by default |
+|---|---|
+| about a commit you rewrote away, reset away or amended: the ones you need to recover work | 30 days, in every version |
+| about a commit still on the branch, the ones `main@{2.months.ago}` reads | 90 days up to Git 2.49, 30 days in Git 2.50 to 2.55 |
 
 That is the answer to "the reflog is 90 days" being wrong in practice. The
 entries you need after a rewrite are exactly the unreachable ones, and they get
-the 30-day rule.
+30 days; since Git 2.50, so does everything else.
+
+> **Careful.** If you depend on the reflog lasting, do not depend on the
+> defaults. Set both, and the result is the same on every version:
+> `git config set --global gc.reflogExpire 90.days.ago` and
+> `git config set --global gc.reflogExpireUnreachable 30.days.ago` give the
+> documented behaviour; larger values, or `never`, keep entries longer.
 
 ```console
 $ git reflog show --date=relative main
@@ -787,8 +826,8 @@ covers it, and Chapter 79 is the whole decision tree for recovering work.
 | Setting | Does |
 |---|---|
 | `core.logAllRefUpdates` | Whether reflogs are written; true with a working tree, false in a bare repository, and `always` to log every ref rather than branches, remotes, notes and `HEAD` |
-| `gc.reflogExpire` | How long an entry lasts, 90 days by default; `never` keeps them |
-| `gc.reflogExpireUnreachable` | The same for entries about unreachable commits, 30 days |
+| `gc.reflogExpire` | How long an entry lasts: 90 days by default up to Git 2.49, 30 days in Git 2.50 to 2.55; `never` keeps them |
+| `gc.reflogExpireUnreachable` | The same for entries about unreachable commits: 30 days up to Git 2.49, 90 days in 2.50 to 2.55, where `gc.reflogExpire`'s 30 days prunes them first |
 | `gc.<pattern>.reflogExpire` | The same, for refs matching a pattern such as `refs/stash` |
 | `gc.auto` | How often `git gc`, and so the expiry, runs on its own (Chapter 77) |
 | `fetch.writeCommitGraph`, `core.commitGraph` | Unrelated to reflogs, but the reason `git log --reflog` can be slower than `git log` on a large repository (Chapter 69) |

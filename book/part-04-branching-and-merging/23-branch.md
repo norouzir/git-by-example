@@ -1189,9 +1189,10 @@ the reflog of `HEAD` still lists the commits made in this repository, and
 searching it for the commit's title found the hash. The new branch starts a
 new reflog.
 
-> **Careful.** Unnamed commits are kept only for a while. Git's documentation
-> gives reflog entries for commits no longer on any branch 30 days by default,
-> and garbage collection may then remove the commits (Chapter 77). Chapter 79
+> **Careful.** Unnamed commits are kept only for a while. Reflog entries for
+> commits no longer on any branch last 30 days by default, in every version of
+> Git (Chapter 36), and garbage collection may then remove the commits
+> (Chapter 77). Chapter 79
 > covers recovering branches in depth.
 
 ### Branches that cannot be deleted
