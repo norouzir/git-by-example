@@ -86,9 +86,10 @@ sb_run "git cat-file --batch-all-objects --batch-check='%(objecttype) %(objectsi
 
 sb_say "--- 14. the executable bit lives in the tree, not the blob ---"
 sb_write plain.txt "x"
-cp plain.txt script.sh
-git add plain.txt script.sh
-git update-index --chmod=+x script.sh
+sb_run "cp plain.txt script.sh && git add plain.txt && git add --chmod=+x script.sh"
 sb_run "git write-tree | xargs git cat-file -p | grep -E 'plain.txt|script.sh'"
 git rm -q --cached plain.txt script.sh
 rm -f plain.txt script.sh
+
+sb_say "--- 15. the empty tree ---"
+sb_run "git hash-object -t tree /dev/null"

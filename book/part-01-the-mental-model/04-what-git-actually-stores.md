@@ -7,6 +7,61 @@ Git stores complete snapshots of your files, not the changes between them.
 Almost everything that confuses people about Git dissolves once that sentence
 is really believed. This chapter makes you believe it by showing you the bytes.
 
+<details class="questions" markdown="1">
+<summary>Questions this chapter answers</summary>
+
+**[The short answer](#the-short-answer)**
+
+- [Does Git store my files, or the changes between them?](#the-short-answer)
+
+**[Following the chain](#following-the-chain)**
+
+- [What is inside a commit?](#following-the-chain)
+- [What are trees and blobs?](#following-the-chain)
+- [How do I look at any object Git has stored, or check that one exists?](#following-the-chain)
+
+**[The name is the content](#the-name-is-the-content)**
+
+- [Where does the long hash of a commit or a file come from?](#the-name-is-the-content)
+- [Can I work out a file's hash without Git?](#the-name-is-the-content)
+- [Does Git still use SHA-1?](#the-name-is-the-content)
+
+**[Editing one line rewrites the whole file](#editing-one-line-rewrites-the-whole-file)**
+
+- [If I change one line, does Git store only that line?](#editing-one-line-rewrites-the-whole-file)
+- [Doesn't storing whole files waste space?](#editing-one-line-rewrites-the-whole-file)
+
+**[Identical content is stored once](#identical-content-is-stored-once)**
+
+- [Are two identical files stored twice?](#identical-content-is-stored-once)
+- [Does an unchanged file take space again in every commit?](#identical-content-is-stored-once)
+
+**[Trees, nesting, and modes](#trees-nesting-and-modes)**
+
+- [What do `100644`, `100755` and `040000` mean?](#trees-nesting-and-modes)
+- [Does Git remember file permissions, owners and timestamps?](#trees-nesting-and-modes)
+- [What is the empty tree, and why does its hash turn up in scripts?](#trees-nesting-and-modes)
+
+**[Git does not store directories](#git-does-not-store-directories)**
+
+- [Why does `git add` of my empty directory do nothing?](#git-does-not-store-directories)
+- [How do I keep an empty directory in the repository?](#git-does-not-store-directories)
+
+**[Renames are not stored either](#renames-are-not-stored-either)**
+
+- [If Git does not record renames, how does it show one?](#renames-are-not-stored-either)
+- [Is `git mv` different from moving the file and adding it?](#renames-are-not-stored-either)
+
+**[The whole repository, laid out](#the-whole-repository-laid-out)**
+
+- [How do I list every object in a repository?](#the-whole-repository-laid-out)
+
+**[What this explains](#what-this-explains)**
+
+- [Why does a rebase change commit hashes, and why does a deleted secret survive?](#what-this-explains)
+
+</details>
+
 ## Following the chain
 
 Here is a repository with one file in it, committed once. A commit is a small
@@ -228,18 +283,27 @@ needs a build step that sets them, not a version control system that carries
 them.
 
 The mode lives in the tree, not in the blob, so a file and an executable copy
-of the same file share one blob:
+of the same file share one blob. `git add --chmod=+x` stages a file as
+executable, and `git write-tree` makes a tree object from what is staged and
+prints its name, without committing (Chapter 75):
 
 ```console
+$ cp plain.txt script.sh && git add plain.txt && git add --chmod=+x script.sh
+$ git write-tree | xargs git cat-file -p | grep -E 'plain.txt|script.sh'
 100644 blob 587be6b4c3f93f93c489c0111bba5596147a26cb	plain.txt
 100755 blob 587be6b4c3f93f93c489c0111bba5596147a26cb	script.sh
 ```
 
-> **Worth knowing.** The empty tree has a fixed name in every SHA-1 repository
-> that has ever existed: `4b825dc642cb6eb9a060e54bf8d69288fbee4904`. You can
-> verify it with `git hash-object -t tree /dev/null`. It occasionally shows up
-> in scripts as a stand-in for "nothing", for instance to diff a first commit
-> against an empty state.
+The empty tree has a fixed name in every SHA-1 repository that has ever
+existed, the hash of a tree with nothing in it:
+
+```console
+$ git hash-object -t tree /dev/null
+4b825dc642cb6eb9a060e54bf8d69288fbee4904
+```
+
+It occasionally shows up in scripts as a stand-in for "nothing", for instance
+to diff a first commit against an empty state.
 
 ## Git does not store directories
 
@@ -327,8 +391,8 @@ $ git log --follow --oneline -- renamed.txt
 
 > **Worth knowing.** `git mv old new` is not a special operation. It is exactly
 > `mv old new` followed by `git rm old` and `git add new`, and it produces an
-> identical commit. Chapter 15 covers the one case where it is genuinely more
-> convenient.
+> identical commit; Chapter 15 shows both routes giving the same tree, and
+> covers the one case where `git mv` is genuinely more convenient.
 
 ## The whole repository, laid out
 
