@@ -637,7 +637,17 @@ entries you need after a rewrite are exactly the unreachable ones, and they get
 the 30-day rule.
 
 ```console
-$ git reflog expire --dry-run --verbose --expire=1.hour.ago main
+$ git reflog show --date=relative main
+afbde37 main@{3 hours ago}: reset: moving to HEAD@{1}
+79300da main@{3 hours ago}: reset: moving to HEAD~1
+afbde37 main@{4 hours ago}: commit (amend): Add bread, with a rest
+8079913 main@{5 hours ago}: commit: Add bread
+79300da main@{6 hours ago}: merge cake: Merge made by the 'ort' strategy.
+8b517e8 main@{7 hours ago}: commit: Season the soup
+d0d877a main@{10 hours ago}: commit: Add soup
+b2bc25e main@{11 hours ago}: commit: Add bread
+c382163 main@{12 hours ago}: commit (initial): Start the collection
+$ git reflog expire --dry-run --verbose --expire=3.hours.ago main
 prune commit (initial): Start the collection
 prune commit: Add bread
 prune commit: Add soup
@@ -645,9 +655,11 @@ prune commit: Season the soup
 prune merge cake: Merge made by the 'ort' strategy.
 prune commit: Add bread
 prune commit (amend): Add bread, with a rest
-prune reset: moving to HEAD~1
-prune reset: moving to HEAD@{1}
-$ git reflog expire --expire=1.hour.ago main && git reflog show main
+keep reset: moving to HEAD~1
+keep reset: moving to HEAD@{1}
+$ git reflog expire --expire=3.hours.ago main && git reflog show main
+afbde37 main@{0}: reset: moving to HEAD@{1}
+79300da main@{1}: reset: moving to HEAD~1
 $ git reflog show cake | wc -l
 3
 $ git reflog expire --expire=all cake && git reflog show cake
@@ -655,7 +667,10 @@ $ git log --oneline --decorate -1 cake
 6401080 (cake) Add butter to the cake
 ```
 
-Without `--dry-run` it happens: seven entries pruned, two left. `--expire=all`
+`--date=relative` shows how old each entry is. `--expire=3.hours.ago` prunes
+the entries older than three hours; the two resets, made exactly three hours
+ago, are not older, and stay. Without `--dry-run` it happens: seven entries
+pruned, two left. `--expire=all`
 prunes everything regardless of age, which empties the reflog — and `cake` is
 still exactly where it was, because expiry deletes records, not commits.
 
@@ -680,6 +695,8 @@ refs
 cake
 main
 $ cat .git/logs/refs/heads/main
+afbde37118a183cc78e45c6e2f508d06cc24e120 79300daf9060a23a99065871928c81d5ee158420 Ada Lovelace <ada@example.com> 1767636000 +0000	reset: moving to HEAD~1
+79300daf9060a23a99065871928c81d5ee158420 afbde37118a183cc78e45c6e2f508d06cc24e120 Ada Lovelace <ada@example.com> 1767636000 +0000	reset: moving to HEAD@{1}
 $ git config core.logAllRefUpdates
 true
 ```

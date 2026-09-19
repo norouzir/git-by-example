@@ -201,12 +201,20 @@ Work that must be finished before the first release, most urgent first.
   `refs/tags/` without `+`; testing showed that false for commits. Other
   chapters may repeat documentation claims no transcript tested; the author's
   review of Parts 2 to 6 is the moment to look for them.
-- **Chapter 36 says something its own transcript contradicts.** Under "When
-  entries expire", the text says `--expire=1.hour.ago` pruned seven entries and
-  left two, but the dry run above it prunes all nine and `git reflog show main`
-  afterwards prints nothing; "Where reflogs are kept" then describes the lines
-  of a `cat` that printed none. Found in passing while reading Chapter 36 for
-  Part 6; not yet fixed.
+- **Git 2.55's default reflog expiry is the reverse of its documentation.**
+  Found on 2026-09-19 while fixing Chapter 36, and not yet acted on. The
+  documentation gives 90 days for `gc.reflogExpire` and 30 for
+  `gc.reflogExpireUnreachable`; since Git 2.50, `reflog.h` sets
+  `default_expire_total` to 30 days and `default_expire_unreachable` to 90
+  (Git 2.49's `builtin/reflog.c` had them the documented way round). Tested: a
+  reachable entry 60 days old is pruned by `git reflog expire` with no
+  options, and kept with `gc.reflogExpire=90.days.ago`. Chapter 36's table of
+  defaults and its "the reflog is 90 days" paragraph follow the documentation,
+  and its explanation of why the first dry run prunes two entries (the 30-day
+  default, with "now" pinned) is wrong: the defaults are counted from the real
+  clock, which `sb_pin_now` does not move, and the example's January 2026
+  entries are older than either. Needs the author's decision on how the book
+  presents it, and a check of other chapters that give the 90 and 30 days.
 - **Chapter 17 points to chapters that do not show what it promises.**
   `tools/audit_examples.py` over the whole book (2026-09-17) reports two rows
   of Chapter 17 as missing: `--show-notes`, `--standard-notes` and
