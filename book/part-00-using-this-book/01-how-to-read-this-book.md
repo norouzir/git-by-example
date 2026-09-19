@@ -15,6 +15,62 @@ command fails in six different ways, you get six failures with their exact
 error text. When two commands look interchangeable but are not, you get both,
 side by side, with the case that separates them.
 
+<details class="questions" markdown="1">
+<summary>Questions this chapter answers</summary>
+
+**[The premise](#the-premise)**
+
+- [Why does this book list every option and every error, instead of pointing to the documentation?](#the-premise)
+
+**[The three-layer rule](#the-three-layer-rule)**
+
+- [Why do some topics get one example and others pages of prose?](#the-three-layer-rule)
+
+**[How to read a transcript](#how-to-read-a-transcript)**
+
+- [In an example, which lines do I type and which are Git's output?](#how-to-read-a-transcript)
+- [What do `...`, `# note` and `<angle-brackets>` mean in an example?](#how-to-read-a-transcript)
+- [Why are a few examples in colour?](#how-to-read-a-transcript)
+- [Why does a prompt sometimes show a directory and a branch?](#how-to-read-a-transcript)
+
+**[Call-out boxes](#call-out-boxes)**
+
+- [What do the boxes marked "Careful", "Windows", "Worth knowing" and "Since Git" mean?](#call-out-boxes)
+
+**[Version badges](#version-badges)**
+
+- [My Git is older than the book's. Which features will I miss?](#version-badges)
+- [Which version of Git were the examples made with?](#version-badges)
+
+**[How the book is organised](#how-the-book-is-organised)**
+
+- [Which parts should I read in order, and which can I dip into?](#how-the-book-is-organised)
+- [How do I jump to a section from the contents, on a phone or in the PDF?](#how-the-book-is-organised)
+
+**[How a chapter is organised](#how-a-chapter-is-organised)**
+
+- [Where in a chapter do I find the list of options, or the settings?](#how-a-chapter-is-organised)
+- [Why do some chapters have no synopsis or options table?](#how-a-chapter-is-organised)
+
+**[Five ways to find an answer](#five-ways-to-find-an-answer)**
+
+- [I have an error message. Where do I look it up?](#five-ways-to-find-an-answer)
+- [I know what I want to do, but not which command does it. Where do I start?](#five-ways-to-find-an-answer)
+
+**[What this book assumes](#what-this-book-assumes)**
+
+- [What do I need to know before I start?](#what-this-book-assumes)
+
+**[What this book does not cover](#what-this-book-does-not-cover)**
+
+- [Does the book cover GitHub Actions or GitLab CI?](#what-this-book-does-not-cover)
+
+**[A note on the two styles of Git](#a-note-on-the-two-styles-of-git)**
+
+- [Should I use `git checkout`, or `git switch` and `git restore`?](#a-note-on-the-two-styles-of-git)
+
+</details>
+
 ## The three-layer rule
 
 Everything in this book is explained in the cheapest form that actually works.
@@ -153,6 +209,12 @@ always know where to look:
 The question list is the quickest way into a long chapter. The questions are
 written the way you would ask them while stuck, not in the book's own terms, so
 you can recognise yours without knowing the answer first.
+
+A chapter about an idea or a practice rather than one command, such as the
+chapters of Part 1 on how Git stores things, or Chapter 45 on diverged
+branches, has no synopsis or options table. It still opens with what it is
+about and the list of questions, and then follows the idea in the order it is
+easiest to learn.
 
 ## Five ways to find an answer
 
