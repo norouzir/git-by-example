@@ -168,13 +168,11 @@ Work that must be finished before the first release, most urgent first.
   message made from a template with empty trailers, from Git's documentation,
   which Chapter 53 describes without a transcript. Chapter 68 must show `-S`
   beside Chapter 53's `-s`.
-- **Version badges missing in Chapters 33 and 35,** found while writing
-  Chapters 52 and 53 and confirmed from the release notes: Chapter 33 has none
-  for `git rebase --keep-base` (2.24), `--update-refs` (2.38) or `--trailer`
-  (2.54); Chapter 35 none for `git commit --fixup=amend:` and `reword:` (2.32)
-  or `git rebase --autosquash` without `-i` (2.44). Chapters 52 and 53 badge
-  the ones they use. Other chapters written before badges were checked by a
-  tool may have the same gap.
+- **Version badges may be missing in chapters written before
+  `tools/first_version.py`.** Chapters 33 and 35 lacked five (`--keep-base`,
+  `--update-refs`, `git rebase --trailer`, `--fixup=amend:`, `--autosquash`
+  without `-i`), found while writing Chapters 52 and 53 and added on
+  2026-09-19. No other chapter has been checked.
 - **Chapters 49 to 51 leave work to later chapters.** Chapter 61 must show
   `git request-pull` in full (`-p`, `<local>:<remote>`) and the patch workflow
   with `git format-patch` and `git am`, which Chapters 49 and 50 point to;

@@ -599,6 +599,8 @@ commit each time. Git's documentation gives the equivalent spelling,
 <upstream> <branch>`, and notes that it implies `--reapply-cherry-picks` so that
 nothing is lost.
 
+> **Since Git 2.24.** `--keep-base`.
+
 ## --fork-point
 
 ```console
@@ -1122,6 +1124,8 @@ The progress count goes from 2 to 4 because the todo list now has an
 Branches checked out in another worktree are left alone (Chapter 56).
 `rebase.updateRefs` makes it the default.
 
+> **Since Git 2.38.** `--update-refs` and `rebase.updateRefs`.
+
 ## Rebasing from the root
 
 ```console
@@ -1313,6 +1317,8 @@ Reviewed-by: Sam Chen <sam@example.com>
 `--trailer` adds any trailer you like, through `git interpret-trailers`
 (Chapter 53). With `-i`, only commits marked `pick`, `edit` or `reword` get
 them.
+
+> **Since Git 2.54.** `git rebase --trailer`.
 
 ## Strategies
 

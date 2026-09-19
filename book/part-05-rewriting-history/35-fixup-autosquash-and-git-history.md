@@ -326,6 +326,8 @@ line one has to stay, because that is what the rebase matches.
 > `--allow-empty-message` is given, because the empty body would become the
 > target's new message.
 
+> **Since Git 2.32.** `--fixup=amend:` and `--fixup=reword:`.
+
 ## Folding them in
 
 ```console
@@ -388,6 +390,10 @@ a974b54 Add the config reader
 is the everyday form once you trust it; `-i` is for when you want to see the
 list before it happens, which is worth doing the first few times and whenever
 the branch is long.
+
+> **Since Git 2.44.** `--autosquash` without `-i`. An older Git gives no error:
+> its `builtin/rebase.c` turns autosquash off when `-i` is missing, so the
+> rebase runs and replays the `fixup!` commits as they are. Add `-i` there.
 
 ### Turning it on for good
 
