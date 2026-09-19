@@ -40,6 +40,7 @@ sb_run_private() {
 sb_say "Checking what you have"
 cd "$R"
 sb_run "git --version"
+sb_run "git version"
 
 # ---------------------------------------------------------------------------
 # A configured machine.

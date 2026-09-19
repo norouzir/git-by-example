@@ -16,10 +16,68 @@ Distribution packages lag. If your Git is more than a year old, some of the
 commands in this book will not exist yet. The version badges tell you which
 ones.
 
+<details class="questions" markdown="1">
+<summary>Questions this chapter answers</summary>
+
+**[Installing](#installing)**
+
+- [How do I install Git on my system?](#installing)
+
+**[Checking what you have](#checking-what-you-have)**
+
+- [Which version of Git do I have?](#checking-what-you-have)
+- [How do I update Git on Windows, and is it safe for my repositories?](#checking-what-you-have)
+
+**[The four configuration levels](#the-four-configuration-levels)**
+
+- [Where does Git keep its settings, and which one wins when two disagree?](#the-four-configuration-levels)
+- [I set a value and Git ignores it. Why?](#the-four-configuration-levels)
+- [What is the difference between unsetting a value and setting it to nothing?](#the-four-configuration-levels)
+
+**[Two ways to write every config command](#two-ways-to-write-every-config-command)**
+
+- [Should I write `git config set user.email` or `git config user.email`?](#two-ways-to-write-every-config-command)
+
+**[The one setting you must have](#the-one-setting-you-must-have)**
+
+- [Git says "Author identity unknown". What do I do?](#the-one-setting-you-must-have)
+- [What if Git guesses my email address?](#the-one-setting-you-must-have)
+
+**[The default branch name](#the-default-branch-name)**
+
+- [Why does `git init` print a long hint about `master`, and how do I stop it?](#the-default-branch-name)
+
+**[The editor](#the-editor)**
+
+- [Which editor does Git open, and how do I change it?](#the-editor)
+- [My commit aborts as soon as the editor opens. Why?](#the-editor)
+
+**[Windows specifics](#windows-specifics)**
+
+- [What does the Git for Windows installer configure for me?](#windows-specifics)
+
+**[Credentials](#credentials)**
+
+- [How do I stop Git asking for my password every time?](#credentials)
+- [Is `credential.helper store` safe?](#credentials)
+
+**[A starting configuration](#a-starting-configuration)**
+
+- [Which settings are worth setting on a new machine?](#a-starting-configuration)
+
+**[Building from source](#building-from-source)**
+
+- [How do I install a newer Git without root access?](#building-from-source)
+- [My build of Git fails because Rust is missing. What now?](#building-from-source)
+
+</details>
+
 ## Checking what you have
 
 ```console
 $ git --version
+git version 2.55.0.windows.5
+$ git version
 git version 2.55.0.windows.5
 ```
 
@@ -41,7 +99,11 @@ Download and install <release name> [N/y]?
 
 Upgrading never touches your repositories. Git's on-disk format has not changed
 in a way that requires migration, and nothing is rewritten when you install a
-new version. Downgrading afterwards is equally safe.
+new version. Downgrading afterwards is safe too, with one exception: a
+repository that uses a feature newer than the older Git, such as the SHA-256
+object format or the reftable way of storing refs, records it as a repository
+*extension*, and a Git that does not know the extension refuses to work in that
+repository ("unknown repository extension found", in Git's `setup.c`).
 
 ## The four configuration levels
 
@@ -128,8 +190,9 @@ most of Git's own error messages show you.
 | Rename a section | `git config rename-section a b` | `git config --rename-section a b` |
 | Delete a section | `git config remove-section a` | `git config --remove-section a` |
 
-The level flags (`--global`, `--local`, `--system`, `--worktree`) work the same
-way in both forms and go after the subcommand:
+Chapter 62 covers `git config` in full. The level flags (`--global`,
+`--local`, `--system`, `--worktree`) work the same way in both forms and go
+after the subcommand:
 
 ```console
 $ git config set --global user.name "Ada Lovelace"
@@ -169,9 +232,12 @@ and they do not always agree with the documentation.
 
 And the `(none)` in the guessed address is Git telling you it tried to invent
 an email from your username and machine name and could not find a domain. If
-your machine happens to have a domain name, Git will not error at all. It will
-silently commit as `you@some-internal-hostname`, and you will discover it
-weeks later in a published history. Set your identity explicitly.
+your machine happens to have a domain name, Git will not refuse. It will commit
+as `you@some-internal-hostname`, and print a notice, from Git's `sequencer.c`,
+that begins "Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate." It is easy
+to miss, and you will discover the address weeks later in a published history.
+Set your identity explicitly.
 
 ```console
 $ git config set --global user.name "Ada Lovelace"
@@ -179,7 +245,8 @@ $ git config set --global user.email "ada@example.com"
 ```
 
 The name is free text and shows up in `git log`. The email is what matters,
-because forges like GitHub match commits to accounts by email address.
+because hosting services like GitHub match commits to accounts by email
+address.
 
 ## The default branch name
 
@@ -241,7 +308,8 @@ message and aborts the commit. Every graphical editor needs a flag that makes
 it block.
 
 > **Careful.** If your editor is misconfigured, `git commit` fails with
-> `error: There was a problem with the editor`. The fastest way to get unstuck
+> `error: there was a problem with the editor '<editor>'`, naming the editor,
+> as Git's `editor.c` prints it. The fastest way to get unstuck
 > is `git commit -m "message"`, which needs no editor at all.
 
 ## Windows specifics
@@ -258,6 +326,9 @@ should know about, because it is not what Git does by default anywhere else:
 | `http.sslbackend` | `schannel` | Uses the Windows certificate store instead of a bundled one |
 | `pull.rebase` | `false` | Makes `git pull` merge, see Chapter 42 |
 | `init.defaultbranch` | `master` | The installer sets it explicitly |
+
+It writes a few more, such as the filters for Git LFS (Chapter 59) and the
+editor chosen during installation.
 
 You can see yours at any time; the lines marked `system` are the installer's:
 
@@ -354,7 +425,10 @@ That installs into your home directory with no root access. Add
 `$HOME/.local/bin` to your `PATH` and `git --version` reports the new build.
 
 > **Since Git 2.55.** Both build systems enable Rust support by default, so a
-> build host without Rust now fails by default. It can still be turned off
-> with a build flag. The switches Git documents for turning it on explicitly
-> are `make WITH_RUST=YesPlease` and `meson configure -Drust=enabled`. In Git
-> 3.0 those options are removed and Rust becomes mandatory.
+> build host without Rust now fails by default. It can still be turned off:
+> Git 2.55's `Makefile` says to define `NO_RUST`, as in
+> `make NO_RUST=YesPlease prefix=$HOME/.local install`, and its Meson build has
+> the option `rust`, turned off with `-Drust=disabled`. Git's `BreakingChanges`
+> document gives `make WITH_RUST=YesPlease` and `meson configure -Drust=enabled`
+> for turning it on explicitly, which 2.55 does anyway, and says that in Git
+> 3.0 the options are removed and Rust becomes mandatory.
