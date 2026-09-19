@@ -230,8 +230,6 @@ Work that must be finished before the first release, most urgent first.
   standard and passes all three checks (2026-09-14). Chapter 13 was approved;
   Chapters 9 to 12 and 14 to 16 were reworked without the first two checkpoints
   (see DECISIONS.md) and have not yet been read by the author.
-- **Chapters 1 to 3 have no generator script**, so their transcripts cannot be
-  verified at all. Every chapter must pass every check before release.
 - **Parts 0 and 1 against the new standard.** Not yet reviewed for the chapter
   order, question lists, or option coverage. Decide with the author how much of
   the standard applies to chapters about concepts rather than one command.

@@ -21,7 +21,7 @@ can read the object directly:
 
 ```console
 $ git cat-file -p HEAD
-tree e22b5fff04de41c427ec4a451ddd9ebe19b7b5a0
+tree 6744922bb0166f2054058cbf0875d6fae8e1acd3
 author Ada Lovelace <ada@example.com> 1767603600 +0000
 committer Ada Lovelace <ada@example.com> 1767603600 +0000
 
@@ -33,12 +33,15 @@ and the message. The hash covers all of it. So the same file contents committed
 by a different person, or one second later, is a different commit:
 
 ```console
-# committed at 09:00:00
-54a8962392bac7c6f6733529e95abde1907d69a5
-
-# identical content, committed at 09:00:01
-30667b43bfd24ce31321e99278a7333900020541
+$ git log -1 --format='%H %cd'
+ea1027eb3df3a6d460c00309894b06bc73ace0c4 Mon Jan 5 09:00:00 2026 +0000
+$ GIT_COMMITTER_DATE='2026-01-05 09:00:01 +0000' git commit -q --amend --no-edit && git log -1 --format='%H %cd'
+877241cdaec2d07c7d0aa5dbf02a09336bcc952a Mon Jan 5 09:00:01 2026 +0000
 ```
+
+`git commit --amend --no-edit` with nothing staged makes the same commit again,
+with the same files, author and message, and `GIT_COMMITTER_DATE` puts its
+commit time one second later. `%H` is the full hash and `%cd` the commit time.
 
 Not similar. Completely different, because that is what a hash function does.
 
@@ -86,6 +89,9 @@ Point either at `/dev/null` and that whole level of configuration disappears:
 ```console
 $ GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null git config list
 ```
+
+Run outside a repository, as here, it lists nothing at all: no level is left.
+Inside one, the repository's own settings would still appear.
 
 > **Worth knowing.** This is the cleanest way to test whether your own
 > configuration is causing a problem. Run the command with both variables
@@ -154,9 +160,10 @@ other date formats Git accepts.
 ## Proof that it works
 
 The self-test builds the same repository twice, in two different scratch
-directories, and compares:
+directories, and compares. From the root of the book's repository:
 
 ```console
+$ bash sandbox/scripts/selftest-reproducibility.sh
 ===== RUN 1 =====
 2a84279 Add the app
 ea1027e Add README
@@ -168,6 +175,8 @@ ea1027eb3df3a6d460c00309894b06bc73ace0c4
 ea1027e Add README
 2a8427922f3b70d0e0e13bdfaeea55fa21903d66
 ea1027eb3df3a6d460c00309894b06bc73ace0c4
+
+OK: both runs produced identical hashes.
 ```
 
 Different directory, different moment in real time, identical result.
@@ -179,8 +188,12 @@ not. A Git remote can be a plain directory, and a **bare repository** is
 exactly the thing a server would host: a repository with no working files,
 just the administrative contents at the top level.
 
+In the example repository, `/home/ada/demo`, a bare repository is made beside
+it and used as its remote:
+
 ```console
-$ git init --bare origin.git
+$ git init --bare ../origin.git
+Initialized empty Git repository in /home/ada/origin.git/
 $ git remote add origin /home/ada/origin.git
 $ git push -u origin main
 To /home/ada/origin.git
@@ -191,10 +204,13 @@ branch 'main' set up to track 'origin/main'.
 From there it behaves like any remote you would clone from a server:
 
 ```console
+$ cd ..
 $ git clone origin.git clone2
+Cloning into 'clone2'...
+done.
 $ cd clone2
 $ git log --oneline
-54a8962 Add README
+ea1027e Add README
 $ git remote -v
 origin	/home/ada/origin.git (fetch)
 origin	/home/ada/origin.git (push)
@@ -247,8 +263,8 @@ If you do get to a computer, the harness and the script for every chapter are
 in the book's repository, under `sandbox/`. Running a chapter's script rebuilds
 that chapter's example repository from nothing:
 
-```console
-$ bash sandbox/scripts/ch12-commit.sh /tmp/playground
+```sh
+bash sandbox/scripts/ch12-commit.sh /tmp/playground
 ```
 
 You do not need the repository to follow the book. Nothing in the text depends

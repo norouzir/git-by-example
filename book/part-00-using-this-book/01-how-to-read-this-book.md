@@ -49,7 +49,7 @@ Nothing is typed from memory. Here is the anatomy:
 
 ```console
 $ git commit -m "Add the parser"
-[main 2a84279] Add the parser
+[main 3770283] Add the parser
  1 file changed, 3 insertions(+)
  create mode 100644 src/parser.py
 ```

@@ -26,12 +26,17 @@ git version 2.55.0.windows.5
 `git version` without the dashes does the same thing. Both forms have always
 worked and neither is more correct.
 
-On Windows, Git can update itself:
+On Windows, Git can update itself, with `git update-git-for-windows`. It asks
+the network for the latest release, so the book shows no transcript of it.
+According to its script, installed with Git for Windows as
+`mingw64/bin/git-update-git-for-windows`, it prints the version you have, then
+either `Up to date` or the version available, and in a terminal it then asks
+before downloading anything:
 
-```console
-$ git update-git-for-windows
-Git for Windows 2.49.0.windows.1 (64-bit)
-Update 2.55.0.windows.5 is available
+```
+Git for Windows <your version> (64-bit)
+Update <latest version> is available
+Download and install <release name> [N/y]?
 ```
 
 Upgrading never touches your repositories. Git's on-disk format has not changed
@@ -74,17 +79,18 @@ local	core.logallrefupdates=true
 local	core.symlinks=false
 local	core.ignorecase=true
 local	user.email=ada@widget.example
-
 $ git config get user.email
 ada@widget.example
-
 $ git config get --global user.email
 ada@example.com
-
 $ git config unset user.email
 $ git config get user.email
 ada@example.com
 ```
+
+There is no `system` line because the book's examples run with the system level
+switched off (Chapter 2); on a real installation its lines come first, marked
+`system`, and on Windows there are several ([Windows specifics](#windows-specifics)).
 
 Two details in that transcript are worth pausing on.
 
@@ -253,10 +259,10 @@ should know about, because it is not what Git does by default anywhere else:
 | `pull.rebase` | `false` | Makes `git pull` merge, see Chapter 42 |
 | `init.defaultbranch` | `master` | The installer sets it explicitly |
 
-You can see yours at any time:
+You can see yours at any time; the lines marked `system` are the installer's:
 
-```console
-$ git config list --show-scope
+```sh
+git config list --show-scope
 ```
 
 `core.autocrlf=true` is the one that causes trouble. It means the bytes in your
@@ -338,10 +344,10 @@ documentation; each of these is justified in its own chapter.
 When your distribution is too old and you cannot install packages, building
 Git is unusually painless:
 
-```console
-$ tar xzf git-2.55.0.tar.gz
-$ cd git-2.55.0
-$ make prefix=$HOME/.local install
+```sh
+tar xzf git-2.55.0.tar.gz
+cd git-2.55.0
+make prefix=$HOME/.local install
 ```
 
 That installs into your home directory with no root access. Add
