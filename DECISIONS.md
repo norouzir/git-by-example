@@ -1086,3 +1086,45 @@ cannot see the values. Each value is its own command, and CLAUDE.md records the
 trap. Fixing the missing version badges found in Chapters 33 and 35 inside
 this work was also left out: they are recorded in OUTLINE.md for the review of
 Part 5.
+
+---
+
+## 2026-09-19. The recorded defects are fixed
+
+The author asked for every defect already recorded in OUTLINE.md to be fixed,
+without searching for new ones. Each was fixed in its own commit.
+
+**Chapters 33 and 35** got the five missing version badges. The one for
+`--autosquash` without `-i` also says what an older Git does, read from Git
+2.43's `builtin/rebase.c`: it runs the rebase and silently ignores the option.
+
+**Chapter 36** now uses `--expire=3.hours.ago`, which does what the text says,
+with `git reflog show --date=relative` first so the ages can be read.
+
+**Chapter 17's pointers.** The deprecated notes options are shown in Chapter 38,
+where notes are displayed, with a `diff` check for each equivalence; and
+`--min-parents=3` in Chapter 25, where an octopus merge is made, rather than in
+Chapter 27, which only describes the strategy. Chapter 4 shows `git cat-file -e`.
+
+**Chapters 7 and 8.** One generator ran a demonstration in the middle of a
+block, and one block had omitted hint lines; in Chapter 8 two blocks had no
+source in the generator at all, one naming a file the example repository does
+not have.
+
+**Chapters 1 to 3 have generators.** Writing them showed that some transcripts
+had not come from a run: a hash in Chapter 1 copied from the self-test, a
+commit in Chapter 2 that no content tried could rebuild, and output missing or
+added elsewhere. Chapter 2 now uses the self-test's own repository, so the
+chapter and the self-test agree. Blocks that no generator can run, because they
+reach the network, build Git or show the reader's own configuration, are no
+longer transcripts but `sh` instructions, and the one piece of output among
+them is quoted from its script. CLAUDE.md records both rules.
+
+**Rejected.** Keeping the old Chapter 2 hashes by finding the content that
+produced them: the tree hash could not be matched, and a hash that cannot be
+reproduced is exactly what the book promises not to print.
+
+**Found in passing and not fixed:** Git 2.55's default reflog expiry is the
+reverse of its documentation, 30 days for reachable entries and 90 for
+unreachable ones, since Git 2.50. It changes what Chapter 36 teaches, so it is
+recorded in OUTLINE.md for the author to decide how the book presents it.

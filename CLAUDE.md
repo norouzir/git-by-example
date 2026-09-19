@@ -680,6 +680,18 @@ a signature, a line `-- ` and Git's version, which here reads
 `2.55.0.windows.5` and on another machine something else. Close the block with
 `...` before it and say what was cut, as `ch52` and `ch53` do.
 
+**`git config --global` in a generator.** The harness points
+`GIT_CONFIG_GLOBAL` at `sandbox/lib/gitconfig`, so a generator that runs
+`git config set --global` would rewrite the pinned configuration of every
+chapter. Point `GIT_CONFIG_GLOBAL` and `HOME` at files inside the scratch
+directory first, as `ch03` does, and check `git status` after a run.
+
+**A command that cannot be generated.** Something that reaches the network,
+builds Git, or shows the reader's own configuration cannot be a transcript. Write
+it without `$` in an `sh` block, as instructions, and quote any output from its
+source or documentation in a plain block, as `ch03` does for
+`git update-git-for-windows`.
+
 **An edit script that stops half-way.** A Python script that applies several
 replacements and exits on the first that fails writes nothing at all. After a
 failure, the file is as it was, including the replacements that looked done;
