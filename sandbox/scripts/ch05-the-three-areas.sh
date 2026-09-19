@@ -66,7 +66,7 @@ sb_say "--- 10. commit -a stages tracked files, and only tracked files ---"
 sb_write recipe.txt "flour" "water" "salt" "yeast" "sugar"
 sb_write notes.txt "untracked"
 sb_run git status --short
-git commit -qam "Add yeast and sugar"
+sb_run "git commit -a -m 'Add yeast and sugar'"
 sb_run git status --short
 sb_run git show --stat --oneline HEAD
 

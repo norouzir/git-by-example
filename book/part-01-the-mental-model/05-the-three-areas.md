@@ -27,6 +27,64 @@ The index is the one that has no equivalent in most other version control
 systems, and it is the source of most early confusion. The rest of this chapter
 is mostly about it.
 
+<details class="questions" markdown="1">
+<summary>Questions this chapter answers</summary>
+
+**[The map](#the-map)**
+
+- [What are the working tree, the index and the repository?](#the-map)
+- [Are "index", "staging area" and "cache" the same thing?](#the-map)
+
+**[Walking a file through](#walking-a-file-through)**
+
+- [What happens to a new file when I `git add` it, and when I commit?](#walking-a-file-through)
+- [Why is `git add` slow on a big file while `git commit` is instant?](#walking-a-file-through)
+
+**[Reading the short status](#reading-the-short-status)**
+
+- [What do the two letters in `git status --short` mean?](#reading-the-short-status)
+- [What is the difference between ` M` and `M `?](#reading-the-short-status)
+
+**[Two disagreements, two diffs](#two-disagreements-two-diffs)**
+
+- [Why does `git diff` show nothing after I staged my change?](#two-disagreements-two-diffs)
+- [How do I see exactly what `git commit` will record?](#two-disagreements-two-diffs)
+- [Is `--cached` the same as `--staged`?](#two-disagreements-two-diffs)
+
+**[One file, two states at once](#one-file-two-states-at-once)**
+
+- [Why is the same file listed as both staged and not staged?](#one-file-two-states-at-once)
+
+**[What actually gets committed](#what-actually-gets-committed)**
+
+- [I edited a file after staging it. Which version does the commit get?](#what-actually-gets-committed)
+
+**[The index holds hashes, not contents](#the-index-holds-hashes-not-contents)**
+
+- [What is actually in `.git/index`?](#the-index-holds-hashes-not-contents)
+- [How do I name the staged version of a file?](#the-index-holds-hashes-not-contents)
+
+**[Skipping the index with commit -a](#skipping-the-index-with-commit-a)**
+
+- [Does `git commit -a` include new files?](#skipping-the-index-with-commit-a)
+- [Which of `git add -A`, `git add .` and `git add -u` stages what?](#skipping-the-index-with-commit-a)
+
+**[Moving backwards](#moving-backwards)**
+
+- [How do I unstage a file, and how do I throw away an edit?](#moving-backwards)
+- [Which of those can lose work for good?](#moving-backwards)
+
+**[The areas people forget](#the-areas-people-forget)**
+
+- [Where else does Git keep content besides these three?](#the-areas-people-forget)
+- [Does "ahead of origin/main" mean Git checked the server?](#the-areas-people-forget)
+
+**[Why the index exists at all](#why-the-index-exists-at-all)**
+
+- [Why does Git have an index at all, when other systems commit the files directly?](#why-the-index-exists-at-all)
+
+</details>
+
 ## Walking a file through
 
 A brand new file exists in the working tree and nowhere else:
@@ -87,7 +145,9 @@ thing to memorise in this chapter:
  └──── index, compared against HEAD
 ```
 
-The left column is what you have staged. The right column is what you have not.
+`HEAD` is the last commit of the branch you are on; Chapter 7 explains the
+name. The left column is what you have staged. The right column is what you
+have not.
 
 | Letter | Meaning |
 |---|---|
@@ -97,7 +157,7 @@ The left column is what you have staged. The right column is what you have not.
 | `A` | added |
 | `D` | deleted |
 | `R` | renamed |
-| `C` | copied, only when `status.renames` is set to `copies` |
+| `C` | copied, only when `status.renames`, or `diff.renames` which it defaults to, is set to `copies` |
 | `U` | updated but unmerged, meaning a conflict (Chapter 26) |
 
 Two codes do not follow the two-column rule, because an untracked file has no
@@ -336,6 +396,9 @@ step:
 $ git status --short
  M recipe.txt
 ?? notes.txt
+$ git commit -a -m 'Add yeast and sugar'
+[main 59c1851] Add yeast and sugar
+ 1 file changed, 2 insertions(+)
 $ git status --short
 ?? notes.txt
 $ git show --stat --oneline HEAD
