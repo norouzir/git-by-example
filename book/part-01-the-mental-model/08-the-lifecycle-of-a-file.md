@@ -16,6 +16,59 @@ Every file in your project is in exactly one of these states:
 "Tracked" simply means the file has an entry in the index. That is the whole
 definition, and `git ls-files` lists exactly those files.
 
+<details class="questions" markdown="1">
+<summary>Questions this chapter answers</summary>
+
+**[The states](#the-states)**
+
+- [What states can a file be in?](#the-states)
+- [What does "tracked" actually mean?](#the-states)
+
+**[The map](#the-map)**
+
+- [Which command moves a file from one state to another?](#the-map)
+
+**[Untracked to committed](#untracked-to-committed)**
+
+- [Why does `git status` show `A` for one file and `M` for another?](#untracked-to-committed)
+
+**[Deleting is a change like any other](#deleting-is-a-change-like-any-other)**
+
+- [I deleted a file by mistake. Can I get it back?](#deleting-is-a-change-like-any-other)
+
+**[rm versus git rm](#rm-versus-git-rm)**
+
+- [What is the difference between `rm` and `git rm`?](#rm-versus-git-rm)
+- [Why does `git rm` refuse to delete my file?](#rm-versus-git-rm)
+
+**[Ignoring](#ignoring)**
+
+- [How do I find out why a file is ignored?](#ignoring)
+
+**[The trap: ignoring a file that is already tracked](#the-trap-ignoring-a-file-that-is-already-tracked)**
+
+- [I added a file to `.gitignore` and Git still shows its changes. Why?](#the-trap-ignoring-a-file-that-is-already-tracked)
+- [Why does `git check-ignore` say nothing about my file?](#the-trap-ignoring-a-file-that-is-already-tracked)
+
+**[Untracking without deleting](#untracking-without-deleting)**
+
+- [How do I stop tracking a file but keep it on disk?](#untracking-without-deleting)
+
+**[History still has it](#history-still-has-it)**
+
+- [I untracked a file. Is it gone from the repository?](#history-still-has-it)
+
+**[Pretending a tracked file has not changed](#pretending-a-tracked-file-has-not-changed)**
+
+- [Can I make Git ignore my local changes to a tracked config file?](#pretending-a-tracked-file-has-not-changed)
+- [How do I find files someone marked with `--assume-unchanged` or `--skip-worktree`?](#pretending-a-tracked-file-has-not-changed)
+
+**[Every transition in one table](#every-transition-in-one-table)**
+
+- [Which of these steps can lose work for good?](#every-transition-in-one-table)
+
+</details>
+
 ## The map
 
 ```
@@ -42,7 +95,7 @@ The rest of this chapter walks every arrow.
 A new file is untracked:
 
 ```console
-$ git status --short
+$ echo one > draft.txt && git status --short
 ?? draft.txt
 ```
 
@@ -59,6 +112,7 @@ A  draft.txt
 nothing to say and `git ls-files` does:
 
 ```console
+$ git commit -q -m 'Add draft'
 $ git status --short
 $ git ls-files
 draft.txt
@@ -68,11 +122,12 @@ From here the cycle repeats, and the code is `M` rather than `A` because the
 index already knew about the file:
 
 ```console
-$ git status --short
+$ echo two >> draft.txt && git status --short
  M draft.txt
 $ git add draft.txt
 $ git status --short
 M  draft.txt
+$ git commit -q -m 'Extend draft'
 $ git status --short
 ```
 
@@ -90,7 +145,7 @@ Delete the file with your shell, and Git records the deletion as a pending
 change:
 
 ```console
-$ git status --short
+$ rm draft.txt && git status --short
  D draft.txt
 $ git status
 On branch main
@@ -167,6 +222,10 @@ error: the following file has local modifications:
 A rule in `.gitignore` keeps a file out of the untracked list entirely:
 
 ```console
+$ cat .gitignore && ls
+*.log
+debug.log
+draft.txt
 $ git status --short
 $ git status --short --ignored
 !! debug.log
@@ -181,10 +240,13 @@ Chapter 16 is about `.gitignore` in full.
 ## The trap: ignoring a file that is already tracked
 
 This is the single most common `.gitignore` misunderstanding, so it gets its
-own demonstration. A file is committed by mistake, then added to `.gitignore`:
+own demonstration. A file is committed by mistake, then added to `.gitignore`,
+and then changed:
 
 ```console
+$ echo hunter2 > secrets.txt && git add secrets.txt && git commit -q -m 'Add secrets by mistake'
 $ printf '*.log\nsecrets.txt\n' > .gitignore
+$ echo 'changed anyway' >> secrets.txt
 $ git status --short
  M .gitignore
  M secrets.txt
@@ -235,6 +297,7 @@ The staged change says "delete", the file is still in the working directory,
 and after committing, the ignore rule finally takes effect:
 
 ```console
+$ git add .gitignore && git commit -q -m 'Stop tracking secrets.txt'
 $ git status --short
 $ git ls-files
 .gitignore
@@ -276,8 +339,11 @@ still in every earlier commit, and it will be in every clone anybody makes.
 
 Two flags claim to make Git overlook local changes to a tracked file:
 
+`config.ini` is committed, holding `debug = false`:
+
 ```console
 $ git update-index --skip-worktree config.ini
+$ echo 'debug = true' > config.ini
 $ git status --short
 $ git ls-files -v | grep config
 S config.ini
