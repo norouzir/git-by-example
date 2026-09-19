@@ -50,6 +50,11 @@ sb_run git status --short
 sb_run git restore draft.txt
 sb_run git status --short
 
+sb_say "--- 7b. git rm refuses a file with unstaged changes ---"
+sb_write draft.txt "one" "two" "three"
+sb_run git rm draft.txt || true
+git restore draft.txt
+
 sb_say "--- 8. an ignored file never reaches the untracked list ---"
 sb_write .gitignore "*.log"
 sb_commit "Ignore log files"
@@ -90,3 +95,8 @@ sb_run git status --short
 sb_run "git ls-files -v | grep config"
 sb_run git update-index --no-skip-worktree config.ini
 sb_run git status --short
+
+sb_say "--- 13. finding files with either bit set ---"
+sb_run git update-index --assume-unchanged config.ini
+sb_run "git ls-files -v | grep -v '^H'"
+sb_run git update-index --no-assume-unchanged config.ini

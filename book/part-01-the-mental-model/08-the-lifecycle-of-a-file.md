@@ -151,9 +151,9 @@ The third row is the useful one and it gets a section of its own below.
 worth reading closely:
 
 ```console
-$ git rm f.txt
+$ git rm draft.txt
 error: the following file has local modifications:
-    f.txt
+    draft.txt
 (use --cached to keep the file, or -f to force removal)
 ```
 
@@ -317,10 +317,15 @@ directly. Chapter 60 covers that command.
 To find bits somebody already set, including yourself six months ago:
 
 ```console
+$ git update-index --assume-unchanged config.ini
 $ git ls-files -v | grep -v '^H'
+h config.ini
+$ git update-index --no-assume-unchanged config.ini
 ```
 
-`H` is the ordinary state, so anything else is a file that has been marked.
+`H` is the ordinary state, so anything else is a file that has been marked:
+here `config.ini`, with the `h` of assume-unchanged, set on the first line for
+the example and cleared on the last.
 
 ## Every transition in one table
 

@@ -48,14 +48,14 @@ sb_run "cat .git/refs/heads/feature"
 sb_say "--- 6. detached HEAD is HEAD holding a hash instead of a name ---"
 sb_run git switch --detach HEAD~1
 sb_run "cat .git/HEAD"
-sb_run git switch -q main
-sb_run git checkout HEAD~1
-sb_run "cat .git/HEAD"
 sb_run git symbolic-ref HEAD || true
 sb_run git status
 sb_run git branch --show-current
-sb_run git switch main
-sb_run "cat .git/HEAD"
+
+sb_say "--- 6b. the same state reached with checkout ---"
+git switch -q main
+sb_run git checkout HEAD~1
+git switch -q main
 
 sb_say "--- 7. moving a branch by hand ---"
 sb_run git log --oneline

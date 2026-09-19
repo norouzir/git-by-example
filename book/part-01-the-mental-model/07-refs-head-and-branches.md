@@ -349,11 +349,20 @@ hint: See 'git help check-ref-format'
 hint: Disable this message with "git config set advice.refSyntax false"
 $ git branch 'ends.lock'
 fatal: 'ends.lock' is not a valid branch name
+hint: See 'git help check-ref-format'
+hint: Disable this message with "git config set advice.refSyntax false"
 $ git branch 'has..dots'
 fatal: 'has..dots' is not a valid branch name
+hint: See 'git help check-ref-format'
+hint: Disable this message with "git config set advice.refSyntax false"
 $ git branch -- '-leading-dash'
 fatal: '-leading-dash' is not a valid branch name
+hint: See 'git help check-ref-format'
+hint: Disable this message with "git config set advice.refSyntax false"
 ```
+
+`git branch` adds the same two hint lines to every refusal, not only the first;
+`git check-ref-format` does not.
 
 The rules, as Git's own documentation states them:
 

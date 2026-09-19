@@ -193,9 +193,6 @@ Work that must be finished before the first release, most urgent first.
   and `export-subst`, Chapter 53 conventions that sort messages into features
   and fixes. `tools/audit_examples.py` enforces the option rows once those
   chapters exist; the prose promises need checking by hand.
-- **The verifier's new end-of-output check has been run over every chapter
-  once** (2026-09-18). It found blocks cut short in Chapters 6 and 29, now
-  restored; Chapters 7 and 8 still fail for the older reasons below.
 - **Chapter 41 was corrected while writing Chapter 44.** It had repeated Git's
   documentation that fetch accepts any update outside `refs/heads/` and
   `refs/tags/` without `+`; testing showed that false for commits. Other
@@ -233,8 +230,6 @@ Work that must be finished before the first release, most urgent first.
   standard and passes all three checks (2026-09-14). Chapter 13 was approved;
   Chapters 9 to 12 and 14 to 16 were reworked without the first two checkpoints
   (see DECISIONS.md) and have not yet been read by the author.
-- **Transcripts that do not match a fresh run**, found by
-  `tools/verify_transcripts.py`: Chapters 7 and 8 have two each.
 - **Chapters 1 to 3 have no generator script**, so their transcripts cannot be
   verified at all. Every chapter must pass every check before release.
 - **Parts 0 and 1 against the new standard.** Not yet reviewed for the chapter
