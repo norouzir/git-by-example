@@ -80,6 +80,11 @@ sb_say "--- 12. object headers are part of the hash, type included ---"
 sb_run "printf 'hello\n' | git hash-object --stdin -t blob"
 sb_run "printf 'hello\n' | git hash-object --stdin -t commit" || true
 
+sb_say "--- 12b. cat-file with a type insists on that type ---"
+sb_run "git cat-file blob HEAD:greeting.txt"
+sb_run "git cat-file blob HEAD" || true
+sb_run "diff <(git cat-file -p HEAD:greeting.txt) <(git cat-file blob HEAD:greeting.txt) && echo same"
+
 sb_say "--- 13. tree entries are sorted, so add order cannot change the hash ---"
 sb_fresh "$SANDBOX_ROOT/sorting" >/dev/null
 sb_write zebra.txt "x"

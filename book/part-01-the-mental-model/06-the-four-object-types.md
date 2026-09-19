@@ -9,11 +9,58 @@ Git's object database contains exactly four kinds of thing. There is no fifth.
 | blob | Bytes | Nothing | A file's contents |
 | tree | Names, modes | Blobs and trees | A directory |
 | commit | Author, time, message | One tree, zero or more commits | A snapshot in history |
-| tag | A message, a tagger | Any object, usually a commit | A signed label |
+| tag | A message, a tagger | Any object, usually a commit | A named label for a release, optionally signed |
 
 Everything you do in Git creates, reads, or rearranges pointers between these
 four. Branches, the index, the stash and remotes are all built on top of them
 without adding a fifth type.
+
+<details class="questions" markdown="1">
+<summary>Questions this chapter answers</summary>
+
+**[The whole vocabulary](#the-whole-vocabulary)**
+
+- [What kinds of object does Git store?](#the-whole-vocabulary)
+
+**[Blobs](#blobs)**
+
+- [Can I store content in Git without a file or a commit?](#blobs)
+- [What happens to an object that nothing points to?](#blobs)
+
+**[Trees](#trees)**
+
+- [Can I build a tree by hand?](#trees)
+- [Does the order I add files in change the tree's hash?](#trees)
+
+**[Commits](#commits)**
+
+- [What lines does a commit object contain?](#commits)
+- [What is the difference between the author and the committer?](#commits)
+- [How many parents can a commit have, and why does their order matter?](#zero-one-or-two-parents)
+
+**[Tags, and the one real trap](#tags-and-the-one-real-trap)**
+
+- [What is the difference between an annotated and a lightweight tag?](#tags-and-the-one-real-trap)
+- [Why doesn't `git rev-parse v1.0` give me the commit's hash?](#tags-and-the-one-real-trap)
+
+**[The type is part of the name](#the-type-is-part-of-the-name)**
+
+- [Why does the same content get a different hash as a different type?](#the-type-is-part-of-the-name)
+
+**[Counting what is there](#counting-what-is-there)**
+
+- [How do I count the objects of each type in a repository?](#counting-what-is-there)
+
+**[The cat-file reference](#the-cat-file-reference)**
+
+- [Which `git cat-file` option do I want?](#the-cat-file-reference)
+- [What does `git cat-file blob` do that `-p` does not?](#the-cat-file-reference)
+
+**[Why objects are immutable](#why-objects-are-immutable)**
+
+- [Why can't I change a commit once it is made?](#why-objects-are-immutable)
+
+</details>
 
 ## Blobs
 
@@ -179,7 +226,7 @@ $ git log --graph --oneline
 | 0 | Root commit | The first commit, or `git switch --orphan` |
 | 1 | Ordinary commit | `git commit` |
 | 2 | Merge commit | `git merge` |
-| 3 or more | Octopus merge | `git merge` with several branches at once (Chapter 27) |
+| 3 or more | Octopus merge | `git merge` with several branches at once (Chapter 25) |
 
 The order of the parent lines is not decoration. The first parent is the branch
 you were on, the second is the branch you merged in. Commands like
@@ -240,7 +287,7 @@ lightweight:   refs/tags/v1.0-light ──────────────�
 annotated:     refs/tags/v1.0 ──▶ tag object ─────▶ commit
 ```
 
-| | Annotated | Lightweight |
+| Compared on | Annotated | Lightweight |
 |---|---|---|
 | Created by | `git tag -a`, `git tag -m`, `git tag -s` | `git tag <name>` |
 | Is an object | Yes | No |
@@ -275,9 +322,9 @@ fatal: refusing to create malformed object
 ```
 
 Git parsed the content as a commit, found no `tree` line, and refused. You can
-force it past this check with `--literally`, which exists so that Git's own
-test suite can create broken objects on purpose. There is no legitimate
-day-to-day use for it.
+force it past this check with `--literally`, which Git's documentation describes
+as useful for stress-testing Git itself or for reproducing corrupt objects found
+in the wild. There is no legitimate day-to-day use for it.
 
 ## Counting what is there
 
@@ -321,6 +368,26 @@ because it appears throughout the rest of this book.
 
 The `--batch-check` format string takes `%(objecttype)`, `%(objectsize)` and
 `%(objectname)`, among others.
+
+Naming the type is a check as well as a request:
+
+```console
+$ git cat-file blob HEAD:greeting.txt
+hello
+goodbye
+$ git cat-file blob HEAD
+fatal: git cat-file HEAD: bad file
+$ diff <(git cat-file -p HEAD:greeting.txt) <(git cat-file blob HEAD:greeting.txt) && echo same
+same
+```
+
+For a blob, `-p` and `blob` print the same bytes, as the `diff` shows. For the
+other types, `-p` formats the object for reading, while naming a type prints the
+object raw. The type is also a check: `HEAD` is a commit, and a commit cannot
+become a blob, so the second command refused. Git's documentation adds that a
+type the object leads to directly is accepted, such as `tree` for a commit,
+which prints the commit's tree; raw, a tree is binary, which is why `-p` is the
+way to read one.
 
 > **Worth knowing.** `-p` is the one you want almost always. `-e` is for
 > scripts: `git cat-file -e $hash 2>/dev/null` is the clean way to ask "does
