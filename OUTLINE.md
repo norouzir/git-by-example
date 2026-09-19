@@ -85,7 +85,7 @@ fall short of the current standard; see Outstanding below.
 - [x] 49. Workflow Patterns
 - [x] 50. Forks and Pull Requests on GitHub
 - [x] 51. Merge Requests on GitLab
-- [ ] 52. Code Review Mechanics
+- [x] 52. Code Review Mechanics
 - [ ] 53. Commit Message Conventions
 - [ ] 54. Collaboration Hazards
 
@@ -288,6 +288,7 @@ editing every chapter in the left column.
 | 49 | Chapter 17, Chapter 20, Chapter 23, Chapter 24, Chapter 25, Chapter 28, Chapter 30, Chapter 31, Chapter 32, Chapter 33, Chapter 41, Chapter 42, Chapter 43, Chapter 44, Chapter 45, Chapter 47, Chapter 48, Chapter 50, Chapter 51, Chapter 61, Chapter 67 |
 | 50 | Chapter 3, Chapter 9, Chapter 10, Chapter 13, Chapter 16, Chapter 17, Chapter 18, Chapter 23, Chapter 24, Chapter 25, Chapter 29, Chapter 31, Chapter 33, Chapter 34, Chapter 35, Chapter 36, Chapter 37, Chapter 39, Chapter 40, Chapter 41, Chapter 42, Chapter 43, Chapter 44, Chapter 45, Chapter 49, Chapter 51, Chapter 53, Chapter 61, Chapter 67, Chapter 68 |
 | 51 | Chapter 12, Chapter 17, Chapter 23, Chapter 24, Chapter 25, Chapter 29, Chapter 31, Chapter 33, Chapter 34, Chapter 35, Chapter 36, Chapter 37, Chapter 40, Chapter 41, Chapter 42, Chapter 43, Chapter 44, Chapter 45, Chapter 46, Chapter 49, Chapter 50, Chapter 59, Chapter 64, Chapter 67, Chapter 68 |
+| 52 | Chapter 13, Chapter 17, Chapter 18, Chapter 20, Chapter 22, Chapter 24, Chapter 25, Chapter 26, Chapter 30, Chapter 31, Chapter 32, Chapter 33, Chapter 34, Chapter 35, Chapter 36, Chapter 38, Chapter 42, Chapter 43, Chapter 44, Chapter 45, Chapter 49, Chapter 50, Chapter 51, Chapter 53, Chapter 55, Chapter 56, Chapter 61, Chapter 67 |
 
 Do not maintain that table by hand. Regenerate it, and check that nothing
 points at a chapter that does not exist:
